@@ -1,4 +1,4 @@
-#include "../include/ecs/Component.h"
+#include "ecs/Component.h"
 
 namespace mage
 {
@@ -7,8 +7,8 @@ namespace ecs
 
 std::uint32_t internal::GenerateUniqueComponentId()
 {
-    static std::uint32_t s_UniqueComponentIdCounter = 0;
-    return s_UniqueComponentIdCounter++;
+    static std::uint32_t s_uniqueComponentIdCounter = 0;
+    return s_uniqueComponentIdCounter++;
 }
 
 } // namespace ecs
