@@ -5,7 +5,7 @@ namespace mage
 namespace ecs
 {
 
-std::uint32_t internal::GenerateUniqueComponentId()
+std::uint32_t internal::GenerateUniqueComponentId() noexcept
 {
     static std::uint32_t s_uniqueComponentIdCounter = 0;
     return s_uniqueComponentIdCounter++;
