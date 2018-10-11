@@ -2,11 +2,13 @@ project(ecs)
 
 add_library(ecs STATIC
     include/ecs/Component.h
+    include/ecs/ComponentManager.h
     include/ecs/ComponentMask.h
     include/ecs/Entity.h
     include/ecs/EntityManager.h
 
     src/Component.cpp
+    src/ComponentManager.cpp
     src/ComponentMask.cpp
     src/Entity.cpp
     src/EntityManager.cpp)
