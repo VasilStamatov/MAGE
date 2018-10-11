@@ -15,8 +15,13 @@ class ComponentManager
 {
     struct ComponentData
     {
-        Entity m_owner;
+        std::uint32_t m_entityId;
         ComponentType m_data;
+
+        ComponentData(std::uint32_t _entityId, const ComponentType &_data)
+            : m_entityId(_entityId), m_data(_data)
+        {
+        }
     };
 
   private:
@@ -28,37 +33,36 @@ class ComponentManager
         m_components.reserve(1024);
     }
 
-    template <typename... TArgs>
-    void AddComponent(Entity _entity, TArgs &&... _constructionArgs)
+    void AddComponent(Entity _entity, const ComponentType &_componentData)
     {
-        if (FindComponentInstanceByEntity(_entity) != m_entityToComponentIdInVector.end())
+        if (FindComponentInstanceByEntity(_entity) != m_components.end())
         {
             //component already exists for this entity
             return;
         }
 
-        m_components.emplace_back(_entity, std::forward<TArgs>(_constructionArgs)...);
+        m_components.emplace_back(_entity.m_iD, _componentData);
     }
 
     void RemoveComponent(Entity _entity)
     {
-        auto foundIterator = FindComponentInstanceByEntity(_entity);
-        if (foundIterator == m_entityToComponentIdInVector.end())
+        for (size_t i = 0; i < m_components.size(); i++)
         {
-            //component doesn't exists for this entity
-            return;
+            if (m_components[i].m_entityId == _entity.m_iD)
+            {
+                std::swap(m_components[i], m_components.back());
+                m_components.pop_back();
+                return;
+            }
         }
-
-        std::swap(foundIterator, m_components.back());
-        m_components.pop_back();
     }
 
     ComponentType *GetComponent(Entity _entity)
     {
         ComponentType *ptrToComponent = nullptr;
 
-        if (auto foundIterator = FindComponentInstanceByEntity(_entity);
-            foundIterator != m_entityToComponentIdInVector.end())
+        auto foundIterator = FindComponentInstanceByEntity(_entity);
+        if (foundIterator != m_components.end())
         {
             //component already exists for this entity
             ptrToComponent = &foundIterator->m_data;
@@ -68,10 +72,10 @@ class ComponentManager
     }
 
   private:
-    auto FindComponentInstanceByEntity(Entity _entity)
+    auto FindComponentInstanceByEntity(Entity _entity) noexcept
     {
-        return std::find(m_components.begin(), m_components.end(), [_entity](const ComponentData &_element) {
-            return _element.m_owner == _entity;
+        return std::find_if(m_components.begin(), m_components.end(), [_entity](const ComponentData &_element) {
+            return _element.m_entityId == _entity.m_iD;
         });
     }
 };
