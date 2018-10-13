@@ -10,16 +10,22 @@ namespace mage
 namespace ecs
 {
 
+class BaseComponentManager
+{
+  public:
+    virtual void RemoveComponent(Entity _entity) = 0;
+};
+
 template <typename ComponentType>
-class ComponentManager
+class ComponentManager : public BaseComponentManager
 {
     struct ComponentData
     {
-        std::uint32_t m_entityId;
+        Entity m_ownerEntity;
         ComponentType m_data;
 
-        ComponentData(std::uint32_t _entityId, const ComponentType &_data)
-            : m_entityId(_entityId), m_data(_data)
+        ComponentData(Entity _entity, const ComponentType &_data)
+            : m_ownerEntity(_entity), m_data(_data)
         {
         }
     };
@@ -41,19 +47,15 @@ class ComponentManager
             return;
         }
 
-        m_components.emplace_back(_entity.m_iD, _componentData);
+        m_components.emplace_back(_entity, _componentData);
     }
 
-    void RemoveComponent(Entity _entity)
+    void RemoveComponent(Entity _entity) override
     {
-        for (size_t i = 0; i < m_components.size(); i++)
+        auto foundIterator = FindComponentInstanceByEntity(_entity);
+        if (foundIterator != m_components.end())
         {
-            if (m_components[i].m_entityId == _entity.m_iD)
-            {
-                std::swap(m_components[i], m_components.back());
-                m_components.pop_back();
-                return;
-            }
+            m_components.erase(foundIterator);
         }
     }
 
@@ -72,10 +74,10 @@ class ComponentManager
     }
 
   private:
-    auto FindComponentInstanceByEntity(Entity _entity) noexcept
+    auto FindComponentInstanceByEntity(Entity _entity)
     {
         return std::find_if(m_components.begin(), m_components.end(), [_entity](const ComponentData &_element) {
-            return _element.m_entityId == _entity.m_iD;
+            return _element.m_ownerEntity == _entity;
         });
     }
 };
