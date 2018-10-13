@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Component.h"
-
 #include <cstdint>
 
 namespace mage
@@ -17,19 +15,12 @@ private:
 public:
   ComponentMask();
 
-  template <typename ComponentType>
-  void AddComponent() noexcept
-  {
-    m_componentBitMask |= (1 << GetComponentTypeId<ComponentType>());
-  }
+  void SetComponentBit(std::uint32_t _componentBit) noexcept;
+  void UnsetComponentBit(std::uint32_t _componentBit) noexcept;
+  void Reset() noexcept;
 
-  template <typename ComponentType>
-  void RemoveComponent() noexcept
-  {
-    m_componentBitMask &= ~(1 << GetComponentTypeId<ComponentType>());
-  }
-
-  bool HasComponents(const ComponentMask &_mask) const noexcept;
+  bool ContainsBits(const ComponentMask &_mask) const noexcept;
+  bool HasComponent(std::uint32_t _componentBit) const noexcept;
 };
 
 } // namespace ecs
