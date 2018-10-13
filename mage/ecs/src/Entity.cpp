@@ -6,18 +6,18 @@ namespace ecs
 {
 
 Entity::Entity(std::uint32_t _id)
-    : m_iD(_id)
+    : m_id(_id)
 {
 }
 
 bool Entity::operator==(const Entity &_other) const noexcept
 {
-    return m_iD == _other.m_iD;
+    return m_id == _other.m_id;
 }
 
 bool Entity::operator!=(const Entity &_other) const noexcept
 {
-    return m_iD != _other.m_iD;
+    return m_id != _other.m_id;
 }
 
 } // namespace ecs

@@ -9,7 +9,7 @@ namespace ecs
 
 struct Entity
 {
-    const std::uint32_t m_iD;
+    std::uint32_t m_id;
 
     Entity(std::uint32_t _id);
 
