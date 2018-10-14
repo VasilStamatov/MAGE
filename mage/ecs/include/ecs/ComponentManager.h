@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Component.h"
 #include "Entity.h"
 
 #include <algorithm>
@@ -19,6 +20,9 @@ class BaseComponentManager
 template <typename ComponentType>
 class ComponentManager : public BaseComponentManager
 {
+    static_assert(std::is_base_of<Component, ComponentType>::value, "Must inherit from Component");
+    static_assert(std::is_standard_layout<ComponentType>::value, "Must have standard layout (all members public, no virtual functions)");
+
     struct ComponentData
     {
         Entity m_ownerEntity;
@@ -32,6 +36,13 @@ class ComponentManager : public BaseComponentManager
 
   private:
     std::vector<ComponentData> m_components;
+
+    auto FindComponentInstanceByEntity(Entity _entity)
+    {
+        return std::find_if(m_components.begin(), m_components.end(), [_entity](const ComponentData &_element) {
+            return _element.m_ownerEntity == _entity;
+        });
+    }
 
   public:
     ComponentManager() : m_components()
@@ -71,14 +82,6 @@ class ComponentManager : public BaseComponentManager
         }
 
         return ptrToComponent;
-    }
-
-  private:
-    auto FindComponentInstanceByEntity(Entity _entity)
-    {
-        return std::find_if(m_components.begin(), m_components.end(), [_entity](const ComponentData &_element) {
-            return _element.m_ownerEntity == _entity;
-        });
     }
 };
 
