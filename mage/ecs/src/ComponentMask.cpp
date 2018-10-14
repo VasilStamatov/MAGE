@@ -14,11 +14,13 @@ ComponentMask::ComponentMask()
 
 void ComponentMask::SetComponentBit(std::uint32_t _componentBit) noexcept
 {
+    assert(_componentBit < 32);
     m_componentBitMask |= (1 << _componentBit);
 }
 
 void ComponentMask::UnsetComponentBit(std::uint32_t _componentBit) noexcept
 {
+    assert(_componentBit < 32);
     m_componentBitMask &= (~(1 << _componentBit));
 }
 
