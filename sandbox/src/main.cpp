@@ -78,18 +78,48 @@ struct TestComponent : me::Component
   int f;
 };
 
-double RunExample()
+class TestSystem : public me::System
 {
-  Timer timer;
-  me::World world;
-  me::EntityHandle handle = world.CreateEntity();
+public:
+  TestSystem() { m_systemSignature.AddComponent<TestComponent>(); }
 
-  for (size_t i = 0; i < 1; i++)
+  void Tick(me::World& _world, float _deltaTime) override
   {
+    for (auto&& entity : m_registeredEntities)
+    {
+      auto testComponent = _world.GetComponent<TestComponent>(entity);
+      std::cout << entity.m_id
+                << " says hi! TestComponent.a = " << testComponent.a
+                << std::endl;
+    }
+  }
+};
+
+class TestWorld : public me::World
+{
+private:
+  virtual void AddSystems() override
+  {
+    AddSystem(std::make_unique<TestSystem>());
+  }
+  virtual void AddEntitiesAndComponents() override
+  {
+    auto handle = CreateEntity();
     handle.AddComponent<TestComponent>(Composite(1.0f, 1.0f, 1, 1, 1),
                                        Composite(1.0f, 1.0f, 1, 1, 1), 1.0f,
                                        1.0f, 1, 1, 1, 1);
-    handle.RemoveComponent<TestComponent>();
+  }
+};
+
+double RunExample()
+{
+  Timer timer;
+  std::unique_ptr<me::World> world = std::make_unique<TestWorld>();
+  world->Initialize();
+
+  for (size_t i = 0; i < 50; i++)
+  {
+    world->TickSystems(1.0f);
   }
 
   return timer.GetElapsedMilli();
@@ -97,15 +127,15 @@ double RunExample()
 
 int main(int argc, char const* argv[])
 {
-  double avg_time = 0.0;
-  size_t num_iterations = 1;
+  double milliAccumulator = 0.0;
+  size_t numIterations = 30;
 
-  for (size_t i = 0; i < num_iterations; i++)
+  for (size_t i = 0; i < numIterations; i++)
   {
-    avg_time += RunExample();
+    milliAccumulator += RunExample();
   }
 
-  std::cout << "Average time: " << avg_time / num_iterations
+  std::cout << "Average time: " << milliAccumulator / numIterations
             << " milliseconds\n";
 
   return 0;

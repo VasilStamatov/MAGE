@@ -11,6 +11,13 @@ World::World()
     , m_systemManager()
 {
 }
+World::~World() {}
+
+void World::Initialize()
+{
+  AddSystems();
+  AddEntitiesAndComponents();
+}
 
 void World::OnEnter() { m_systemManager.InitializeSystems(); }
 

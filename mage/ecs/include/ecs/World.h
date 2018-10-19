@@ -16,6 +16,9 @@ class World
 {
 public:
   World();
+  virtual ~World();
+
+  void Initialize();
 
   void OnEnter();
   void OnExit();
@@ -59,6 +62,9 @@ public:
   }
 
 private:
+  virtual void AddSystems() = 0;
+  virtual void AddEntitiesAndComponents() = 0;
+
   template <typename ComponentType>
   ComponentManager<ComponentType>* GetPtrToDerivedComponentManager()
   {
