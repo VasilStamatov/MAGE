@@ -1,14 +1,17 @@
 #include "ecs/Component.h"
 
+#include <assert.h>
+
 namespace mage
 {
 namespace ecs
 {
 
-std::uint32_t internal::GenerateUniqueComponentId() noexcept
+std::int32_t internal::GenerateUniqueComponentId() noexcept
 {
-    static std::uint32_t s_uniqueComponentIdCounter = 0;
-    return s_uniqueComponentIdCounter++;
+  static std::int32_t s_uniqueComponentIdCounter = 0;
+  assert(s_uniqueComponentIdCounter < c_maxNumberOfComponentTypes - 1);
+  return s_uniqueComponentIdCounter++;
 }
 
 } // namespace ecs

@@ -11,26 +11,26 @@ class World;
 
 class EntityHandle
 {
-private:
-  World &m_world;
-  const Entity m_entity;
-
 public:
-  EntityHandle(World &_world, Entity _entity);
+  EntityHandle(World& _world, Entity _entity);
 
   void Destroy();
 
-  template <typename ComponentType>
-  void AddComponent(const ComponentType &_component)
+  template <typename ComponentType, typename... TArgs>
+  void AddComponent(TArgs&&... _constructionArgs)
   {
-    m_world.AddComponent<ComponentType>(m_entity, _component);
+    m_world.AddComponent<ComponentType>(
+        m_entity, std::forward<TArgs>(_constructionArgs)...);
   }
 
-  template <typename ComponentType>
-  void RemoveComponent()
+  template <typename ComponentType> void RemoveComponent()
   {
     m_world.RemoveComponent<ComponentType>(m_entity);
   }
+
+private:
+  World& m_world;
+  Entity m_entity;
 };
 
 } // namespace ecs

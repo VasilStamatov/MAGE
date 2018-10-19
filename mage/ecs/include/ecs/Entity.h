@@ -9,12 +9,12 @@ namespace ecs
 
 struct Entity
 {
-    std::uint32_t m_id;
+  explicit Entity(std::int32_t _id);
 
-    Entity(std::uint32_t _id);
+  bool operator==(const Entity& _other) const noexcept;
+  bool operator!=(const Entity& _other) const noexcept;
 
-    bool operator==(const Entity &_other) const noexcept;
-    bool operator!=(const Entity &_other) const noexcept;
+  std::int32_t m_id;
 };
 
 } // namespace ecs
