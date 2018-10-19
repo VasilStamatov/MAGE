@@ -1,13 +1,23 @@
-#include "../include/ecs/Entity.h"
+#include "ecs/Entity.h"
 
 namespace mage
 {
 namespace ecs
 {
 
-bool Entity::operator==(const Entity &_other) const noexcept
+Entity::Entity(std::int32_t _id)
+    : m_id(_id)
 {
-    return m_iD == _other.m_iD;
+}
+
+bool Entity::operator==(const Entity& _other) const noexcept
+{
+  return m_id == _other.m_id;
+}
+
+bool Entity::operator!=(const Entity& _other) const noexcept
+{
+  return m_id != _other.m_id;
 }
 
 } // namespace ecs
