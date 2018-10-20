@@ -4,8 +4,12 @@
 #include <vector>
 
 #include <ecs/World.h>
+#include <graphics/Video.h>
+
+#include <GLFW/glfw3.h>
 
 namespace me = mage::ecs;
+namespace mg = mage::graphics;
 
 struct Timer
 {
@@ -111,7 +115,7 @@ private:
   }
 };
 
-double RunExample()
+void ECSExample()
 {
   Timer timer;
   std::unique_ptr<me::World> world = std::make_unique<TestWorld>();
@@ -121,22 +125,47 @@ double RunExample()
   {
     world->TickSystems(1.0f);
   }
+}
 
-  return timer.GetElapsedMilli();
+void VideoExample()
+{
+  mg::Video video;
+  video.Initialize();
+
+  for (size_t i = 0; i < 500; i++)
+  {
+    video.SwapBuffers();
+  }
+
+  video.Shutdown();
 }
 
 int main(int argc, char const* argv[])
 {
-  double milliAccumulator = 0.0;
-  size_t numIterations = 30;
+  // try
+  // {
+  //   VideoExample();
+  //   ECSExample();
+  // }
+  // catch (const std::exception& e)
+  // {
+  //   std::cerr << e.what() << '\n';
+  // }
 
-  for (size_t i = 0; i < numIterations; i++)
+  glfwInit();
+
+  glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+  GLFWwindow* window =
+      glfwCreateWindow(800, 600, "Vulkan window", nullptr, nullptr);
+
+  while (!glfwWindowShouldClose(window))
   {
-    milliAccumulator += RunExample();
+    glfwPollEvents();
   }
 
-  std::cout << "Average time: " << milliAccumulator / numIterations
-            << " milliseconds\n";
+  glfwDestroyWindow(window);
+
+  glfwTerminate();
 
   return 0;
 }
