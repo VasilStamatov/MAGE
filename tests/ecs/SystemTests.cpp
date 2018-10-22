@@ -1,6 +1,6 @@
 #include <catch/catch.hpp>
 
-#include "ecs/System.h"
+#include "ecs/World.h"
 
 struct TestComponent1 : mage::ecs::Component
 {
@@ -24,7 +24,14 @@ public:
   }
   void Initialize() override {}
   void Uninitialize() override {}
-  void Tick(mage::ecs::World& _world, float _deltaTime) override {}
+  void Tick(mage::ecs::World& _world, float _deltaTime) override
+  {
+    for (auto&& entity : m_registeredEntities)
+    {
+      auto component = _world.GetComponent<TestComponent1>(entity);
+      _deltaTime = 1.0f;
+    }
+  }
 
   bool IsEntityRegistered(mage::ecs::Entity _entity)
   {

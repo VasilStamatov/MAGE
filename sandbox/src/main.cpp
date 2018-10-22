@@ -90,7 +90,7 @@ public:
       auto testComponent = _world.GetComponent<TestComponent>(entity);
       std::cout << entity.m_id
                 << " says hi! TestComponent.a = " << testComponent.a
-                << std::endl;
+                << "dt: " << _deltaTime << std::endl;
     }
   }
 };
@@ -127,6 +127,7 @@ double RunExample()
 
 int main(int argc, char const* argv[])
 {
+  std::cout << "Argc: " << argc << "Argv: " << argv << std::endl;
   double milliAccumulator = 0.0;
   size_t numIterations = 30;
 
