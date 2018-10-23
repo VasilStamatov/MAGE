@@ -160,7 +160,28 @@ public:
   }
   bool operator!=(const Mat& _rhs) const { return !operator==(_rhs); }
 
+  friend std::ostream& operator<<(std::ostream& _outStream, const Mat& _mat)
+  {
+    _outStream << "Mat:\n";
+
+    for (auto row = 0; row < Size; row++)
+    {
+      _outStream << "Row " << row << '\t';
+      _outStream << "{ ";
+
+      for (auto col = 0; col < Size; col++)
+      {
+        _outStream << _mat[col + row * Size] << ", ";
+      }
+
+      _outStream << '}' << '\n';
+    }
+
+    return _outStream;
+  }
+
 private:
+  // [row][col] access = col + row * Size
   T m_elements[Size * Size];
 };
 

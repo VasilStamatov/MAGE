@@ -281,16 +281,16 @@ public:
   friend Vec operator*(T _lhs, const Vec& _rhs) { return _rhs * _lhs; }
   friend Vec operator/(T _lhs, const Vec& _rhs) { return _rhs / _lhs; }
 
-  friend std::ostream& operator<<(std::ostream& _outStream, const Vec& _Vec)
+  friend std::ostream& operator<<(std::ostream& _outStream, const Vec& _vec)
   {
-    _outStream << "Vec(";
+    _outStream << "Vec: { ";
 
     for (auto i = 0; i < Size; i++)
     {
-      _outStream << _Vec.m_elements[i] << ", ";
+      _outStream << _vec.m_elements[i] << ", ";
     }
 
-    _outStream << ')';
+    _outStream << '}';
     return _outStream;
   }
 

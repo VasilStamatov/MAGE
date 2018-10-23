@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <ecs/World.h>
+#include <math/Mat.h>
 
 namespace me = mage::ecs;
 
@@ -127,17 +128,25 @@ double RunExample()
 
 int main(int argc, char const* argv[])
 {
-  std::cout << "Argc: " << argc << "Argv: " << argv << std::endl;
-  double milliAccumulator = 0.0;
-  size_t numIterations = 30;
+  std::cout << "Argc: " << argc << " /--/ Argv: " << argv << std::endl;
+  // double milliAccumulator = 0.0;
+  // size_t numIterations = 30;
 
-  for (size_t i = 0; i < numIterations; i++)
-  {
-    milliAccumulator += RunExample();
-  }
+  // for (size_t i = 0; i < numIterations; i++)
+  // {
+  //   milliAccumulator += RunExample();
+  // }
 
-  std::cout << "Average time: " << milliAccumulator / numIterations
-            << " milliseconds\n";
+  // std::cout << "Average time: " << milliAccumulator / numIterations
+  //           << " milliseconds\n";
+
+  mage::math::Vec4f vec(1.0f, 2.0f, 3.0f, 4.0f);
+
+  std::cout << vec << std::endl;
+
+  mage::math::Mat4f mat(1.0f);
+
+  std::cout << mat << std::endl;
 
   return 0;
 }
