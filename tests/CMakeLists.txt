@@ -7,6 +7,7 @@ add_executable(tests
   ecs/EntityManagerTests.cpp
   ecs/SystemTests.cpp
 
+  math/MatTests.cpp
   math/VecTests.cpp
 
   src/testsMain.cpp)

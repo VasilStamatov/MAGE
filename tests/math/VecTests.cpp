@@ -2,7 +2,7 @@
 
 #include "math/Vec.h"
 
-SCENARIO("Vector Math test ", "[Math]")
+SCENARIO("Vector Math tests", "[Math]")
 {
   using namespace mage::math;
   GIVEN("Two Vec2's")
@@ -87,7 +87,7 @@ SCENARIO("Vector Math test ", "[Math]")
 
     WHEN("The cross product for them is calculated")
     {
-      Vec3f result = rightAxis.Cross(upAxis);
+      Vec3f result = Cross(rightAxis, upAxis);
       THEN("Result is equal to expected")
       {
         Vec3f forwardAxis(0.0f, 0.0f, 1.0f);

@@ -13,7 +13,7 @@ template <typename T, std::uint32_t Size> class Vec
 {
 public:
   Vec() { memset(m_elements, 0, Size * sizeof(T)); }
-  Vec(T _val)
+  explicit Vec(T _val)
   {
     for (auto i = 0; i < Size; i++)
     {

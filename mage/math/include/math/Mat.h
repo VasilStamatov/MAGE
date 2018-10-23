@@ -13,7 +13,7 @@ template <typename T, std::uint32_t Size> class Mat
 
 public:
   Mat() { memset(m_elements, 0, Size * Size * sizeof(T)); }
-  Mat(T _diagonal)
+  explicit Mat(T _diagonal)
   {
     memset(m_elements, 0, Size * Size * sizeof(T));
 
@@ -22,7 +22,10 @@ public:
       m_elements[i] = _diagonal;
     }
   }
-  Mat(T* _elements) { memcpy(m_elements, _elements, Size * Size * sizeof(T)); }
+  explicit Mat(T* _elements)
+  {
+    memcpy(m_elements, _elements, Size * Size * sizeof(T));
+  }
 
   Mat operator+(const Mat& _rhs) const
   {
@@ -58,10 +61,10 @@ public:
 
         for (int32_t e = 0; e < Size; e++)
         {
-          sum += elements[e + row * Size] * _rhs.elements[col + e * Size];
+          sum += m_elements[e + row * Size] * _rhs.m_elements[col + e * Size];
         }
 
-        data[col + row * Size] = sum;
+        rtn.m_elements[col + row * Size] = sum;
       }
     }
 
@@ -90,7 +93,7 @@ public:
     return rtn;
   }
 
-  Vec<T, Size> operator*(const Vec<T, Size>& _vec)
+  Vec<T, Size> operator*(const Vec<T, Size>& _vec) const
   {
     Vec<T, Size> rtn;
 
@@ -180,27 +183,30 @@ template <typename T> Mat<T, 4> GetTransposed(const Mat<T, 4>& _mat)
 
   Mat rtn(_mat);
 
-  swap(rtn.m_elements[1], rtn.m_elements[4]);
-  swap(rtn.m_elements[2], rtn.m_elements[8]);
-  swap(rtn.m_elements[6], rtn.m_elements[9]);
-  swap(rtn.m_elements[3], rtn.m_elements[12]);
-  swap(rtn.m_elements[7], rtn.m_elements[13]);
-  swap(rtn.m_elements[11], rtn.m_elements[14]);
+  swap(rtn[1], rtn[4]);
+  swap(rtn[2], rtn[8]);
+  swap(rtn[6], rtn[9]);
+  swap(rtn[3], rtn[12]);
+  swap(rtn[7], rtn[13]);
+  swap(rtn[11], rtn[14]);
 
   return rtn;
 }
 
-template <typename T> Mat<T, 4> Translate(const Vec<T, 3>& _translation)
+template <typename T> Mat<T, 4> GenTranslation(const Vec<T, 3>& _translation)
 {
-  return {static_cast<T>(1.0), static_cast<T>(0.0), static_cast<T>(0.0),
-          _translation[0],     static_cast<T>(0.0), static_cast<T>(1.0),
-          static_cast<T>(0.0), _translation[1],     static_cast<T>(0.0),
-          static_cast<T>(0.0), static_cast<T>(1.0), _translation[2],
-          static_cast<T>(0.0), static_cast<T>(0.0), static_cast<T>(0.0),
-          static_cast<T>(1.0)};
+  float matrixData[16] = {
+      static_cast<T>(1.0), static_cast<T>(0.0), static_cast<T>(0.0),
+      _translation[0],     static_cast<T>(0.0), static_cast<T>(1.0),
+      static_cast<T>(0.0), _translation[1],     static_cast<T>(0.0),
+      static_cast<T>(0.0), static_cast<T>(1.0), _translation[2],
+      static_cast<T>(0.0), static_cast<T>(0.0), static_cast<T>(0.0),
+      static_cast<T>(1.0)};
+
+  return Mat<T, 4>(matrixData);
 }
 
-template <typename T> Mat<T, 4> Rotate(T _radians, const Vec<T, 3>& _axis)
+template <typename T> Mat<T, 4> GenRotation(T _radians, const Vec<T, 3>& _axis)
 {
   T c = std::cos(_radians);
   T s = std::sin(_radians);
@@ -240,14 +246,17 @@ template <typename T> Mat<T, 4> Rotate(T _radians, const Vec<T, 3>& _axis)
   return rtn;
 }
 
-template <typename T> Mat<T, 4> Scale(const Vec<T, 3>& _scale)
+template <typename T> Mat<T, 4> GenScaling(const Vec<T, 3>& _scale)
 {
-  return {_scale[0],           static_cast<T>(0.0), static_cast<T>(0.0),
-          static_cast<T>(0.0), static_cast<T>(0.0), _scale[1],
-          static_cast<T>(0.0), static_cast<T>(0.0), static_cast<T>(0.0),
-          static_cast<T>(0.0), _scale[2],           static_cast<T>(0.0),
-          static_cast<T>(0.0), static_cast<T>(0.0), static_cast<T>(0.0),
-          static_cast<T>(1.0)};
+  float matrixData[16] = {
+      _scale[0],           static_cast<T>(0.0), static_cast<T>(0.0),
+      static_cast<T>(0.0), static_cast<T>(0.0), _scale[1],
+      static_cast<T>(0.0), static_cast<T>(0.0), static_cast<T>(0.0),
+      static_cast<T>(0.0), _scale[2],           static_cast<T>(0.0),
+      static_cast<T>(0.0), static_cast<T>(0.0), static_cast<T>(0.0),
+      static_cast<T>(1.0)};
+
+  return Mat<T, 4>(matrixData);
 }
 
 template <typename T>
@@ -281,8 +290,8 @@ Mat<T, 4> GenPerspective(T _FovRadians, T _aspectRatio, T _near, T _far)
   rtn[1 + 1 * 4] = static_cast<T>(1.0) / (tanHalfFoV);
   rtn[2 + 3 * 4] = static_cast<T>(-1.0);
 
-  rtn.[2 + 2 * 4] = -(_far + _near) / (_far - _near);
-  rtn.[3 + 2 * 4] = -(static_cast<T>(2.0) * _far * _near) / (_far - _near);
+  rtn[2 + 2 * 4] = -(_far + _near) / (_far - _near);
+  rtn[3 + 2 * 4] = -(static_cast<T>(2.0) * _far * _near) / (_far - _near);
 
   return rtn;
 }
@@ -294,7 +303,7 @@ Mat<T, 4> GenLookAt(const Vec<T, 3>& _camera, const Vec<T, 3>& _object,
   Mat<T, 4> rtn(static_cast<T>(1.0));
 
   Vec<T, 3> forward = (_object - _camera).GetNormalized();
-  Vec<T, 3> right = Cross(forward, _up).GetNormalized();
+  Vec<T, 3> right = Cross(forward, _up.GetNormalized()).GetNormalized();
   Vec<T, 3> up = Cross(right, forward);
 
   rtn[0 + 0 * 4] = right[0];
