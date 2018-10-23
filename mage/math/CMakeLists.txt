@@ -1,8 +1,10 @@
 project(mage_math)
 
 add_library(mage_math STATIC
+  include/math/Mat.h
   include/math/Vec.h
   
+  src/Mat.cpp
   src/Vec.cpp)
 
 target_compile_features(mage_math PUBLIC cxx_std_17)
