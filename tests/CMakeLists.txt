@@ -8,6 +8,7 @@ add_executable(tests
   ecs/SystemTests.cpp
 
   math/MatTests.cpp
+  math/QuatTests.cpp
   math/VecTests.cpp
 
   src/testsMain.cpp)

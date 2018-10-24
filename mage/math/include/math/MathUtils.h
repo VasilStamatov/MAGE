@@ -11,22 +11,19 @@ namespace math
 
 // ------------------------------------------------------------------------------
 
-template <typename T> constexpr inline T c_pi = 3.1415926535897932;
-template <typename T> constexpr inline T c_twoPi = 6.28318530717959;
-template <typename T> constexpr inline T c_halfPi = 1.57079632679;
-template <typename T> constexpr inline T c_reciprocalPi = 0.31830988618;
-template <typename T> constexpr inline T c_reciprocalTwoPi = 0.159154943091895;
-template <typename T> constexpr inline T c_reciprocalHalfPi = 0.636619772367581;
+template <typename T> constexpr T c_pi = 3.1415926535897932;
+template <typename T> constexpr T c_twoPi = 6.28318530717959;
+template <typename T> constexpr T c_halfPi = 1.57079632679;
+template <typename T> constexpr T c_reciprocalPi = 0.31830988618;
+template <typename T> constexpr T c_reciprocalTwoPi = 0.159154943091895;
+template <typename T> constexpr T c_reciprocalHalfPi = 0.636619772367581;
 
+template <typename T> constexpr T c_eulersNumber = 2.71828182845904523536f;
+template <typename T> constexpr T c_log2E = 1.44269504088896;
+template <typename T> constexpr T c_radToDeg = 57.2957795f; // 180.0f/PI;
+template <typename T> constexpr T c_degToRad = 0.0174532f;  // PI/180.0f;
 template <typename T>
-constexpr inline T c_eulersNumber = 2.71828182845904523536f;
-template <typename T> constexpr inline T c_log2E = 1.44269504088896;
-template <typename T>
-constexpr inline T c_radToDeg = 57.2957795130823; // 180.0f/PI;
-template <typename T>
-constexpr inline T c_degToRad = 0.0174532925199433; // PI/180.0f;
-template <typename T>
-constexpr inline T c_epsilon = std::numeric_limits<T>::epsilon();
+constexpr T c_epsilon = std::numeric_limits<T>::epsilon() * 100;
 
 // ------------------------------------------------------------------------------
 
@@ -274,14 +271,14 @@ constexpr inline T Max3(const T& _val1, const T& _val2, const T& _val3)
 
 template <typename T> inline T ToDegrees(const T& _val)
 {
-  return _val * c_RadToDeg<T>;
+  return _val * c_radToDeg<T>;
 }
 
 // ------------------------------------------------------------------------------
 
 template <typename T> inline T ToRadians(const T& _val)
 {
-  return _val * c_DegToRad<T>;
+  return _val * c_degToRad<T>;
 }
 
 // ------------------------------------------------------------------------------

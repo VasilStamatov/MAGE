@@ -46,6 +46,77 @@ public:
 
   // ------------------------------------------------------------------------------
 
+  explicit Quat(const Mat<T, 4>& _mat4)
+  {
+    T fourXSquaredMinus1 =
+        _mat4[0 + 4 * 0] - _mat4[1 + 4 * 1] - _mat4[2 + 4 * 2];
+
+    T fourYSquaredMinus1 =
+        _mat4[1 + 4 * 1] - _mat4[0 + 4 * 0] - _mat4[2 + 4 * 2];
+
+    T fourZSquaredMinus1 =
+        _mat4[2 + 4 * 2] - _mat4[0 + 4 * 0] - _mat4[1 + 4 * 1];
+
+    T fourWSquaredMinus1 =
+        _mat4[0 + 4 * 0] + _mat4[1 + 4 * 1] + _mat4[2 + 4 * 2];
+
+    std::int32_t biggestIndex = 0;
+
+    T fourBiggestSquaredMinus1 = fourWSquaredMinus1;
+
+    if (fourXSquaredMinus1 > fourBiggestSquaredMinus1)
+    {
+      fourBiggestSquaredMinus1 = fourXSquaredMinus1;
+      biggestIndex = 1;
+    }
+
+    if (fourYSquaredMinus1 > fourBiggestSquaredMinus1)
+    {
+      fourBiggestSquaredMinus1 = fourYSquaredMinus1;
+      biggestIndex = 2;
+    }
+
+    if (fourZSquaredMinus1 > fourBiggestSquaredMinus1)
+    {
+      fourBiggestSquaredMinus1 = fourZSquaredMinus1;
+      biggestIndex = 3;
+    }
+
+    T biggestVal = Sqrt(fourBiggestSquaredMinus1 + static_cast<T>(1.0)) *
+                   static_cast<T>(0.5);
+    T mult = static_cast<T>(0.25) / biggestVal;
+
+    switch (biggestIndex)
+    {
+      case 0:
+        m_elements[3] = biggestVal;
+        m_elements[0] = (_mat4[1 + 4 * 2] - _mat4[2 + 4 * 1]) * mult;
+        m_elements[1] = (_mat4[2 + 4 * 0] - _mat4[0 + 4 * 2]) * mult;
+        m_elements[2] = (_mat4[0 + 4 * 1] - _mat4[1 + 4 * 0]) * mult;
+        break;
+      case 1:
+        m_elements[3] = (_mat4[1 + 4 * 2] - _mat4[2 + 4 * 1]) * mult;
+        m_elements[0] = biggestVal;
+        m_elements[1] = (_mat4[0 + 4 * 1] + _mat4[1 + 4 * 0]) * mult;
+        m_elements[2] = (_mat4[2 + 4 * 0] + _mat4[0 + 4 * 2]) * mult;
+        break;
+      case 2:
+        m_elements[3] = (_mat4[2 + 4 * 0] - _mat4[0 + 4 * 2]) * mult;
+        m_elements[0] = (_mat4[0 + 4 * 1] + _mat4[1 + 4 * 0]) * mult;
+        m_elements[1] = biggestVal;
+        m_elements[2] = (_mat4[1 + 4 * 2] + _mat4[2 + 4 * 1]) * mult;
+        break;
+      case 3:
+        m_elements[3] = (_mat4[0 + 4 * 1] - _mat4[1 + 4 * 0]) * mult;
+        m_elements[0] = (_mat4[2 + 4 * 0] + _mat4[0 + 4 * 2]) * mult;
+        m_elements[1] = (_mat4[1 + 4 * 2] + _mat4[2 + 4 * 1]) * mult;
+        m_elements[2] = biggestVal;
+        break;
+    }
+  }
+
+  // ------------------------------------------------------------------------------
+
   static Quat GenRotation(const Vec<T, 3>& _origin, const Vec<T, 3>& _dest)
   {
     const T cosHalfAngleX2 = Sqrt(
@@ -53,8 +124,13 @@ public:
 
     const T recipCosHalfAngleX2 = (static_cast<T>(1.0) / cosHalfAngleX2);
 
-    return Quaternion(Cross(_origin, _dest) * recipCosHalfAngleX2,
-                      cosHalfAngleX2 * static_cast<T>(0.5));
+    const Vec<T, 3> axisOfRotation =
+        Cross(_origin, _dest) * recipCosHalfAngleX2;
+
+    const T cosAmountOfRotation = cosHalfAngleX2 * static_cast<T>(0.5);
+
+    return Quat(axisOfRotation[0], axisOfRotation[1], axisOfRotation[2],
+                cosAmountOfRotation);
   }
 
   // ------------------------------------------------------------------------------
@@ -100,11 +176,12 @@ public:
 
   static Vec<T, 3> RotateVec(const Quat& _quat, const Vec<T, 3>& _vec)
   {
-    const Vec<T, 3> axesOfRotation(_quat.x, _quat.y, _quat.z);
+    const Vec<T, 3> axesOfRotation(_quat.m_elements[0], _quat.m_elements[1],
+                                   _quat.m_elements[2]);
     const Vec<T, 3> uv(Cross(axesOfRotation, _vec));
     const Vec<T, 3> uuv(Cross(axesOfRotation, uv));
 
-    return _vec + ((uv * _quat.w) + uuv) * static_cast<T>(2.0);
+    return _vec + ((uv * _quat.m_elements[3]) + uuv) * static_cast<T>(2.0);
   }
 
   // ------------------------------------------------------------------------------
@@ -254,7 +331,7 @@ public:
   {
     const T temp1 = static_cast<T>(1.0) - m_elements[3] * m_elements[3];
 
-    if (Abs(x) < c_epsilon<T>) // Divide by zero safety check
+    if (Abs(m_elements[0]) < c_epsilon<T>) // Divide by zero safety check
     {
       // default axis = z
       return Vec<T, 3>(static_cast<T>(0.0), static_cast<T>(0.0),
@@ -306,6 +383,42 @@ public:
 
   // ------------------------------------------------------------------------------
 
+  Mat<T, 4> ToMat4() const
+  {
+    Mat<T, 4> rtn;
+
+    Quat normalized = GetNormalized();
+
+    T xx = normalized.m_elements[0] * normalized.m_elements[0];
+    T yy = normalized.m_elements[1] * normalized.m_elements[1];
+    T zz = normalized.m_elements[2] * normalized.m_elements[2];
+    T ww = normalized.m_elements[3] * normalized.m_elements[3];
+
+    rtn[0] = (xx - yy - zz + ww);
+    rtn[5] = (-xx + yy - zz + ww);
+    rtn[10] = (-xx - yy + zz + ww);
+
+    T tmp1 = normalized.m_elements[0] * normalized.m_elements[1];
+    T tmp2 = normalized.m_elements[2] * normalized.m_elements[3];
+    rtn[4] = static_cast<T>(2.0) * (tmp1 + tmp2);
+    rtn[1] = static_cast<T>(2.0) * (tmp1 - tmp2);
+
+    tmp1 = normalized.m_elements[0] * normalized.m_elements[2];
+    tmp2 = normalized.m_elements[1] * normalized.m_elements[3];
+    rtn[8] = static_cast<T>(2.0) * (tmp1 - tmp2);
+    rtn[2] = static_cast<T>(2.0) * (tmp1 + tmp2);
+
+    tmp1 = normalized.m_elements[1] * normalized.m_elements[2];
+    tmp2 = normalized.m_elements[0] * normalized.m_elements[3];
+    rtn[1 + 2 * 4] = static_cast<T>(2.0) * (tmp1 + tmp2);
+    rtn[2 + 1 * 4] = static_cast<T>(2.0) * (tmp1 - tmp2);
+    rtn[3 + 3 * 4] = static_cast<T>(1.0);
+
+    return rtn;
+  }
+
+  // ------------------------------------------------------------------------------
+
   T Dot(const Quat& _other) const
   {
     return m_elements[0] * _other.m_elements[0] +
@@ -332,7 +445,7 @@ public:
   {
     const T inverseMagnitude =
         Sqrt(static_cast<T>(1.0) / GetSquaredMagnitude());
-    return (*this * InverseMagnitude);
+    return (*this * inverseMagnitude);
   }
 
   // ------------------------------------------------------------------------------

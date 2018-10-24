@@ -9,8 +9,6 @@ namespace math
 
 template <typename T, std::uint32_t Size> class Mat
 {
-  static_assert(Size > 2 && Size < 5, "Mat only supports mat(3/4) for now.");
-
 public:
   Mat() { memset(m_elements, 0, Size * Size * sizeof(T)); }
 
@@ -236,7 +234,7 @@ private:
 
 // ------------------------------------------------------------------------------
 
-template <typename T> Mat<T, 3> GetTransposed(const Mat<T, 3>& _mat)
+template <typename T> Mat<T, 3> GetTransposedMat(const Mat<T, 3>& _mat)
 {
   using std::swap;
 
@@ -251,7 +249,7 @@ template <typename T> Mat<T, 3> GetTransposed(const Mat<T, 3>& _mat)
 
 // ------------------------------------------------------------------------------
 
-template <typename T> Mat<T, 4> GetTransposed(const Mat<T, 4>& _mat)
+template <typename T> Mat<T, 4> GetTransposedMat(const Mat<T, 4>& _mat)
 {
   using std::swap;
 
@@ -269,7 +267,7 @@ template <typename T> Mat<T, 4> GetTransposed(const Mat<T, 4>& _mat)
 
 // ------------------------------------------------------------------------------
 
-template <typename T> Mat<T, 4> GenTranslation(const Vec<T, 3>& _translation)
+template <typename T> Mat<T, 4> GenTranslationMat(const Vec<T, 3>& _translation)
 {
   float matrixData[16] = {
       static_cast<T>(1.0), static_cast<T>(0.0), static_cast<T>(0.0),
@@ -284,7 +282,8 @@ template <typename T> Mat<T, 4> GenTranslation(const Vec<T, 3>& _translation)
 
 // ------------------------------------------------------------------------------
 
-template <typename T> Mat<T, 4> GenRotation(T _radians, const Vec<T, 3>& _axis)
+template <typename T>
+Mat<T, 4> GenRotationMat(T _radians, const Vec<T, 3>& _axis)
 {
   const T c = std::cos(_radians);
   const T s = std::sin(_radians);
@@ -326,7 +325,7 @@ template <typename T> Mat<T, 4> GenRotation(T _radians, const Vec<T, 3>& _axis)
 
 // ------------------------------------------------------------------------------
 
-template <typename T> Mat<T, 4> GenScaling(const Vec<T, 3>& _scale)
+template <typename T> Mat<T, 4> GenScalingMat(const Vec<T, 3>& _scale)
 {
   float matrixData[16] = {
       _scale[0],           static_cast<T>(0.0), static_cast<T>(0.0),
@@ -342,7 +341,7 @@ template <typename T> Mat<T, 4> GenScaling(const Vec<T, 3>& _scale)
 // ------------------------------------------------------------------------------
 
 template <typename T>
-Mat<T, 4> GenOrtho(T _left, T _right, T _bottom, T _top, T _near, T _far)
+Mat<T, 4> GenOrthoMat(T _left, T _right, T _bottom, T _top, T _near, T _far)
 {
   Mat<T, 4> rtn;
 
@@ -361,7 +360,7 @@ Mat<T, 4> GenOrtho(T _left, T _right, T _bottom, T _top, T _near, T _far)
 // ------------------------------------------------------------------------------
 
 template <typename T>
-Mat<T, 4> GenPerspective(T _FovRadians, T _aspectRatio, T _near, T _far)
+Mat<T, 4> GenPerspectiveMat(T _FovRadians, T _aspectRatio, T _near, T _far)
 {
   assert(std::abs(_aspectRatio - std::numeric_limits<T>::epsilon()) >
          static_cast<T>(0.0));
@@ -383,8 +382,8 @@ Mat<T, 4> GenPerspective(T _FovRadians, T _aspectRatio, T _near, T _far)
 // ------------------------------------------------------------------------------
 
 template <typename T>
-Mat<T, 4> GenLookAt(const Vec<T, 3>& _camera, const Vec<T, 3>& _object,
-                    const Vec<T, 3>& _up)
+Mat<T, 4> GenLookAtMat(const Vec<T, 3>& _camera, const Vec<T, 3>& _object,
+                       const Vec<T, 3>& _up)
 {
   Mat<T, 4> rtn(static_cast<T>(1.0));
 
