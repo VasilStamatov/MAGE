@@ -10,15 +10,25 @@ namespace ecs
 namespace internal
 {
 
+// ------------------------------------------------------------------------------
+
 std::int32_t GenerateUniqueComponentId() noexcept;
+
+// ------------------------------------------------------------------------------
 
 } // namespace internal
 
+// ------------------------------------------------------------------------------
+
 constexpr std::int32_t c_maxNumberOfComponentTypes = 32u;
+
+// ------------------------------------------------------------------------------
 
 struct Component
 {
 };
+
+// ------------------------------------------------------------------------------
 
 template <typename ComponentType> std::int32_t GetComponentTypeId() noexcept
 {
@@ -31,6 +41,8 @@ template <typename ComponentType> std::int32_t GetComponentTypeId() noexcept
   static std::int32_t s_componentTypeId = internal::GenerateUniqueComponentId();
   return s_componentTypeId;
 }
+
+// ------------------------------------------------------------------------------
 
 } // namespace ecs
 } // namespace mage

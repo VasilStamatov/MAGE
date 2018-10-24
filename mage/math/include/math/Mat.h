@@ -7,6 +7,8 @@ namespace mage
 namespace math
 {
 
+// ------------------------------------------------------------------------------
+
 template <typename T, std::uint32_t Size> class Mat
 {
 public:

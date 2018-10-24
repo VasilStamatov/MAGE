@@ -7,6 +7,8 @@ namespace mage
 namespace math
 {
 
+// ------------------------------------------------------------------------------
+
 template <typename T> class Quat
 {
 public:

@@ -5,10 +5,20 @@ namespace mage
 namespace ecs
 {
 
+// ------------------------------------------------------------------------------
+
 namespace
 {
+
+// ------------------------------------------------------------------------------
+
 constexpr std::int32_t c_invalidId = -1;
-}
+
+// ------------------------------------------------------------------------------
+
+} // namespace
+
+// ------------------------------------------------------------------------------
 
 EntityManager::EntityManager()
     : m_freeEntityIds()
@@ -17,6 +27,8 @@ EntityManager::EntityManager()
   m_freeEntityIds.reserve(1024);
   m_entityComponentMasks.reserve(1024);
 }
+
+// ------------------------------------------------------------------------------
 
 Entity EntityManager::CreateEntity()
 {
@@ -36,6 +48,8 @@ Entity EntityManager::CreateEntity()
   return Entity(entityId);
 }
 
+// ------------------------------------------------------------------------------
+
 void EntityManager::RecycleEntity(Entity& _entity)
 {
   assert(_entity.m_id >= 0);
@@ -43,17 +57,23 @@ void EntityManager::RecycleEntity(Entity& _entity)
   _entity.m_id = c_invalidId;
 }
 
+// ------------------------------------------------------------------------------
+
 ComponentMask EntityManager::GetComponentMaskForEntity(Entity _entity) const
 {
   assert(_entity.m_id >= 0);
   return m_entityComponentMasks[_entity.m_id];
 }
 
+// ------------------------------------------------------------------------------
+
 void EntityManager::ResetComponentMask(Entity _entity) noexcept
 {
   assert(_entity.m_id >= 0);
   m_entityComponentMasks[_entity.m_id].Reset();
 }
+
+// ------------------------------------------------------------------------------
 
 } // namespace ecs
 } // namespace mage
