@@ -13,6 +13,9 @@ template <typename T, std::uint32_t Size> class Mat
 
 public:
   Mat() { memset(m_elements, 0, Size * Size * sizeof(T)); }
+
+  // ------------------------------------------------------------------------------
+
   explicit Mat(T _diagonal)
   {
     memset(m_elements, 0, Size * Size * sizeof(T));
@@ -22,10 +25,15 @@ public:
       m_elements[i] = _diagonal;
     }
   }
+
+  // ------------------------------------------------------------------------------
+
   explicit Mat(T* _elements)
   {
     memcpy(m_elements, _elements, Size * Size * sizeof(T));
   }
+
+  // ------------------------------------------------------------------------------
 
   Mat operator+(const Mat& _rhs) const
   {
@@ -38,6 +46,9 @@ public:
 
     return rtn;
   }
+
+  // ------------------------------------------------------------------------------
+
   Mat operator-(const Mat& _rhs) const
   {
     Mat rtn;
@@ -49,6 +60,9 @@ public:
 
     return rtn;
   }
+
+  // ------------------------------------------------------------------------------
+
   Mat operator*(const Mat& _rhs) const
   {
     Mat rtn;
@@ -70,6 +84,9 @@ public:
 
     return rtn;
   }
+
+  // ------------------------------------------------------------------------------
+
   Mat operator*(T _scalar) const
   {
     Mat rtn;
@@ -81,6 +98,9 @@ public:
 
     return rtn;
   }
+
+  // ------------------------------------------------------------------------------
+
   Mat operator/(T _scalar) const
   {
     Mat rtn;
@@ -92,6 +112,8 @@ public:
 
     return rtn;
   }
+
+  // ------------------------------------------------------------------------------
 
   Vec<T, Size> operator*(const Vec<T, Size>& _vec) const
   {
@@ -108,31 +130,47 @@ public:
     return rtn;
   }
 
+  // ------------------------------------------------------------------------------
+
   Mat& operator+=(const Mat& _rhs)
   {
     *this = *this + _rhs;
     return *this;
   }
+
+  // ------------------------------------------------------------------------------
+
   Mat& operator-=(const Mat& _rhs)
   {
     *this = *this - _rhs;
     return *this;
   }
+
+  // ------------------------------------------------------------------------------
+
   Mat& operator*=(const Mat& _rhs)
   {
     *this = *this * _rhs;
     return *this;
   }
+
+  // ------------------------------------------------------------------------------
+
   Mat& operator*=(T _scalar)
   {
     *this = *this * _rhs;
     return *this;
   }
+
+  // ------------------------------------------------------------------------------
+
   Mat& operator/=(T _scalar)
   {
     *this = *this / _rhs;
     return *this;
   }
+
+  // ------------------------------------------------------------------------------
 
   T& operator[](std::uint32_t _index)
   {
@@ -140,11 +178,15 @@ public:
     return m_elements[_index];
   }
 
+  // ------------------------------------------------------------------------------
+
   T operator[](std::uint32_t _index) const
   {
     assert(_index < Size * Size);
     return m_elements[_index];
   }
+
+  // ------------------------------------------------------------------------------
 
   bool operator==(const Mat& _rhs) const
   {
@@ -152,13 +194,18 @@ public:
 
     for (auto i = 0; i < Size * Size; i++)
     {
-      allElementsAreEqual &= std::abs(m_elements[i] - _rhs.m_elements[i]) <=
-                             std::numeric_limits<T>::epsilon();
+      allElementsAreEqual &=
+          Equals(m_elements[i], _rhs.m_elements[i], c_epsilon<T>);
     }
 
     return allElementsAreEqual;
   }
+
+  // ------------------------------------------------------------------------------
+
   bool operator!=(const Mat& _rhs) const { return !operator==(_rhs); }
+
+  // ------------------------------------------------------------------------------
 
   friend std::ostream& operator<<(std::ostream& _outStream, const Mat& _mat)
   {
@@ -180,10 +227,14 @@ public:
     return _outStream;
   }
 
+  // ------------------------------------------------------------------------------
+
 private:
   // [row][col] access = col + row * Size
   T m_elements[Size * Size];
 };
+
+// ------------------------------------------------------------------------------
 
 template <typename T> Mat<T, 3> GetTransposed(const Mat<T, 3>& _mat)
 {
@@ -197,6 +248,8 @@ template <typename T> Mat<T, 3> GetTransposed(const Mat<T, 3>& _mat)
 
   return rtn;
 }
+
+// ------------------------------------------------------------------------------
 
 template <typename T> Mat<T, 4> GetTransposed(const Mat<T, 4>& _mat)
 {
@@ -214,6 +267,8 @@ template <typename T> Mat<T, 4> GetTransposed(const Mat<T, 4>& _mat)
   return rtn;
 }
 
+// ------------------------------------------------------------------------------
+
 template <typename T> Mat<T, 4> GenTranslation(const Vec<T, 3>& _translation)
 {
   float matrixData[16] = {
@@ -227,14 +282,16 @@ template <typename T> Mat<T, 4> GenTranslation(const Vec<T, 3>& _translation)
   return Mat<T, 4>(matrixData);
 }
 
+// ------------------------------------------------------------------------------
+
 template <typename T> Mat<T, 4> GenRotation(T _radians, const Vec<T, 3>& _axis)
 {
-  T c = std::cos(_radians);
-  T s = std::sin(_radians);
+  const T c = std::cos(_radians);
+  const T s = std::sin(_radians);
 
-  Vec<T, 3> normalizedAxis = _axis.GetNormalized();
+  const Vec<T, 3> normalizedAxis = _axis.GetNormalized();
 
-  T omc = static_cast<T>(1.0) - c;
+  const T omc = static_cast<T>(1.0) - c;
 
   Mat<T, 4> rtn;
 
@@ -267,6 +324,8 @@ template <typename T> Mat<T, 4> GenRotation(T _radians, const Vec<T, 3>& _axis)
   return rtn;
 }
 
+// ------------------------------------------------------------------------------
+
 template <typename T> Mat<T, 4> GenScaling(const Vec<T, 3>& _scale)
 {
   float matrixData[16] = {
@@ -279,6 +338,8 @@ template <typename T> Mat<T, 4> GenScaling(const Vec<T, 3>& _scale)
 
   return Mat<T, 4>(matrixData);
 }
+
+// ------------------------------------------------------------------------------
 
 template <typename T>
 Mat<T, 4> GenOrtho(T _left, T _right, T _bottom, T _top, T _near, T _far)
@@ -296,6 +357,8 @@ Mat<T, 4> GenOrtho(T _left, T _right, T _bottom, T _top, T _near, T _far)
 
   return rtn;
 }
+
+// ------------------------------------------------------------------------------
 
 template <typename T>
 Mat<T, 4> GenPerspective(T _FovRadians, T _aspectRatio, T _near, T _far)
@@ -317,15 +380,17 @@ Mat<T, 4> GenPerspective(T _FovRadians, T _aspectRatio, T _near, T _far)
   return rtn;
 }
 
+// ------------------------------------------------------------------------------
+
 template <typename T>
 Mat<T, 4> GenLookAt(const Vec<T, 3>& _camera, const Vec<T, 3>& _object,
                     const Vec<T, 3>& _up)
 {
   Mat<T, 4> rtn(static_cast<T>(1.0));
 
-  Vec<T, 3> forward = (_object - _camera).GetNormalized();
-  Vec<T, 3> right = Cross(forward, _up.GetNormalized()).GetNormalized();
-  Vec<T, 3> up = Cross(right, forward);
+  const Vec<T, 3> forward = (_object - _camera).GetNormalized();
+  const Vec<T, 3> right = Cross(forward, _up.GetNormalized()).GetNormalized();
+  const Vec<T, 3> up = Cross(right, forward);
 
   rtn[0 + 0 * 4] = right[0];
   rtn[1 + 0 * 4] = right[1];
@@ -343,10 +408,14 @@ Mat<T, 4> GenLookAt(const Vec<T, 3>& _camera, const Vec<T, 3>& _object,
   return rtn;
 }
 
+// ------------------------------------------------------------------------------
+
 using Mat3f = Mat<float, 3>;
 using Mat3d = Mat<double, 3>;
 using Mat4f = Mat<float, 4>;
 using Mat4d = Mat<double, 4>;
+
+// ------------------------------------------------------------------------------
 
 } // namespace math
 } // namespace mage
