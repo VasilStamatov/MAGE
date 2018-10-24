@@ -6,7 +6,13 @@ add_executable(tests
   ecs/ComponentTests.cpp
   ecs/EntityManagerTests.cpp
   ecs/SystemTests.cpp
+
+  math/MatTests.cpp
+  math/QuatTests.cpp
+  math/VecTests.cpp
+
   src/testsMain.cpp)
 
 target_link_libraries(tests PRIVATE catch)
-target_link_libraries(tests PRIVATE ecs)
+target_link_libraries(tests PRIVATE mage_ecs)
+target_link_libraries(tests PRIVATE mage_math)

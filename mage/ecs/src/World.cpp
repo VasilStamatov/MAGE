@@ -5,13 +5,20 @@ namespace mage
 namespace ecs
 {
 
+// ------------------------------------------------------------------------------
+
 World::World()
     : m_componentManagers()
     , m_entityManager()
     , m_systemManager()
 {
 }
+
+// ------------------------------------------------------------------------------
+
 World::~World() {}
+
+// ------------------------------------------------------------------------------
 
 void World::Initialize()
 {
@@ -19,14 +26,22 @@ void World::Initialize()
   AddEntitiesAndComponents();
 }
 
+// ------------------------------------------------------------------------------
+
 void World::OnEnter() { m_systemManager.InitializeSystems(); }
 
+// ------------------------------------------------------------------------------
+
 void World::OnExit() { m_systemManager.UninitializeSystems(); }
+
+// ------------------------------------------------------------------------------
 
 EntityHandle World::CreateEntity()
 {
   return EntityHandle(*this, m_entityManager.CreateEntity());
 }
+
+// ------------------------------------------------------------------------------
 
 void World::DestroyEntity(Entity& _entity)
 {
@@ -48,15 +63,21 @@ void World::DestroyEntity(Entity& _entity)
   m_entityManager.RecycleEntity(_entity);
 }
 
+// ------------------------------------------------------------------------------
+
 void World::AddSystem(std::unique_ptr<System> _system)
 {
   m_systemManager.AddSystem(std::move(_system));
 }
 
+// ------------------------------------------------------------------------------
+
 void World::TickSystems(float _deltaTime)
 {
   m_systemManager.TickSystems(*this, _deltaTime);
 }
+
+// ------------------------------------------------------------------------------
 
 } // namespace ecs
 } // namespace mage

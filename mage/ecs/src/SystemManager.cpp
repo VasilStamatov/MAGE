@@ -5,15 +5,21 @@ namespace mage
 namespace ecs
 {
 
+// ------------------------------------------------------------------------------
+
 SystemManager::SystemManager()
     : m_systems()
 {
 }
 
+// ------------------------------------------------------------------------------
+
 void SystemManager::AddSystem(std::unique_ptr<System> _system)
 {
   m_systems.push_back(std::move(_system));
 }
+
+// ------------------------------------------------------------------------------
 
 void SystemManager::InitializeSystems()
 {
@@ -23,6 +29,8 @@ void SystemManager::InitializeSystems()
   }
 }
 
+// ------------------------------------------------------------------------------
+
 void SystemManager::UninitializeSystems()
 {
   for (auto&& system : m_systems)
@@ -30,6 +38,8 @@ void SystemManager::UninitializeSystems()
     system->Uninitialize();
   }
 }
+
+// ------------------------------------------------------------------------------
 
 void SystemManager::TickSystems(World& _world, float _deltaTime)
 {
@@ -39,6 +49,8 @@ void SystemManager::TickSystems(World& _world, float _deltaTime)
   }
 }
 
+// ------------------------------------------------------------------------------
+
 void SystemManager::OnEntityComponentMaskChange(Entity _entity,
                                                 ComponentMask _newMask)
 {
@@ -47,6 +59,8 @@ void SystemManager::OnEntityComponentMaskChange(Entity _entity,
     system->OnEntityComponentMaskChange(_entity, _newMask);
   }
 }
+
+// ------------------------------------------------------------------------------
 
 } // namespace ecs
 } // namespace mage

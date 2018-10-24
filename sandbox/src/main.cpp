@@ -5,6 +5,7 @@
 
 #include <ecs/World.h>
 #include <graphics/Video.h>
+#include <math/Mat.h>
 
 #include <GLFW/glfw3.h>
 
@@ -94,7 +95,7 @@ public:
       auto testComponent = _world.GetComponent<TestComponent>(entity);
       std::cout << entity.m_id
                 << " says hi! TestComponent.a = " << testComponent.a
-                << std::endl;
+                << "dt: " << _deltaTime << std::endl;
     }
   }
 };
@@ -142,6 +143,8 @@ void VideoExample()
 
 int main(int argc, char const* argv[])
 {
+  std::cout << "Argc: " << argc << " /--/ Argv: " << argv << std::endl;
+
   // try
   // {
   //   VideoExample();

@@ -5,12 +5,19 @@ namespace mage
 namespace ecs
 {
 
+// ------------------------------------------------------------------------------
+
 System::System()
     : m_registeredEntities()
     , m_systemSignature()
 {
 }
+
+// ------------------------------------------------------------------------------
+
 System::~System() {}
+
+// ------------------------------------------------------------------------------
 
 void System::OnEntityComponentMaskChange(Entity _entity, ComponentMask _newMask)
 {
@@ -32,6 +39,8 @@ void System::OnEntityComponentMaskChange(Entity _entity, ComponentMask _newMask)
     }
   }
 }
+
+// ------------------------------------------------------------------------------
 
 } // namespace ecs
 } // namespace mage

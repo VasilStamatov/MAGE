@@ -12,11 +12,15 @@ namespace mage
 namespace ecs
 {
 
+// ------------------------------------------------------------------------------
+
 class BaseComponentManager
 {
 public:
   virtual void RemoveComponent(Entity _entity) = 0;
 };
+
+// ------------------------------------------------------------------------------
 
 template <typename ComponentType>
 class ComponentManager : public BaseComponentManager
@@ -30,12 +34,16 @@ class ComponentManager : public BaseComponentManager
   static_assert(std::is_move_assignable<ComponentType>::value,
                 "Must be move assignable");
 
+  // ------------------------------------------------------------------------------
+
 public:
   ComponentManager()
       : m_components()
   {
     m_components.reserve(1024);
   }
+
+  // ------------------------------------------------------------------------------
 
   template <typename... TArgs>
   void AddComponent(Entity _entity, TArgs&&... _constructionArgs)
@@ -50,6 +58,8 @@ public:
         _entity, ComponentType(std::forward<TArgs>(_constructionArgs)...));
   }
 
+  // ------------------------------------------------------------------------------
+
   void RemoveComponent(Entity _entity) override
   {
     auto foundIterator = FindComponentInstanceByEntity(_entity);
@@ -59,12 +69,16 @@ public:
     }
   }
 
+  // ------------------------------------------------------------------------------
+
   ComponentType& GetComponent(Entity _entity)
   {
     auto foundIterator = FindComponentInstanceByEntity(_entity);
     assert(foundIterator != m_components.end());
     return foundIterator->m_data;
   }
+
+  // ------------------------------------------------------------------------------
 
 private:
   auto FindComponentInstanceByEntity(Entity _entity)
@@ -74,6 +88,8 @@ private:
                           return _element.m_ownerEntity == _entity;
                         });
   }
+
+  // ------------------------------------------------------------------------------
 
 private:
   struct ComponentInstance
@@ -88,8 +104,12 @@ private:
     }
   };
 
+  // ------------------------------------------------------------------------------
+
   std::vector<ComponentInstance> m_components;
 };
+
+// ------------------------------------------------------------------------------
 
 } // namespace ecs
 } // namespace mage
