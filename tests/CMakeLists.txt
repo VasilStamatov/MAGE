@@ -11,8 +11,8 @@ add_executable(tests
   math/QuatTests.cpp
   math/VecTests.cpp
 
-  src/testsMain.cpp)
+  src/testsMain.cpp
+)
 
 target_link_libraries(tests PRIVATE catch)
-target_link_libraries(tests PRIVATE mage_ecs)
-target_link_libraries(tests PRIVATE mage_math)
+target_link_libraries(tests PRIVATE mage)

@@ -41,7 +41,7 @@ Entity EntityManager::CreateEntity()
   }
   else
   {
-    entityId = m_entityComponentMasks.size();
+    entityId = static_cast<std::int32_t>(m_entityComponentMasks.size());
     m_entityComponentMasks.emplace_back();
   }
 

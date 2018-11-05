@@ -1,18 +1,26 @@
-cmake_minimum_required(VERSION 3.7)
+cmake_minimum_required(VERSION 3.5)
+
 project(mage)
 
-if (MSVC)
-  # warning level 4 and all warnings as errors
-  add_compile_options(/W4 /WX)
-else()
-  # lots of warnings and all warnings as errors
-  add_compile_options(-Wall -Wextra -pedantic -Werror)
+# We need a CMAKE_DIR with some code to find external dependencies
+set(CMAKE_SCRIPTS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
+
+if (NOT CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
+  set(
+    CMAKE_BUILD_TYPE 
+      "Debug"
+    CACHE STRING 
+      "Choose the type of build, options are: None (CMAKE_CXX_FLAGS or CMAKE_C_FLAGS used) \"Debug\" \"Release\" \"RelWithDebInfo\" \"MinSizeRel\"."
+    FORCE
+  )
 endif()
 
-add_subdirectory(contrib/catch)
-add_subdirectory(contrib/glfw)
-add_subdirectory(mage/ecs)
-add_subdirectory(mage/graphics)
-add_subdirectory(mage/math)
+if ( CMAKE_BUILD_TYPE STREQUAL "Release" )
+  add_definitions( -O2 )
+  add_definitions( -NDEBUG )
+endif ()
+
+add_subdirectory(contrib)
+add_subdirectory(mage)
 add_subdirectory(sandbox)
 add_subdirectory(tests)

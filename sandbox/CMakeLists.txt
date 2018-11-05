@@ -1,8 +1,14 @@
 project(sandbox)
 
 add_executable(sandbox 
-  src/main.cpp)
+  src/SandboxApplication.h
+  src/SandboxComponents.h
+  src/SandboxSystems.h
+  src/SandboxWorld.h
 
-target_link_libraries(sandbox PRIVATE mage_ecs)
-target_link_libraries(sandbox PRIVATE mage_math)
-target_link_libraries(sandbox PRIVATE graphics)
+  src/main.cpp
+)
+
+target_include_directories(sandbox PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+target_link_libraries(sandbox PRIVATE mage)
