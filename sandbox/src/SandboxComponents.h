@@ -2,9 +2,7 @@
 
 #include <ecs/Component.h>
 
-namespace me = mage::ecs;
-
-struct SandboxComponent : me::Component
+struct SandboxComponent : mage::ecs::Component
 {
   SandboxComponent(float _a, float _b, int _c, int _d, int _e, int _f)
       : a(_a)

@@ -4,14 +4,12 @@
 
 #include <ecs/World.h>
 
-namespace me = mage::ecs;
-
-class TestSystem : public me::System
+class TestSystem : public mage::ecs::System
 {
 public:
   TestSystem() { m_systemSignature.AddComponent<SandboxComponent>(); }
 
-  void Tick(me::World& _world, float _deltaTime) override
+  void Tick(mage::ecs::World& _world, float _deltaTime) override
   {
     for (auto&& entity : m_registeredEntities)
     {

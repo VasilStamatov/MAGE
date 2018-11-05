@@ -9,6 +9,12 @@
 
 namespace mage
 {
+
+namespace core
+{
+class Application;
+}
+
 namespace ecs
 {
 
@@ -17,7 +23,7 @@ namespace ecs
 class World
 {
 public:
-  World();
+  World(core::Application* _ownerApp);
   virtual ~World();
 
   // ------------------------------------------------------------------------------
@@ -79,6 +85,10 @@ public:
 
   // ------------------------------------------------------------------------------
 
+  core::Application& GetApplication();
+
+  // ------------------------------------------------------------------------------
+
 private:
   virtual void AddSystems() = 0;
   virtual void AddEntitiesAndComponents() = 0;
@@ -106,6 +116,8 @@ private:
       m_componentManagers;
   EntityManager m_entityManager;
   SystemManager m_systemManager;
+
+  core::Application* m_ownerApp;
 };
 
 // ------------------------------------------------------------------------------

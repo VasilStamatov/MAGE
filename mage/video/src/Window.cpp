@@ -166,6 +166,10 @@ void Window::SwapBuffers() { glfwSwapBuffers(m_handle); }
 
 // ------------------------------------------------------------------------------
 
+bool Window::ShouldClose() const { return glfwWindowShouldClose(m_handle); }
+
+// ------------------------------------------------------------------------------
+
 Window::ScreenPosition Window::GetPosition() const { return m_position; }
 
 // ------------------------------------------------------------------------------

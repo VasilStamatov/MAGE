@@ -2,15 +2,22 @@
 
 #include "SandboxSystems.h"
 
-namespace me = mage::ecs;
+#include <core/Application.h>
 
-class SandboxWorld : public me::World
+class SandboxWorld : public mage::ecs::World
 {
+public:
+  SandboxWorld(mage::core::Application* _ownerApp)
+      : mage::ecs::World(_ownerApp)
+  {
+  }
+
 private:
   virtual void AddSystems() override
   {
     AddSystem(std::make_unique<TestSystem>());
   }
+
   virtual void AddEntitiesAndComponents() override
   {
     auto handle = CreateEntity();

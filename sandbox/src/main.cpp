@@ -1,18 +1,17 @@
+
 #include <iostream>
 
 #include "SandboxApplication.h"
 
 #include <exceptions/RuntimeError.h>
 
-int main(int argc, char const* argv[])
+int main(int argc, const char** argv)
 {
-  std::cout << "Argc: " << argc << " /--/ Argv: " << argv << std::endl;
-
   try
   {
-    std::unique_ptr<mage::core::Application> app =
+    std::unique_ptr<SandboxApplication> app =
         std::make_unique<SandboxApplication>();
-    app->Run();
+    app->Run(argc, argv);
   }
   catch (const mage::exceptions::RuntimeError& e)
   {

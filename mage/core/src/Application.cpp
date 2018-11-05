@@ -2,6 +2,8 @@
 
 #include "core/Timer.h"
 
+#include <iostream>
+
 namespace mage
 {
 namespace core
@@ -28,8 +30,10 @@ Application::Application()
 
 // ------------------------------------------------------------------------------
 
-void Application::Run()
+void Application::Run(int argc, const char** argv)
 {
+  std::cout << "Argc: " << argc << " /--/ Argv: " << argv << std::endl;
+
   std::chrono::nanoseconds lag(0ns);
 
   InitializeSubSystems();
@@ -39,7 +43,7 @@ void Application::Run()
 
   Timer timer;
 
-  while (m_state != ApplicationState::Exitting)
+  while (m_state != ApplicationState::Exitting && !m_video.ShouldClose())
   {
     auto frameTime = timer.GetElapsedTime();
 
@@ -56,6 +60,7 @@ void Application::Run()
     {
       lag -= c_timestep;
 
+      m_inputManager.Update();
       Update(0.016f);
     }
 
@@ -87,9 +92,16 @@ void Application::TransitionToPreviousWorld()
 
 // ------------------------------------------------------------------------------
 
+const video::InputManager& Application::GetInputManager() const
+{
+  return m_inputManager;
+}
+
+// ------------------------------------------------------------------------------
+
 void Application::InitializeSubSystems()
 {
-  m_video.Initialize(m_inputManager);
+  m_video.Initialize();
   m_inputManager.Initialize(m_video.GetWindow());
 }
 

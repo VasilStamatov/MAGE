@@ -7,10 +7,11 @@ namespace ecs
 
 // ------------------------------------------------------------------------------
 
-World::World()
+World::World(core::Application* _ownerApp)
     : m_componentManagers()
     , m_entityManager()
     , m_systemManager()
+    , m_ownerApp(_ownerApp)
 {
 }
 
@@ -76,6 +77,10 @@ void World::TickSystems(float _deltaTime)
 {
   m_systemManager.TickSystems(*this, _deltaTime);
 }
+
+// ------------------------------------------------------------------------------
+
+core::Application& World::GetApplication() { return *m_ownerApp; }
 
 // ------------------------------------------------------------------------------
 

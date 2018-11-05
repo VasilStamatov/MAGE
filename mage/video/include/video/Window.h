@@ -83,6 +83,7 @@ public:
 
   // ------------------------------------------------------------------------------
 
+  bool ShouldClose() const;
   ScreenPosition GetPosition() const;
   ScreenSize GetSize() const;
   ScreenSize GetFramebufferSize() const;

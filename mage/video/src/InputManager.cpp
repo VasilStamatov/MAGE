@@ -1,5 +1,8 @@
 #include "video/InputManager.h"
 
+#include "video/Window.h"
+
+#define GLFW_INCLUDE_VULKAN
 #include <glfw3.h>
 
 namespace mage
@@ -19,6 +22,8 @@ InputManager::InputManager()
 
 void InputManager::Initialize(Window& _window)
 {
+  glfwSetWindowUserPointer(_window.GetHandle(), this);
+
   m_keyboard = std::make_unique<Keyboard>(_window);
   m_mouse = std::make_unique<Mouse>(_window);
 }

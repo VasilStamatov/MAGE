@@ -1,7 +1,6 @@
 #include "video/Video.h"
 
 #include "exceptions/RuntimeError.h"
-#include "video/InputManager.h"
 #include "video/VideoHints.h"
 
 #include <iostream>
@@ -69,7 +68,7 @@ Video::Video()
 
 // ------------------------------------------------------------------------------
 
-void Video::Initialize(InputManager& _inputManager)
+void Video::Initialize()
 {
   const std::string title = "Application Window";
   const std::int32_t width = 500;
@@ -140,8 +139,6 @@ void Video::Initialize(InputManager& _inputManager)
   {
     CreateWindowedWindow(std::move(title), width, height);
   }
-
-  glfwSetWindowUserPointer(m_window->GetHandle(), &_inputManager);
 }
 
 // ------------------------------------------------------------------------------
@@ -159,6 +156,10 @@ void Video::SwapBuffers()
   glfwPollEvents();
   m_window->SwapBuffers();
 }
+
+// ------------------------------------------------------------------------------
+
+bool Video::ShouldClose() const { return m_window->ShouldClose(); }
 
 // ------------------------------------------------------------------------------
 
