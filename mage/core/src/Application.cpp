@@ -11,17 +11,18 @@ namespace core
 
 // ------------------------------------------------------------------------------
 
-using namespace std::chrono_literals;
-
-// ------------------------------------------------------------------------------
-
-constexpr std::chrono::nanoseconds c_timestep(16ms);
+constexpr std::int32_t c_desiredFPS = 25;
+constexpr std::int32_t c_millisPerSecond = 1000;
+constexpr std::int32_t c_desiredFrameTimeMS = c_millisPerSecond / c_desiredFPS;
+constexpr std::int32_t c_maxUpdatesPerFrame = 5;
 
 // ------------------------------------------------------------------------------
 
 Application::Application()
-    : m_gameWorlds()
-    , m_video()
+    : m_applicationMessageBus()
+    , m_gameWorlds()
+    , m_video(m_applicationMessageBus)
+    , m_inputManager(m_applicationMessageBus)
     , m_currentWorldId(0)
     , m_nextWorldId(-1)
     , m_state(ApplicationState::Running)
@@ -34,7 +35,11 @@ void Application::Run(int argc, const char** argv)
 {
   std::cout << "Argc: " << argc << " /--/ Argv: " << argv << std::endl;
 
-  std::chrono::nanoseconds lag(0ns);
+  m_applicationMessageBus.Subscribe(this, &Application::ExitAppEventHandler);
+  m_applicationMessageBus.Subscribe(
+      this, &Application::SetTransitionNextEventHandler);
+  m_applicationMessageBus.Subscribe(
+      this, &Application::SetTransitionPrevEventHandler);
 
   InitializeSubSystems();
 
@@ -42,27 +47,29 @@ void Application::Run(int argc, const char** argv)
   m_gameWorlds[m_currentWorldId]->OnEnter();
 
   Timer timer;
+  float millisElapsed = timer.GetElapsedMilli();
 
   while (m_state != ApplicationState::Exitting && !m_video.ShouldClose())
   {
-    auto frameTime = timer.GetElapsedTime();
+    std::int32_t numUpdates = 0;
 
-    if (frameTime > c_timestep / 100)
+    while (timer.GetElapsedMilli() > millisElapsed &&
+           numUpdates < c_maxUpdatesPerFrame)
     {
-      frameTime = c_timestep / 100;
-    }
-
-    timer.Renew();
-
-    lag += frameTime;
-
-    while (lag >= c_timestep)
-    {
-      lag -= c_timestep;
+      millisElapsed += c_desiredFrameTimeMS;
+      numUpdates++;
 
       m_inputManager.Update();
-      Update(0.016f);
+      Update(1.0f);
     }
+
+    float interpolation =
+        (timer.GetElapsedMilli() + c_desiredFrameTimeMS - millisElapsed) /
+        c_desiredFrameTimeMS;
+
+    std::cout << "Interpolation: " << interpolation << std::endl;
+
+    // Render(interpolation);
 
     m_video.SwapBuffers();
   }
@@ -92,17 +99,10 @@ void Application::TransitionToPreviousWorld()
 
 // ------------------------------------------------------------------------------
 
-const video::InputManager& Application::GetInputManager() const
-{
-  return m_inputManager;
-}
-
-// ------------------------------------------------------------------------------
-
 void Application::InitializeSubSystems()
 {
   m_video.Initialize();
-  m_inputManager.Initialize(m_video.GetWindow());
+  m_inputManager.Initialize();
 }
 
 // ------------------------------------------------------------------------------
@@ -135,6 +135,24 @@ void Application::Update(float _deltaTime)
     default:
       break;
   }
+}
+
+// ------------------------------------------------------------------------------
+
+void Application::ExitAppEventHandler(OnExitAppEvent* _event) { Stop(); }
+
+// ------------------------------------------------------------------------------
+
+void Application::SetTransitionNextEventHandler(
+    OnSetTransitionNextEvent* _event)
+{
+  TransitionToNextWorld();
+}
+
+void Application::SetTransitionPrevEventHandler(
+    OnSetTransitionPreviousEvent* _event)
+{
+  TransitionToPreviousWorld();
 }
 
 // ------------------------------------------------------------------------------

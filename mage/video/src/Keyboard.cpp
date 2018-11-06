@@ -219,9 +219,6 @@ void KeyCallback(GLFWwindow* _handle, int _key, int _scancode, int _action,
       static_cast<InputManager*>(glfwGetWindowUserPointer(_handle));
   Keyboard& keyboard = inputManager->GetKeyboard();
 
-  _scancode;
-  _modifiers;
-
   if (_action != GLFW_RELEASE)
   {
     keyboard.PressKey(GetKeyboardKeyFromGLFWKey(_key));

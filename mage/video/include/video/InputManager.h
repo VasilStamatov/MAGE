@@ -2,6 +2,7 @@
 
 #include "Keyboard.h"
 #include "Mouse.h"
+#include "messaging/MessageBus.h"
 
 namespace mage
 {
@@ -10,18 +11,14 @@ namespace video
 
 // ------------------------------------------------------------------------------
 
-class Window;
-
-// ------------------------------------------------------------------------------
-
 class InputManager
 {
 public:
-  InputManager();
+  InputManager(messaging::MessageBus& _messageBus);
 
   // ------------------------------------------------------------------------------
 
-  void Initialize(Window& _window);
+  void Initialize();
 
   // ------------------------------------------------------------------------------
 
@@ -30,6 +27,10 @@ public:
   // ------------------------------------------------------------------------------
 
   void Update();
+
+  // ------------------------------------------------------------------------------
+
+  void OnWindowCreatedEvent(struct OnWindowCreated* _event);
 
   // ------------------------------------------------------------------------------
 
@@ -60,6 +61,8 @@ public:
 private:
   std::unique_ptr<Keyboard> m_keyboard;
   std::unique_ptr<Mouse> m_mouse;
+
+  messaging::MessageBus& m_applicationMessageBus;
 };
 
 // ------------------------------------------------------------------------------

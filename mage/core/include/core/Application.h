@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ecs/World.h"
+#include "messaging/MessageBus.h"
 #include "video/InputManager.h"
 #include "video/Video.h"
 
@@ -20,6 +21,20 @@ enum class ApplicationState : std::uint8_t
 
 // ------------------------------------------------------------------------------
 
+struct OnExitAppEvent
+{
+};
+
+struct OnSetTransitionNextEvent
+{
+};
+
+struct OnSetTransitionPreviousEvent
+{
+};
+
+// ------------------------------------------------------------------------------
+
 class Application
 {
 public:
@@ -32,6 +47,7 @@ public:
 
   // ------------------------------------------------------------------------------
 
+private:
   void Stop();
 
   // ------------------------------------------------------------------------------
@@ -41,11 +57,6 @@ public:
 
   // ------------------------------------------------------------------------------
 
-  const video::InputManager& GetInputManager() const;
-
-  // ------------------------------------------------------------------------------
-
-private:
   void InitializeSubSystems();
   void ShutdownSubSystems();
 
@@ -55,11 +66,18 @@ private:
 
   // ------------------------------------------------------------------------------
 
+  void ExitAppEventHandler(OnExitAppEvent* _event);
+  void SetTransitionNextEventHandler(OnSetTransitionNextEvent* _event);
+  void SetTransitionPrevEventHandler(OnSetTransitionPreviousEvent* _event);
+
+  // ------------------------------------------------------------------------------
+
   virtual void AddGameWorlds() = 0;
 
   // ------------------------------------------------------------------------------
 
 protected:
+  messaging::MessageBus m_applicationMessageBus;
   std::vector<std::unique_ptr<ecs::World>> m_gameWorlds;
 
 private:

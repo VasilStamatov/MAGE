@@ -16,7 +16,8 @@ public:
 
   void Renew();
 
-  std::chrono::nanoseconds GetElapsedTime() const;
+  float GetElapsedMilli() const;
+  float GetElapsedSeconds() const;
 
 private:
   HRTimePoint m_start;

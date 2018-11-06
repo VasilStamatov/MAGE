@@ -1,6 +1,6 @@
 #include "video/InputManager.h"
 
-#include "video/Window.h"
+#include "video/Video.h"
 
 #define GLFW_INCLUDE_VULKAN
 #include <glfw3.h>
@@ -12,21 +12,17 @@ namespace video
 
 // ------------------------------------------------------------------------------
 
-InputManager::InputManager()
+InputManager::InputManager(messaging::MessageBus& _messageBus)
     : m_keyboard(nullptr)
     , m_mouse(nullptr)
+    , m_applicationMessageBus(_messageBus)
 {
+  m_applicationMessageBus.Subscribe(this, &InputManager::OnWindowCreatedEvent);
 }
 
 // ------------------------------------------------------------------------------
 
-void InputManager::Initialize(Window& _window)
-{
-  glfwSetWindowUserPointer(_window.GetHandle(), this);
-
-  m_keyboard = std::make_unique<Keyboard>(_window);
-  m_mouse = std::make_unique<Mouse>(_window);
-}
+void InputManager::Initialize() {}
 
 // ------------------------------------------------------------------------------
 
@@ -44,6 +40,16 @@ void InputManager::Update()
   m_mouse->Refresh();
 
   glfwPollEvents();
+}
+
+// ------------------------------------------------------------------------------
+
+void InputManager::OnWindowCreatedEvent(OnWindowCreated* _event)
+{
+  glfwSetWindowUserPointer(_event->m_window.GetHandle(), this);
+
+  m_keyboard = std::make_unique<Keyboard>(_event->m_window);
+  m_mouse = std::make_unique<Mouse>(_event->m_window);
 }
 
 // ------------------------------------------------------------------------------

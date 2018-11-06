@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Window.h"
+#include "messaging/MessageBus.h"
 
 namespace mage
 {
@@ -9,14 +10,21 @@ namespace video
 
 // ------------------------------------------------------------------------------
 
-class InputManager;
+struct OnWindowCreated
+{
+  OnWindowCreated(Window& _window)
+      : m_window(_window)
+  {
+  }
+  Window& m_window;
+};
 
 // ------------------------------------------------------------------------------
 
 class Video
 {
 public:
-  Video();
+  Video(messaging::MessageBus& _messageBus);
 
   // ------------------------------------------------------------------------------
 
@@ -33,10 +41,6 @@ public:
   // ------------------------------------------------------------------------------
 
   bool ShouldClose() const;
-
-  // ------------------------------------------------------------------------------
-
-  Window& GetWindow();
 
   // ------------------------------------------------------------------------------
 
@@ -58,6 +62,7 @@ private:
 
 private:
   std::unique_ptr<Window> m_window;
+  messaging::MessageBus& m_applicationMessageBus;
 };
 
 } // namespace video

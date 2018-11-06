@@ -7,11 +7,11 @@ namespace ecs
 
 // ------------------------------------------------------------------------------
 
-World::World(core::Application* _ownerApp)
+World::World(messaging::MessageBus& _applicationMessageBus)
     : m_componentManagers()
     , m_entityManager()
     , m_systemManager()
-    , m_ownerApp(_ownerApp)
+    , m_applicationMessageBus(_applicationMessageBus)
 {
 }
 
@@ -80,7 +80,10 @@ void World::TickSystems(float _deltaTime)
 
 // ------------------------------------------------------------------------------
 
-core::Application& World::GetApplication() { return *m_ownerApp; }
+messaging::MessageBus& World::GetApplicationMessageBus()
+{
+  return m_applicationMessageBus;
+}
 
 // ------------------------------------------------------------------------------
 

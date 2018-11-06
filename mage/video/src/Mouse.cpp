@@ -49,8 +49,6 @@ void MouseButtonCallback(GLFWwindow* _window, std::int32_t _button,
   InputManager* inputManager =
       static_cast<InputManager*>(glfwGetWindowUserPointer(_window));
 
-  _mods;
-
   if (_action != GLFW_RELEASE)
   {
     inputManager->GetMouse().PressButton(GetMouseButtonFromGLFWButton(_button));

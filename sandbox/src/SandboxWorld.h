@@ -2,13 +2,13 @@
 
 #include "SandboxSystems.h"
 
-#include <core/Application.h>
+#include <messaging/MessageBus.h>
 
 class SandboxWorld : public mage::ecs::World
 {
 public:
-  SandboxWorld(mage::core::Application* _ownerApp)
-      : mage::ecs::World(_ownerApp)
+  SandboxWorld(mage::messaging::MessageBus& _applicationMessageBus)
+      : mage::ecs::World(_applicationMessageBus)
   {
   }
 

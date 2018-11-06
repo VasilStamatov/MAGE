@@ -61,8 +61,9 @@ void GLFWErrorCallback(int _error, const char* _description)
 
 // ------------------------------------------------------------------------------
 
-Video::Video()
+Video::Video(messaging::MessageBus& _messageBus)
     : m_window()
+    , m_applicationMessageBus(_messageBus)
 {
 }
 
@@ -139,6 +140,10 @@ void Video::Initialize()
   {
     CreateWindowedWindow(std::move(title), width, height);
   }
+
+  std::unique_ptr<OnWindowCreated> windowCreatedEvent =
+      std::make_unique<OnWindowCreated>(*m_window);
+  m_applicationMessageBus.Broadcast(windowCreatedEvent.get());
 }
 
 // ------------------------------------------------------------------------------
@@ -160,10 +165,6 @@ void Video::SwapBuffers()
 // ------------------------------------------------------------------------------
 
 bool Video::ShouldClose() const { return m_window->ShouldClose(); }
-
-// ------------------------------------------------------------------------------
-
-Window& Video::GetWindow() { return *m_window; }
 
 // ------------------------------------------------------------------------------
 

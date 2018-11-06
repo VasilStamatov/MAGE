@@ -10,9 +10,9 @@
 namespace mage
 {
 
-namespace core
+namespace messaging
 {
-class Application;
+class MessageBus;
 }
 
 namespace ecs
@@ -23,7 +23,7 @@ namespace ecs
 class World
 {
 public:
-  World(core::Application* _ownerApp);
+  World(messaging::MessageBus& _applicationMessageBus);
   virtual ~World();
 
   // ------------------------------------------------------------------------------
@@ -85,7 +85,7 @@ public:
 
   // ------------------------------------------------------------------------------
 
-  core::Application& GetApplication();
+  messaging::MessageBus& GetApplicationMessageBus();
 
   // ------------------------------------------------------------------------------
 
@@ -117,7 +117,7 @@ private:
   EntityManager m_entityManager;
   SystemManager m_systemManager;
 
-  core::Application* m_ownerApp;
+  messaging::MessageBus& m_applicationMessageBus;
 };
 
 // ------------------------------------------------------------------------------
