@@ -1,10 +1,15 @@
 #pragma once
 
 #include "Window.h"
-#include "messaging/MessageBus.h"
 
 namespace mage
 {
+
+namespace messaging
+{
+class MessageBus;
+}
+
 namespace video
 {
 

@@ -31,8 +31,9 @@ target_include_directories(mage
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/core/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ecs/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/exceptions/include
-  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/messaging/include
+  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/input/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/math/include
+  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/messaging/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/video/include
 )
 

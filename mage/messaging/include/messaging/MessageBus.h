@@ -10,7 +10,7 @@ namespace mage
 namespace messaging
 {
 
-using Callback = std::function<void(void* _ptrToEventData)>;
+// ------------------------------------------------------------------------------
 
 class MessageBus
 {
@@ -30,6 +30,8 @@ public:
     }
   }
 
+  // ------------------------------------------------------------------------------
+
   template <typename T, typename EventType>
   void Subscribe(T* _instance, void (T::*_memberFunc)(EventType*))
   {
@@ -39,10 +41,18 @@ public:
     });
   }
 
+  // ------------------------------------------------------------------------------
+
 private:
+  using Callback = std::function<void(void* _ptrToEventData)>;
+
+  // ------------------------------------------------------------------------------
+
   // [Key = Id of Event type][value = vector of subscribed callbacks]
   std::map<std::type_index, std::vector<Callback>> m_subscribers;
 };
+
+// ------------------------------------------------------------------------------
 
 } // namespace messaging
 } // namespace mage

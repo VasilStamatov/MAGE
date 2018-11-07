@@ -1,13 +1,49 @@
 #pragma once
 
-#include "Keyboard.h"
-#include "Mouse.h"
-#include "messaging/MessageBus.h"
+#include "InputKeys.h"
+
+#include <array>
+#include <functional>
 
 namespace mage
 {
+
 namespace video
 {
+struct OnWindowCreated;
+}
+
+namespace messaging
+{
+class MessageBus;
+}
+
+namespace input
+{
+
+// ------------------------------------------------------------------------------
+
+// Received events
+struct AddBindingEvent
+{
+  std::function<void()> m_callback;
+  InputKey m_key;
+};
+
+// ------------------------------------------------------------------------------
+
+// Broadcasted events
+struct CursorPositionMovedEvent
+{
+  double m_xPos = 0.0;
+  double m_yPos = 0.0;
+};
+
+struct MouseScrollChangedEvent
+{
+  double m_xOffset = 0.0;
+  double m_yOffset = 0.0;
+};
 
 // ------------------------------------------------------------------------------
 
@@ -30,42 +66,40 @@ public:
 
   // ------------------------------------------------------------------------------
 
-  void OnWindowCreatedEvent(struct OnWindowCreated* _event);
+  void OnWindowCreatedEvent(video::OnWindowCreated* _event);
 
   // ------------------------------------------------------------------------------
 
-  bool IsKeyPressed(KeyboardKey _key) const noexcept;
-  bool IsKeyHeldDown(KeyboardKey _key) const noexcept;
+  void OnAddBindingEvent(AddBindingEvent* _event);
 
   // ------------------------------------------------------------------------------
 
-  bool IsButtonPressed(MouseButton _button) const noexcept;
-  bool IsButtonHeldDown(MouseButton _button) const noexcept;
+  void OnKeyDown(InputKey _key);
 
   // ------------------------------------------------------------------------------
 
-  const math::Vec2d& GetCurrentCursorPos() const noexcept;
-  const math::Vec2d& GetPreviousCursorPos() const noexcept;
-  const math::Vec2d& GetMouseScrollValue() const noexcept;
+  void OnKeyUp(InputKey _key);
 
   // ------------------------------------------------------------------------------
 
-  Keyboard& GetKeyboard();
+  void OnCursorMoved(double _xPos, double _yPos);
 
   // ------------------------------------------------------------------------------
 
-  Mouse& GetMouse();
-
-  // ------------------------------------------------------------------------------
+  void OnMouseScrollChanged(double _xOffset, double _yOffset);
 
 private:
-  std::unique_ptr<Keyboard> m_keyboard;
-  std::unique_ptr<Mouse> m_mouse;
+  using Callback = std::function<void()>;
+
+  // ------------------------------------------------------------------------------
+
+  std::array<Callback, (int)InputKey::NumKeys> m_bindings;
+  std::vector<int> m_pressedKeys;
 
   messaging::MessageBus& m_applicationMessageBus;
 };
 
 // ------------------------------------------------------------------------------
 
-} // namespace video
+} // namespace input
 } // namespace mage

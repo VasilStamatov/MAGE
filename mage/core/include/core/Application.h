@@ -1,8 +1,8 @@
 #pragma once
 
 #include "ecs/World.h"
+#include "input/InputManager.h"
 #include "messaging/MessageBus.h"
-#include "video/InputManager.h"
 #include "video/Video.h"
 
 namespace mage
@@ -82,7 +82,7 @@ protected:
 
 private:
   video::Video m_video;
-  video::InputManager m_inputManager;
+  input::InputManager m_inputManager;
 
   std::int32_t m_currentWorldId;
   std::int32_t m_nextWorldId;

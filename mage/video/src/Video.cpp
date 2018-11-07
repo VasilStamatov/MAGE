@@ -1,6 +1,7 @@
 #include "video/Video.h"
 
 #include "exceptions/RuntimeError.h"
+#include "messaging/MessageBus.h"
 #include "video/VideoHints.h"
 
 #include <iostream>
