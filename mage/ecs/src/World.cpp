@@ -29,11 +29,11 @@ void World::Initialize()
 
 // ------------------------------------------------------------------------------
 
-void World::OnEnter() { m_systemManager.InitializeSystems(); }
+void World::OnEnter() { m_systemManager.InitializeSystems(*this); }
 
 // ------------------------------------------------------------------------------
 
-void World::OnExit() { m_systemManager.UninitializeSystems(); }
+void World::OnExit() { m_systemManager.UninitializeSystems(*this); }
 
 // ------------------------------------------------------------------------------
 

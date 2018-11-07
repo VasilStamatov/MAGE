@@ -44,6 +44,12 @@ void Application::Run(int argc, const char** argv)
   InitializeSubSystems();
 
   AddGameWorlds();
+
+  for (auto&& world : m_gameWorlds)
+  {
+    world->Initialize();
+  }
+
   m_gameWorlds[m_currentWorldId]->OnEnter();
 
   Timer timer;

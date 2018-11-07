@@ -351,7 +351,10 @@ void InputManager::OnKeyUp(InputKey _key)
   auto iterator =
       std::find(m_pressedKeys.begin(), m_pressedKeys.end(), (int)_key);
 
-  m_pressedKeys.erase(iterator);
+  if (iterator != m_pressedKeys.end())
+  {
+    m_pressedKeys.erase(iterator);
+  }
 }
 
 // ------------------------------------------------------------------------------

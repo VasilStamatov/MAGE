@@ -22,8 +22,8 @@ public:
 
   // ------------------------------------------------------------------------------
 
-  void InitializeSystems();
-  void UninitializeSystems();
+  void InitializeSystems(World& _world);
+  void UninitializeSystems(World& _world);
   void TickSystems(World& _world, float _deltaTime);
 
   // ------------------------------------------------------------------------------

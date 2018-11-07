@@ -21,21 +21,21 @@ void SystemManager::AddSystem(std::unique_ptr<System> _system)
 
 // ------------------------------------------------------------------------------
 
-void SystemManager::InitializeSystems()
+void SystemManager::InitializeSystems(World& _world)
 {
   for (auto&& system : m_systems)
   {
-    system->Initialize();
+    system->Initialize(_world);
   }
 }
 
 // ------------------------------------------------------------------------------
 
-void SystemManager::UninitializeSystems()
+void SystemManager::UninitializeSystems(World& _world)
 {
   for (auto&& system : m_systems)
   {
-    system->Uninitialize();
+    system->Uninitialize(_world);
   }
 }
 

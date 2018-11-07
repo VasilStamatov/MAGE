@@ -22,8 +22,8 @@ public:
     m_systemSignature.AddComponent<TestComponent1>();
     m_systemSignature.AddComponent<TestComponent2>();
   }
-  void Initialize() override {}
-  void Uninitialize() override {}
+  void Initialize(mage::ecs::World& _world) override {}
+  void Uninitialize(mage::ecs::World& _world) override {}
   void Tick(mage::ecs::World& _world, float _deltaTime) override
   {
     for (auto&& entity : m_registeredEntities)

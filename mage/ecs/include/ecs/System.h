@@ -24,8 +24,8 @@ public:
 
   // ------------------------------------------------------------------------------
 
-  virtual void Initialize() {}
-  virtual void Uninitialize() {}
+  virtual void Initialize(World& _world) {}
+  virtual void Uninitialize(World& _world) {}
   virtual void Tick(World& _world, float _deltaTime) = 0;
 
   // ------------------------------------------------------------------------------
