@@ -62,11 +62,10 @@ void VideoHints::ResetToDefaults()
 
 void VideoHints::FromVideoMode(const GLFWvidmode* _vidmode)
 {
-  const GLFWvidmode* vidmode = reinterpret_cast<const GLFWvidmode*>(_vidmode);
-  m_framebufferHints.m_redBits = vidmode->redBits;
-  m_framebufferHints.m_greenBits = vidmode->greenBits;
-  m_framebufferHints.m_blueBits = vidmode->blueBits;
-  m_monitorHints.m_refreshRate = vidmode->refreshRate;
+  m_framebufferHints.m_redBits = _vidmode->redBits;
+  m_framebufferHints.m_greenBits = _vidmode->greenBits;
+  m_framebufferHints.m_blueBits = _vidmode->blueBits;
+  m_monitorHints.m_refreshRate = _vidmode->refreshRate;
 }
 
 // ------------------------------------------------------------------------------

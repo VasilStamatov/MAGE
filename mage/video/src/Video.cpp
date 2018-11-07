@@ -78,7 +78,9 @@ void Video::Initialize()
   const bool fullscreen = false;
   const bool borderless = false;
 
+#ifndef NDEBUG
   glfwSetErrorCallback(&GLFWErrorCallback);
+#endif
 
   if (!glfwInit())
   {
