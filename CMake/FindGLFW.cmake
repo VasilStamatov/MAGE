@@ -18,7 +18,7 @@ find_path( GLFW_INCLUDE_DIRS
   PATHS
     ${GLFW_SEARCH_PATHS}
   PATH_SUFFIXES
-    include
+    include/GLFW
   DOC
     "The directory where glfw3.h and glfw3native.h resides"
 )

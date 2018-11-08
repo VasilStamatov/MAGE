@@ -8,6 +8,8 @@ else()
   add_compile_options(-Wall -C)
 endif()
 
+add_definitions( -DGLEW_STATIC )
+
 # LOAD the header files
 file(GLOB_RECURSE HEADERS
   ${CMAKE_CURRENT_SOURCE_DIR}/*.h
@@ -34,21 +36,23 @@ target_include_directories(mage
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/input/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/math/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/messaging/include
+  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/renderer/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/video/include
 )
 
 # Find dependencies
-include(${CMAKE_SCRIPTS_DIR}/FindVulkan.cmake)
+find_package(OpenGL REQUIRED)
+include(${CMAKE_SCRIPTS_DIR}/FindGLEW.cmake)
 include(${CMAKE_SCRIPTS_DIR}/FindGLFW.cmake)
 
 # Include dependencies headers
 target_include_directories(mage 
-  PRIVATE ${VULKAN_INCLUDE_DIR}
+  PRIVATE ${GLEW_INCLUDE_DIR}
   PRIVATE ${GLFW_INCLUDE_DIRS}
 )
 
 # Link dependency libraries to this target library
 target_link_libraries(mage 
-  PRIVATE ${VULKAN_LIBRARIES}
+  PRIVATE ${GLEW_LIBRARIES}
   PRIVATE ${GLFW_LIBRARIES}
 )

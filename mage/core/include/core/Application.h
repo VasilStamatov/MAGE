@@ -3,6 +3,7 @@
 #include "ecs/World.h"
 #include "input/InputManager.h"
 #include "messaging/MessageBus.h"
+#include "renderer/Renderer.h"
 #include "video/Video.h"
 
 namespace mage
@@ -83,6 +84,7 @@ protected:
 private:
   video::Video m_video;
   input::InputManager m_inputManager;
+  renderer::Renderer m_renderer;
 
   std::int32_t m_currentWorldId;
   std::int32_t m_nextWorldId;

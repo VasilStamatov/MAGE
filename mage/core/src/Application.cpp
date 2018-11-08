@@ -23,6 +23,7 @@ Application::Application()
     , m_gameWorlds()
     , m_video(m_applicationMessageBus)
     , m_inputManager(m_applicationMessageBus)
+    , m_renderer()
     , m_currentWorldId(0)
     , m_nextWorldId(-1)
     , m_state(ApplicationState::Running)
@@ -73,8 +74,6 @@ void Application::Run(int argc, const char** argv)
         (timer.GetElapsedMilli() + c_desiredFrameTimeMS - millisElapsed) /
         c_desiredFrameTimeMS;
 
-    std::cout << "Interpolation: " << interpolation << std::endl;
-
     // Render(interpolation);
 
     m_video.SwapBuffers();
@@ -109,12 +108,14 @@ void Application::InitializeSubSystems()
 {
   m_video.Initialize();
   m_inputManager.Initialize();
+  m_renderer.Initialize();
 }
 
 // ------------------------------------------------------------------------------
 
 void Application::ShutdownSubSystems()
 {
+  m_renderer.Shutdown();
   m_inputManager.Shutdown();
   m_video.Shutdown();
 }

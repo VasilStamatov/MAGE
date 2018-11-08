@@ -4,7 +4,6 @@
 #include <iostream>
 #include <string>
 
-#define GLFW_INCLUDE_VULKAN
 #include <glfw3.h>
 
 namespace mage

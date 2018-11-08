@@ -3,7 +3,6 @@
 #include "messaging/MessageBus.h"
 #include "video/Video.h"
 
-#define GLFW_INCLUDE_VULKAN
 #include <glfw3.h>
 
 namespace mage

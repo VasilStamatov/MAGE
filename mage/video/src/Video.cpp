@@ -6,7 +6,6 @@
 
 #include <iostream>
 
-#define GLFW_INCLUDE_VULKAN
 #include <glfw3.h>
 
 namespace mage
@@ -52,8 +51,8 @@ std::string IntepretGLFWerrorcode(int _code)
 
 void GLFWErrorCallback(int _error, const char* _description)
 {
-  std::cout << "GLFW error (" << IntepretGLFWerrorcode(_error)
-            << "): " << _description << std::endl;
+  // std::cout << "GLFW error (" << IntepretGLFWerrorcode(_error)
+  //           << "): " << _description << std::endl;
 }
 
 // ------------------------------------------------------------------------------
@@ -144,9 +143,8 @@ void Video::Initialize()
     CreateWindowedWindow(std::move(title), width, height);
   }
 
-  std::unique_ptr<OnWindowCreated> windowCreatedEvent =
-      std::make_unique<OnWindowCreated>(*m_window);
-  m_applicationMessageBus.Broadcast(windowCreatedEvent.get());
+  OnWindowCreated windowCreatedEvent(*m_window);
+  m_applicationMessageBus.Broadcast(&windowCreatedEvent);
 }
 
 // ------------------------------------------------------------------------------
