@@ -33,6 +33,7 @@ target_include_directories(mage
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/core/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ecs/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/exceptions/include
+  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/filesystem/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/input/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/math/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/messaging/include
@@ -44,15 +45,19 @@ target_include_directories(mage
 find_package(OpenGL REQUIRED)
 include(${CMAKE_SCRIPTS_DIR}/FindGLEW.cmake)
 include(${CMAKE_SCRIPTS_DIR}/FindGLFW.cmake)
+include(${CMAKE_SCRIPTS_DIR}/FindSTB.cmake)
 
 # Include dependencies headers
-target_include_directories(mage 
+target_include_directories(mage
+  PRIVATE ${OPENGL_INCLUDE_DIRS}
   PRIVATE ${GLEW_INCLUDE_DIR}
-  PRIVATE ${GLFW_INCLUDE_DIRS}
+  PRIVATE ${GLFW_INCLUDE_DIR}
+  PRIVATE ${STB_INCLUDE_DIR}
 )
 
 # Link dependency libraries to this target library
 target_link_libraries(mage 
+  PRIVATE ${OPENGL_LIBRARIES}
   PRIVATE ${GLEW_LIBRARIES}
   PRIVATE ${GLFW_LIBRARIES}
 )

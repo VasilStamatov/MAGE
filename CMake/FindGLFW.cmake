@@ -1,6 +1,9 @@
+SET(_PF86 "PROGRAMFILES(X86)")
 set( GLFW_SEARCH_PATHS
+  ${GLFW_ROOT_DIR}
   ${CMAKE_SOURCE_DIR}/contrib/glfw # Project root
   $ENV{PROGRAMFILES}/GLFW # WINDOWS
+  "$ENV{_PF86}/GLFW"	# WINDOWS
   ~/Library/Frameworks # MAC
   /Library/Frameworks # MAC
   /usr/local # LINUX/MAC/UNIX
@@ -11,7 +14,7 @@ set( GLFW_SEARCH_PATHS
   /opt/csw # Blastwave
 )
 
-find_path( GLFW_INCLUDE_DIRS
+find_path( GLFW_INCLUDE_DIR
   NAMES
     glfw3.h
     glfw3native.h
@@ -35,9 +38,9 @@ find_library( GLFW_LIBRARIES
 )
 
 # Check if we found it!
-if ( GLFW_INCLUDE_DIRS AND GLFW_LIBRARIES )
+if ( GLFW_INCLUDE_DIR AND GLFW_LIBRARIES )
   set( GLFW_FOUND TRUE )
-  message( STATUS "Looking for GLFW - found include : ${GLFW_INCLUDE_DIRS} and lib : ${GLFW_LIBRARIES}" )
+  message( STATUS "Looking for GLFW - found include : ${GLFW_INCLUDE_DIR} and lib : ${GLFW_LIBRARIES}" )
 else ()
   set( GLFW_FOUND FALSE )
   message( FATAL_ERROR "Looking for GLFW - not found" )

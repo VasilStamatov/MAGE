@@ -20,7 +20,6 @@ if ( CMAKE_BUILD_TYPE STREQUAL "Release" )
   add_definitions( -NDEBUG )
 endif ()
 
-add_subdirectory(contrib)
 add_subdirectory(mage)
 add_subdirectory(sandbox)
 add_subdirectory(tests)

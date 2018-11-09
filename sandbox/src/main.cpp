@@ -24,7 +24,6 @@ int main(int argc, const char** argv)
     return -1;
   }
 
-  std::cin.get();
   return 0;
 }
 

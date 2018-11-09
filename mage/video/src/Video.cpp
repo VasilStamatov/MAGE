@@ -51,8 +51,8 @@ std::string IntepretGLFWerrorcode(int _code)
 
 void GLFWErrorCallback(int _error, const char* _description)
 {
-  // std::cout << "GLFW error (" << IntepretGLFWerrorcode(_error)
-  //           << "): " << _description << std::endl;
+  std::cout << "GLFW error (" << IntepretGLFWerrorcode(_error)
+            << "): " << _description << std::endl;
 }
 
 // ------------------------------------------------------------------------------
@@ -105,9 +105,9 @@ void Video::Initialize()
   videoHints.m_framebufferHints.m_sRGBCapable = true;
   videoHints.m_framebufferHints.m_doubleBuffer = true;
 
-  videoHints.m_contextHints.m_clientAPI = ContextHints::ClientAPI::None;
-  videoHints.m_contextHints.m_contextVersionMajor = 4;
-  videoHints.m_contextHints.m_contextVersionMinor = 0;
+  videoHints.m_contextHints.m_clientAPI = ContextHints::ClientAPI::OpenGL;
+  videoHints.m_contextHints.m_contextVersionMajor = 3;
+  videoHints.m_contextHints.m_contextVersionMinor = 2;
 
   videoHints.m_contextHints.m_openGLForwardCompatible = true;
   videoHints.m_contextHints.m_openGLProfile = ContextHints::OpenGLProfile::Core;

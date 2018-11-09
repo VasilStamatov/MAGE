@@ -14,5 +14,10 @@ add_executable(tests
   src/testsMain.cpp
 )
 
-target_link_libraries(tests PRIVATE catch)
+include(${CMAKE_SCRIPTS_DIR}/FindCatch.cmake)
+
+target_include_directories(tests
+  PRIVATE ${CATCH_INCLUDE_DIR}
+)
+
 target_link_libraries(tests PRIVATE mage)
