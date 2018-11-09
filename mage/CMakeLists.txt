@@ -46,6 +46,7 @@ find_package(OpenGL REQUIRED)
 include(${CMAKE_SCRIPTS_DIR}/FindGLEW.cmake)
 include(${CMAKE_SCRIPTS_DIR}/FindGLFW.cmake)
 include(${CMAKE_SCRIPTS_DIR}/FindSTB.cmake)
+include(${CMAKE_SCRIPTS_DIR}/FindTinyObj.cmake)
 
 # Include dependencies headers
 target_include_directories(mage
@@ -53,6 +54,7 @@ target_include_directories(mage
   PRIVATE ${GLEW_INCLUDE_DIR}
   PRIVATE ${GLFW_INCLUDE_DIR}
   PRIVATE ${STB_INCLUDE_DIR}
+  PRIVATE ${TINY_OBJ_LOADER_INCLUDE_DIR}
 )
 
 # Link dependency libraries to this target library

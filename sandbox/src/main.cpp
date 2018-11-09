@@ -4,6 +4,7 @@
 #include "SandboxApplication.h"
 
 #include <exceptions/RuntimeError.h>
+#include <filesystem/Filesystem.h>
 
 int main(int argc, const char** argv)
 {
@@ -23,6 +24,10 @@ int main(int argc, const char** argv)
     std::cerr << e.what() << '\n';
     return -1;
   }
+
+  std::string buffer;
+  mage::filesystem::ReadFileToBuffer("../res/shaders/simple.vert", buffer);
+  std::cout << buffer << std::endl;
 
   return 0;
 }
