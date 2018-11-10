@@ -5,13 +5,13 @@
 
 namespace mage
 {
-namespace renderer
+namespace graphics
 {
 
 // ------------------------------------------------------------------------------
 
-extern void GLClearError();
-extern bool GLLogCall(const char* _function, const char* _file, int _line);
+std::uint32_t GLCheckError();
+bool GLLogCall(const char* _function, const char* _file, int _line);
 
 // ------------------------------------------------------------------------------
 
@@ -19,12 +19,12 @@ extern bool GLLogCall(const char* _function, const char* _file, int _line);
 #define GLCall(expr) expr
 #else
 #define GLCall(expr)                                                           \
-  GLClearError();                                                              \
+  GLCheckError();                                                              \
   expr;                                                                        \
   assert(GLLogCall(#expr, __FILE__, __LINE__))
 #endif
 
 // ------------------------------------------------------------------------------
 
-} // namespace renderer
+} // namespace graphics
 } // namespace mage

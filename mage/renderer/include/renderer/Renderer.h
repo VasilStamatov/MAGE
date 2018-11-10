@@ -2,7 +2,7 @@
 
 namespace mage
 {
-namespace renderer
+namespace graphics
 {
 
 // ------------------------------------------------------------------------------
@@ -23,5 +23,5 @@ public:
 
 // ------------------------------------------------------------------------------
 
-} // namespace renderer
+} // namespace graphics
 } // namespace mage

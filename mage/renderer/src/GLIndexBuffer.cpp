@@ -6,15 +6,20 @@
 
 namespace mage
 {
-namespace renderer
+namespace graphics
 {
+
+GLIndexBuffer::GLIndexBuffer()
+    : m_count(0)
+{
+  GLCall(glGenBuffers(1, &m_handle));
+}
 
 // ------------------------------------------------------------------------------
 
-GLIndexBuffer::GLIndexBuffer(std::uint32_t* _data, std::uint32_t _count)
-    : m_count(_count)
+void GLIndexBuffer::SetData(std::uint32_t* _data, std::uint32_t _count)
 {
-  GLCall(glGenBuffers(1, &m_handle));
+  m_count = _count;
   GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_handle));
   GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_count * sizeof(uint32_t),
                       _data, GL_STATIC_DRAW));
@@ -22,10 +27,9 @@ GLIndexBuffer::GLIndexBuffer(std::uint32_t* _data, std::uint32_t _count)
 
 // ------------------------------------------------------------------------------
 
-GLIndexBuffer::GLIndexBuffer(std::uint16_t* _data, std::uint32_t _count)
-    : m_count(_count)
+void GLIndexBuffer::SetData(std::uint16_t* _data, std::uint32_t _count)
 {
-  GLCall(glGenBuffers(1, &m_handle));
+  m_count = _count;
   GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_handle));
   GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_count * sizeof(uint16_t),
                       _data, GL_STATIC_DRAW));
@@ -55,5 +59,5 @@ std::uint32_t GLIndexBuffer::GetCount() const noexcept { return m_count; }
 
 // ------------------------------------------------------------------------------
 
-} // namespace renderer
+} // namespace graphics
 } // namespace mage

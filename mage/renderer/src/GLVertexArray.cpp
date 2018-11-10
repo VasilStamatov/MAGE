@@ -6,7 +6,7 @@
 
 namespace mage
 {
-namespace renderer
+namespace graphics
 {
 
 // ------------------------------------------------------------------------------

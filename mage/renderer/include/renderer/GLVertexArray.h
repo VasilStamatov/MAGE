@@ -4,7 +4,7 @@
 
 namespace mage
 {
-namespace renderer
+namespace graphics
 {
 
 // ------------------------------------------------------------------------------
@@ -39,5 +39,5 @@ private:
 
 // ------------------------------------------------------------------------------
 
-} // namespace renderer
+} // namespace graphics
 } // namespace mage

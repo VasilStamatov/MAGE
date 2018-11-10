@@ -6,7 +6,7 @@
 
 namespace mage
 {
-namespace renderer
+namespace graphics
 {
 
 // ------------------------------------------------------------------------------
@@ -78,5 +78,5 @@ void GLBufferLayout::Apply() const
 
 // ------------------------------------------------------------------------------
 
-} // namespace renderer
+} // namespace graphics
 } // namespace mage

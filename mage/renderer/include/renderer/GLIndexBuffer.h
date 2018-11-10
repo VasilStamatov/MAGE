@@ -4,7 +4,7 @@
 
 namespace mage
 {
-namespace renderer
+namespace graphics
 {
 
 // ------------------------------------------------------------------------------
@@ -12,9 +12,16 @@ namespace renderer
 class GLIndexBuffer
 {
 public:
-  GLIndexBuffer(std::uint32_t* _data, std::uint32_t _count);
-  GLIndexBuffer(std::uint16_t* _data, std::uint32_t _count);
+  GLIndexBuffer();
   ~GLIndexBuffer();
+
+  // ------------------------------------------------------------------------------
+
+  void SetData(std::uint32_t* _data, std::uint32_t _count);
+
+  // ------------------------------------------------------------------------------
+
+  void SetData(std::uint16_t* _data, std::uint32_t _count);
 
   // ------------------------------------------------------------------------------
 
@@ -37,5 +44,5 @@ private:
 
 // ------------------------------------------------------------------------------
 
-} // namespace renderer
+} // namespace graphics
 } // namespace mage

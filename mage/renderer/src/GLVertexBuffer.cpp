@@ -6,7 +6,7 @@
 
 namespace mage
 {
-namespace renderer
+namespace graphics
 {
 
 namespace
@@ -95,5 +95,5 @@ void GLVertexBuffer::ReleasePointerToBufferData() const
 
 // ------------------------------------------------------------------------------
 
-} // namespace renderer
+} // namespace graphics
 } // namespace mage

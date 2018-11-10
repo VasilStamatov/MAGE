@@ -9,7 +9,7 @@
 
 namespace mage
 {
-namespace renderer
+namespace graphics
 {
 
 // ------------------------------------------------------------------------------
@@ -28,7 +28,7 @@ void Renderer::Initialize()
   }
 
   GLCall(auto version = glGetString(GL_VERSION));
-  std::cout << "Initialized GL v" << version << std::endl;
+  std::cout << "Initialized OpenGL v" << version << std::endl;
   ;
 }
 
@@ -38,5 +38,5 @@ void Renderer::Shutdown() {}
 
 // ------------------------------------------------------------------------------
 
-} // namespace renderer
+} // namespace graphics
 } // namespace mage

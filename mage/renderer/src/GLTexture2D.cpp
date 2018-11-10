@@ -8,7 +8,7 @@
 
 namespace mage
 {
-namespace renderer
+namespace graphics
 {
 
 namespace

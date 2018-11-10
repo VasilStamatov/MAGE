@@ -84,7 +84,7 @@ protected:
 private:
   video::Video m_video;
   input::InputManager m_inputManager;
-  renderer::Renderer m_renderer;
+  graphics::Renderer m_renderer;
 
   std::int32_t m_currentWorldId;
   std::int32_t m_nextWorldId;

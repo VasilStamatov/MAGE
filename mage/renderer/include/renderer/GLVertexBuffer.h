@@ -4,7 +4,7 @@
 
 namespace mage
 {
-namespace renderer
+namespace graphics
 {
 
 // http://docs.gl/gl4/glBufferData
@@ -57,5 +57,5 @@ private:
 
 // ------------------------------------------------------------------------------
 
-} // namespace renderer
+} // namespace graphics
 } // namespace mage

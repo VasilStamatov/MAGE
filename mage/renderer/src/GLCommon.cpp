@@ -1,37 +1,32 @@
 #include "renderer/GLCommon.h"
 
 #include <iostream>
-#include <sstream>
+#include <string>
 
 #include <glew.h>
 
 namespace mage
 {
-namespace renderer
+namespace graphics
 {
 
 // ------------------------------------------------------------------------------
 
-void GLClearError()
-{
-  while (glGetError() != GL_NO_ERROR)
-  {
-  }
-}
+std::uint32_t GLCheckError() { return glGetError(); }
 
 // ------------------------------------------------------------------------------
 
 bool GLLogCall(const char* _function, const char* _file, int _line)
 {
-  GLenum error = glGetError();
+  std::uint32_t error = GLCheckError();
   if (error != GL_NO_ERROR)
   {
-    std::stringstream errorString;
-    errorString << "[GL ERROR] : " << error << "\n";
-    errorString << "\t File: " << _file << "\n";
-    errorString << "\t Function: " << _function << "\n";
-    errorString << "\t Line: " << _line << "\n";
-    std::cout << errorString.str();
+    std::string errorString("[GL ERROR] : " + std::to_string(error) + '\n' +
+                            "\t File: " + _file + '\n' +
+                            "\t Function: " + _function + '\n' +
+                            "\t Line: " + std::to_string(_line) + '\n');
+
+    std::cout << errorString;
     return false;
   }
   return true;
@@ -39,5 +34,5 @@ bool GLLogCall(const char* _function, const char* _file, int _line)
 
 // ------------------------------------------------------------------------------
 
-} // namespace renderer
+} // namespace graphics
 } // namespace mage

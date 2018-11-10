@@ -34,6 +34,7 @@ target_include_directories(mage
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ecs/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/exceptions/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/filesystem/include
+  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/graphics/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/input/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/math/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/messaging/include
@@ -54,7 +55,7 @@ target_include_directories(mage
   PRIVATE ${GLEW_INCLUDE_DIR}
   PRIVATE ${GLFW_INCLUDE_DIR}
   PRIVATE ${STB_INCLUDE_DIR}
-  PRIVATE ${TINY_OBJ_LOADER_INCLUDE_DIR}
+  PUBLIC ${TINY_OBJ_LOADER_INCLUDE_DIR}
 )
 
 # Link dependency libraries to this target library
