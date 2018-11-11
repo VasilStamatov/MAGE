@@ -1,4 +1,4 @@
-#include "graphics/ShaderManager.h"
+#include "graphics/ShaderLibrary.h"
 
 #include <algorithm>
 
@@ -7,14 +7,14 @@ namespace mage
 namespace graphics
 {
 
-ShaderManager::ShaderManager()
+ShaderLibrary::ShaderLibrary()
     : m_loadedShaders()
 {
 }
 
-ShaderManager::~ShaderManager() {}
+ShaderLibrary::~ShaderLibrary() {}
 
-std::shared_ptr<GLShader> ShaderManager::Get(const std::string& _vsFilePath,
+std::shared_ptr<GLShader> ShaderLibrary::Get(const std::string& _vsFilePath,
                                              const std::string& _fsFilePath)
 {
   std::hash<std::string> hashFunction;
@@ -37,9 +37,9 @@ std::shared_ptr<GLShader> ShaderManager::Get(const std::string& _vsFilePath,
   return m_loadedShaders.back().m_shader;
 }
 
-void ShaderManager::Clear() { m_loadedShaders.clear(); }
+void ShaderLibrary::Clear() { m_loadedShaders.clear(); }
 
-void ShaderManager::Refresh()
+void ShaderLibrary::Refresh()
 {
   m_loadedShaders.erase(
       std::remove_if(m_loadedShaders.begin(), m_loadedShaders.end(),
@@ -49,7 +49,7 @@ void ShaderManager::Refresh()
       m_loadedShaders.end());
 }
 
-ShaderManager::ShaderResourceInstance::ShaderResourceInstance(
+ShaderLibrary::ShaderResourceInstance::ShaderResourceInstance(
     std::shared_ptr<GLShader>&& _shader, std::uint32_t _hashedName)
     : m_shader(std::move(_shader))
     , m_hashedName(_hashedName)

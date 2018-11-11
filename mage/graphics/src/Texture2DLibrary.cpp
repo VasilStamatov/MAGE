@@ -1,4 +1,4 @@
-#include "graphics/Texture2DManager.h"
+#include "graphics/Texture2DLibrary.h"
 
 #include <algorithm>
 
@@ -7,15 +7,15 @@ namespace mage
 namespace graphics
 {
 
-Texture2DManager::Texture2DManager()
+Texture2DLibrary::Texture2DLibrary()
     : m_loadedTextures()
 {
 }
 
-Texture2DManager::~Texture2DManager() {}
+Texture2DLibrary::~Texture2DLibrary() {}
 
 std::shared_ptr<GLTexture2D>
-Texture2DManager::Get(const std::string& _filepath,
+Texture2DLibrary::Get(const std::string& _filepath,
                       TextureParameters _parameters)
 {
   std::hash<std::string> hashFunction;
@@ -39,9 +39,9 @@ Texture2DManager::Get(const std::string& _filepath,
   return m_loadedTextures.back().m_texture;
 }
 
-void Texture2DManager::Clear() { m_loadedTextures.clear(); }
+void Texture2DLibrary::Clear() { m_loadedTextures.clear(); }
 
-void Texture2DManager::Refresh()
+void Texture2DLibrary::Refresh()
 {
   m_loadedTextures.erase(
       std::remove_if(m_loadedTextures.begin(), m_loadedTextures.end(),
@@ -51,7 +51,7 @@ void Texture2DManager::Refresh()
       m_loadedTextures.end());
 }
 
-Texture2DManager::Texture2DResourceInstance::Texture2DResourceInstance(
+Texture2DLibrary::Texture2DResourceInstance::Texture2DResourceInstance(
     std::shared_ptr<GLTexture2D>&& _texture, std::uint32_t _hashedName)
     : m_texture(std::move(_texture))
     , m_hashedName(_hashedName)

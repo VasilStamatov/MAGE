@@ -10,11 +10,11 @@ namespace mage
 namespace graphics
 {
 
-class Texture2DManager
+class Texture2DLibrary
 {
 public:
-  Texture2DManager();
-  ~Texture2DManager();
+  Texture2DLibrary();
+  ~Texture2DLibrary();
 
   std::shared_ptr<GLTexture2D>
   Get(const std::string& _filepath,

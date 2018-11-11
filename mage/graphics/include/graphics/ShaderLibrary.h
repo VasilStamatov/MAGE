@@ -10,11 +10,11 @@ namespace mage
 namespace graphics
 {
 
-class ShaderManager
+class ShaderLibrary
 {
 public:
-  ShaderManager();
-  ~ShaderManager();
+  ShaderLibrary();
+  ~ShaderLibrary();
 
   std::shared_ptr<GLShader> Get(const std::string& _vsFilePath,
                                 const std::string& _fsFilePath);
