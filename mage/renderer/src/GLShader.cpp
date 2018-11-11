@@ -186,6 +186,7 @@ void GLShader::SetUniform4f(std::uint32_t _location, const math::Vec4f& _vector)
 
 void GLShader::SetUniformMat4(std::uint32_t _location, math::Mat4f& _matrix)
 {
+  // Transpose flag is set to GL_TRUE, because the matrix class is row-major
   GLCall(glUniformMatrix4fv(_location, 1, GL_TRUE, &_matrix[0]));
 }
 
@@ -292,5 +293,5 @@ bool GLShader::operator==(const GLShader& _other) const
 
 // ------------------------------------------------------------------------------
 
-} // namespace renderer
+} // namespace graphics
 } // namespace mage

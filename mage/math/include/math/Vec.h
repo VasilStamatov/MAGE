@@ -363,6 +363,34 @@ public:
 
   // ------------------------------------------------------------------------------
 
+  friend Vec GetMinValues(const Vec& _v1, const Vec& _v2)
+  {
+    Vec rtn;
+
+    for (auto i = 0; i < Size; i++)
+    {
+      rtn[i] = math::Min(_v1[i], _v2[i]);
+    }
+
+    return rtn;
+  }
+
+  // ------------------------------------------------------------------------------
+
+  friend Vec GetMaxValues(const Vec& _v1, const Vec& _v2)
+  {
+    Vec rtn;
+
+    for (auto i = 0; i < Size; i++)
+    {
+      rtn[i] = math::Max(_v1[i], _v2[i]);
+    }
+
+    return rtn;
+  }
+
+  // ------------------------------------------------------------------------------
+
   friend Vec operator*(T _lhs, const Vec& _rhs) { return _rhs * _lhs; }
 
   // ------------------------------------------------------------------------------

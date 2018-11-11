@@ -271,7 +271,7 @@ template <typename T> Mat<T, 4> GetTransposedMat(const Mat<T, 4>& _mat)
 
 template <typename T> Mat<T, 4> GenTranslationMat(const Vec<T, 3>& _translation)
 {
-  float matrixData[16] = {
+  T matrixData[16] = {
       static_cast<T>(1.0), static_cast<T>(0.0), static_cast<T>(0.0),
       _translation[0],     static_cast<T>(0.0), static_cast<T>(1.0),
       static_cast<T>(0.0), _translation[1],     static_cast<T>(0.0),
@@ -329,7 +329,7 @@ Mat<T, 4> GenRotationMat(T _radians, const Vec<T, 3>& _axis)
 
 template <typename T> Mat<T, 4> GenScalingMat(const Vec<T, 3>& _scale)
 {
-  float matrixData[16] = {
+  T matrixData[16] = {
       _scale[0],           static_cast<T>(0.0), static_cast<T>(0.0),
       static_cast<T>(0.0), static_cast<T>(0.0), _scale[1],
       static_cast<T>(0.0), static_cast<T>(0.0), static_cast<T>(0.0),
