@@ -16,15 +16,22 @@ public:
 private:
   virtual void AddSystems() override
   {
-    AddGameSystem(std::make_unique<TestSystem>());
+    AddGameSystem(std::make_unique<CameraController>());
 
-    AddRenderingSystem(std::make_unique<mage::graphics::StaticMeshRenderer>());
+    AddRenderingSystem(std::make_unique<mage::graphics::StaticMeshRenderer>(
+        mage::graphics::GLShader("./res/shaders/StaticMesh.vert",
+                                 "./res/shaders/StaticMesh.frag")));
   }
 
   virtual void AddEntitiesAndComponents() override
   {
-    auto handle = CreateEntity();
-    auto& sc = handle.AddComponent<SandboxComponent>(1.0f, 1.0f, 1, 1, 1, 1);
+    auto camera = CreateEntity();
+    auto& cameraComp = camera.AddComponent<mage::ecs::common::CameraComponent>(
+        *this, mage::math::GenPerspectiveMat(mage::math::ToRadians(70.0f),
+                                             16.0f / 9.0f, 0.1f, 100.0f));
+
+    auto& cameraControlComponent =
+        camera.AddComponent<CameraControlComponent>();
 
     auto renderedEntity = CreateEntity();
     auto& transform =
@@ -34,8 +41,6 @@ private:
 
     auto& staticMeshComp =
         renderedEntity.AddComponent<mage::graphics::StaticMeshComponent>(
-            "./res/models/cube.obj",
-            m_shaderLib.Get("./res/shaders/StaticMesh.vert",
-                            "./res/shaders/StaticMesh.frag"));
+            "./res/models/cube.obj");
   }
 };

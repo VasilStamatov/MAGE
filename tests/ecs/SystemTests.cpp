@@ -14,7 +14,7 @@ struct TestComponent3 : mage::ecs::Component
 {
 };
 
-class TestSystem : public mage::ecs::System
+class TestSystem : public mage::ecs::GameSystem
 {
 public:
   TestSystem()

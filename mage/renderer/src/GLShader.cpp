@@ -27,8 +27,7 @@ GLenum GetShaderType(ShaderType _type)
     case ShaderType::Fragment:
       return GL_FRAGMENT_SHADER;
   }
-
-  assert(false);
+  return 0;
 }
 
 // ------------------------------------------------------------------------------

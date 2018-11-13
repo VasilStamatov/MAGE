@@ -3,9 +3,8 @@
 #include "ComponentManager.h"
 #include "EntityHandle.h"
 #include "EntityManager.h"
-#include "SystemManager.h"
-
-#include "graphics/ShaderLibrary.h"
+#include "GameSystem.h"
+#include "RenderingSystem.h"
 
 #include <array>
 
@@ -44,15 +43,21 @@ public:
 
   // ------------------------------------------------------------------------------
 
-  void AddGameSystem(std::unique_ptr<System> _system);
+  void AddGameSystem(std::unique_ptr<GameSystem> _system);
   void TickGameSystems(float _deltaTime);
 
   // ------------------------------------------------------------------------------
 
-  void AddRenderingSystem(std::unique_ptr<System> _system);
+  void AddRenderingSystem(std::unique_ptr<RenderingSystem> _system);
   void TickRenderingSystems(float _deltaTime);
 
   // ------------------------------------------------------------------------------
+
+  std::uint32_t AddCamera(math::Mat4f _projectionMat);
+  graphics::Camera& GetCamera(std::uint32_t _id);
+
+  // ------------------------------------------------------------------------------
+
   template <typename ComponentType, typename... TArgs>
   ComponentType& AddComponent(Entity _entity, TArgs&&... _constructionArgs)
   {
@@ -64,11 +69,16 @@ public:
 
     m_entityManager.AddComponent<ComponentType>(_entity);
 
-    m_gameSystems.OnEntityComponentMaskChange(
-        _entity, m_entityManager.GetComponentMaskForEntity(_entity));
-
-    m_renderingSystems.OnEntityComponentMaskChange(
-        _entity, m_entityManager.GetComponentMaskForEntity(_entity));
+    for (auto&& system : m_gameSystems)
+    {
+      system->OnEntityComponentMaskChange(
+          _entity, m_entityManager.GetComponentMaskForEntity(_entity));
+    }
+    for (auto&& system : m_renderingSystems)
+    {
+      system->OnEntityComponentMaskChange(
+          _entity, m_entityManager.GetComponentMaskForEntity(_entity));
+    }
 
     return componentRef;
   }
@@ -84,11 +94,16 @@ public:
 
     m_entityManager.RemoveComponent<ComponentType>(_entity);
 
-    m_gameSystems.OnEntityComponentMaskChange(
-        _entity, m_entityManager.GetComponentMaskForEntity(_entity));
-
-    m_renderingSystems.OnEntityComponentMaskChange(
-        _entity, m_entityManager.GetComponentMaskForEntity(_entity));
+    for (auto&& system : m_gameSystems)
+    {
+      system->OnEntityComponentMaskChange(
+          _entity, m_entityManager.GetComponentMaskForEntity(_entity));
+    }
+    for (auto&& system : m_renderingSystems)
+    {
+      system->OnEntityComponentMaskChange(
+          _entity, m_entityManager.GetComponentMaskForEntity(_entity));
+    }
   }
 
   // ------------------------------------------------------------------------------
@@ -132,10 +147,11 @@ protected:
   std::array<std::unique_ptr<BaseComponentManager>, c_maxNumberOfComponentTypes>
       m_componentManagers;
   EntityManager m_entityManager;
-  SystemManager m_gameSystems;
-  SystemManager m_renderingSystems;
+  std::vector<std::unique_ptr<GameSystem>> m_gameSystems;
+  std::vector<std::unique_ptr<RenderingSystem>> m_renderingSystems;
 
-  graphics::ShaderLibrary m_shaderLib;
+  std::vector<graphics::Camera> m_cameras;
+
   messaging::MessageBus& m_applicationMessageBus;
 };
 

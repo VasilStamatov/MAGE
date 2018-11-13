@@ -117,6 +117,7 @@ void Application::InitializeSubSystems()
 
 void Application::ShutdownSubSystems()
 {
+  m_gameWorlds.clear();
   m_renderDevice.Shutdown();
   m_inputManager.Shutdown();
   m_video.Shutdown();

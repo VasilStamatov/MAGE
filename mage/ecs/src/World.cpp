@@ -32,16 +32,28 @@ void World::Initialize()
 
 void World::OnEnter()
 {
-  m_gameSystems.InitializeSystems(*this);
-  m_renderingSystems.InitializeSystems(*this);
+  for (auto&& system : m_gameSystems)
+  {
+    system->Initialize(*this);
+  }
+  for (auto&& system : m_renderingSystems)
+  {
+    system->Initialize(*this);
+  }
 }
 
 // ------------------------------------------------------------------------------
 
 void World::OnExit()
 {
-  m_gameSystems.UninitializeSystems(*this);
-  m_renderingSystems.UninitializeSystems(*this);
+  for (auto&& system : m_gameSystems)
+  {
+    system->Uninitialize(*this);
+  }
+  for (auto&& system : m_renderingSystems)
+  {
+    system->Uninitialize(*this);
+  }
 }
 
 // ------------------------------------------------------------------------------
@@ -67,41 +79,71 @@ void World::DestroyEntity(Entity& _entity)
 
   m_entityManager.ResetComponentMask(_entity);
 
-  m_gameSystems.OnEntityComponentMaskChange(
-      _entity, m_entityManager.GetComponentMaskForEntity(_entity));
-
-  m_renderingSystems.OnEntityComponentMaskChange(
-      _entity, m_entityManager.GetComponentMaskForEntity(_entity));
+  for (auto&& system : m_gameSystems)
+  {
+    system->OnEntityComponentMaskChange(
+        _entity, m_entityManager.GetComponentMaskForEntity(_entity));
+  }
+  for (auto&& system : m_renderingSystems)
+  {
+    system->OnEntityComponentMaskChange(
+        _entity, m_entityManager.GetComponentMaskForEntity(_entity));
+  }
 
   m_entityManager.RecycleEntity(_entity);
 }
 
 // ------------------------------------------------------------------------------
 
-void World::AddGameSystem(std::unique_ptr<System> _system)
+void World::AddGameSystem(std::unique_ptr<GameSystem> _system)
 {
-  m_gameSystems.AddSystem(std::move(_system));
+  m_gameSystems.push_back(std::move(_system));
 }
 
 // ------------------------------------------------------------------------------
 
 void World::TickGameSystems(float _deltaTime)
 {
-  m_gameSystems.TickSystems(*this, _deltaTime);
+  for (auto&& system : m_gameSystems)
+  {
+    system->Tick(*this, _deltaTime);
+  }
 }
 
 // ------------------------------------------------------------------------------
 
-void World::AddRenderingSystem(std::unique_ptr<System> _system)
+void World::AddRenderingSystem(std::unique_ptr<RenderingSystem> _system)
 {
-  m_renderingSystems.AddSystem(std::move(_system));
+  m_renderingSystems.push_back(std::move(_system));
 }
 
 // ------------------------------------------------------------------------------
 
 void World::TickRenderingSystems(float _deltaTime)
 {
-  m_renderingSystems.TickSystems(*this, _deltaTime);
+  for (auto&& system : m_renderingSystems)
+  {
+    for (const auto& camera : m_cameras)
+    {
+      system->Render(*this, camera, _deltaTime);
+    }
+  }
+}
+
+// ------------------------------------------------------------------------------
+
+std::uint32_t World::AddCamera(math::Mat4f _projectionMat)
+{
+  m_cameras.emplace_back(std::move(_projectionMat));
+  return m_cameras.size() - 1;
+}
+
+// ------------------------------------------------------------------------------
+
+graphics::Camera& World::GetCamera(std::uint32_t _id)
+{
+  assert(_id < m_cameras.size());
+  return m_cameras[_id];
 }
 
 // ------------------------------------------------------------------------------
