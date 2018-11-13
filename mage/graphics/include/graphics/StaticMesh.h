@@ -8,16 +8,19 @@ namespace mage
 namespace graphics
 {
 
-class Mesh
+class StaticMesh
 {
 public:
-  Mesh(const std::string& _filepath);
+  StaticMesh(const std::string& _filepath);
+
+  void Draw() const;
 
 private:
   void Load(const std::string& _filepath);
 
 private:
   GLVertexArray m_vertexArrayObject;
+  GLVertexBuffer m_vertexBuffer;
   GLIndexBuffer m_indexBufferObject;
 };
 

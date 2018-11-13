@@ -24,14 +24,7 @@ public:
   }
   void Initialize(mage::ecs::World& _world) override {}
   void Uninitialize(mage::ecs::World& _world) override {}
-  void Tick(mage::ecs::World& _world, float _deltaTime) override
-  {
-    for (auto&& entity : m_registeredEntities)
-    {
-      auto component = _world.GetComponent<TestComponent1>(entity);
-      _deltaTime = 1.0f;
-    }
-  }
+  void Tick(mage::ecs::World& _world, float _deltaTime) override {}
 
   bool IsEntityRegistered(mage::ecs::Entity _entity)
   {

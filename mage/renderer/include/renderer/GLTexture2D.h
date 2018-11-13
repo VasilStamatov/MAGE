@@ -62,6 +62,12 @@ public:
               TextureParameters _parameters = TextureParameters());
   ~GLTexture2D();
 
+  GLTexture2D(const GLTexture2D& _copy) = delete;
+  GLTexture2D(GLTexture2D&& _moved);
+
+  GLTexture2D& operator=(const GLTexture2D& _copy) = delete;
+  GLTexture2D& operator=(GLTexture2D&& _moved);
+
   // ------------------------------------------------------------------------------
 
   void Bind(std::uint32_t _slot) const;

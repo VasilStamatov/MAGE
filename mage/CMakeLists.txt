@@ -32,6 +32,7 @@ target_compile_features(mage PUBLIC cxx_std_17)
 target_include_directories(mage 
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/core/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ecs/include
+  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ecs_common/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/exceptions/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/filesystem/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/graphics/include
@@ -55,7 +56,7 @@ target_include_directories(mage
   PRIVATE ${GLEW_INCLUDE_DIR}
   PRIVATE ${GLFW_INCLUDE_DIR}
   PRIVATE ${STB_INCLUDE_DIR}
-  PUBLIC ${TINY_OBJ_LOADER_INCLUDE_DIR}
+  PRIVATE ${TINY_OBJ_LOADER_INCLUDE_DIR}
 )
 
 # Link dependency libraries to this target library

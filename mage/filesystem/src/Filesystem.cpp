@@ -28,13 +28,12 @@ std::string ResolveAbsolutePathForFile(const std::string& _file)
 
 // ------------------------------------------------------------------------------
 
-bool ReadFileToBuffer(const std::string& _filePath, std::string& _buffer)
+void ReadFileToBuffer(const std::string& _filePath, std::string& _buffer)
 {
   std::ifstream file(_filePath, std::ios::binary);
   if (file.fail())
   {
-    perror(_filePath.c_str());
-    return false;
+    throw RUNTIME_ERROR("Unable to find/open FILEPATH: " + _filePath);
   }
 
   // seek to the end
@@ -55,13 +54,11 @@ bool ReadFileToBuffer(const std::string& _filePath, std::string& _buffer)
 
   // close the file
   file.close();
-
-  return true;
 }
 
 // ------------------------------------------------------------------------------
 
-bool WriteBufferToFile(const std::string& _buffer, const std::string& _filePath)
+void WriteBufferToFile(const std::string& _buffer, const std::string& _filePath)
 {
   std::ofstream file(_filePath, std::ios::out | std::ios::app);
   if (file.fail())
@@ -79,8 +76,6 @@ bool WriteBufferToFile(const std::string& _buffer, const std::string& _filePath)
   file << _buffer;
 
   file.close();
-
-  return true;
 }
 
 // ------------------------------------------------------------------------------

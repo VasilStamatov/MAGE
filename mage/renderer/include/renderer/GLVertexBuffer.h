@@ -7,6 +7,8 @@ namespace mage
 namespace graphics
 {
 
+// ------------------------------------------------------------------------------
+
 // http://docs.gl/gl4/glBufferData
 enum class BufferUsage : std::uint32_t
 {
@@ -22,9 +24,11 @@ public:
   GLVertexBuffer(BufferUsage _usage);
   ~GLVertexBuffer();
 
-  // ------------------------------------------------------------------------------
+  GLVertexBuffer(const GLVertexBuffer& _copy) = delete;
+  GLVertexBuffer(GLVertexBuffer&& _moved);
 
-  void SetBufferLayout(GLBufferLayout _layout);
+  GLVertexBuffer& operator=(const GLVertexBuffer& _copy) = delete;
+  GLVertexBuffer& operator=(GLVertexBuffer&& _moved);
 
   // ------------------------------------------------------------------------------
 
@@ -50,9 +54,7 @@ public:
 
 private:
   std::uint32_t m_handle;
-  std::uint32_t m_sizeOfBufferDataInBytes;
   BufferUsage m_usage;
-  GLBufferLayout m_layout;
 };
 
 // ------------------------------------------------------------------------------

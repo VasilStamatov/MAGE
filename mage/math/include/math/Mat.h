@@ -287,8 +287,8 @@ template <typename T> Mat<T, 4> GenTranslationMat(const Vec<T, 3>& _translation)
 template <typename T>
 Mat<T, 4> GenRotationMat(T _radians, const Vec<T, 3>& _axis)
 {
-  const T c = std::cos(_radians);
-  const T s = std::sin(_radians);
+  const T c = Cos(_radians);
+  const T s = Sin(_radians);
 
   const Vec<T, 3> normalizedAxis = _axis.GetNormalized();
 
@@ -362,14 +362,12 @@ Mat<T, 4> GenOrthoMat(T _left, T _right, T _bottom, T _top, T _near, T _far)
 // ------------------------------------------------------------------------------
 
 template <typename T>
-Mat<T, 4> GenPerspectiveMat(T _FovRadians, T _aspectRatio, T _near, T _far)
+constexpr Mat<T, 4> GenPerspectiveMat(T _FovRadians, T _aspectRatio, T _near,
+                                      T _far)
 {
-  assert(std::abs(_aspectRatio - std::numeric_limits<T>::epsilon()) >
-         static_cast<T>(0.0));
-
   Mat<T, 4> rtn;
 
-  const T tanHalfFoV = std::tan(_FovRadians * static_cast<T>(0.5));
+  const T tanHalfFoV = Tan(_FovRadians * static_cast<T>(0.5));
 
   rtn[0] = static_cast<T>(1.0) / (_aspectRatio * tanHalfFoV);
   rtn[1 + 1 * 4] = static_cast<T>(1.0) / (tanHalfFoV);

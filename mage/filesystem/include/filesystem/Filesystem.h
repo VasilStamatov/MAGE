@@ -13,11 +13,11 @@ std::string ResolveAbsolutePathForFile(const std::string& _file);
 
 // ------------------------------------------------------------------------------
 
-bool ReadFileToBuffer(const std::string& _filePath, std::string& _buffer);
+void ReadFileToBuffer(const std::string& _filePath, std::string& _buffer);
 
 // ------------------------------------------------------------------------------
 
-bool WriteBufferToFile(const std::string& _buffer,
+void WriteBufferToFile(const std::string& _buffer,
                        const std::string& _filePath);
 
 // ------------------------------------------------------------------------------

@@ -34,32 +34,46 @@ std::uint32_t GetOpenGLBufferUsage(BufferUsage _usage)
 
 GLVertexBuffer::GLVertexBuffer(BufferUsage _usage)
     : m_handle(0)
-    , m_sizeOfBufferDataInBytes(0)
     , m_usage(_usage)
-    , m_layout()
 {
   GLCall(glGenBuffers(1, &m_handle));
 }
 
 // ------------------------------------------------------------------------------
 
-GLVertexBuffer::~GLVertexBuffer() { GLCall(glDeleteBuffers(1, &m_handle)); }
+GLVertexBuffer::~GLVertexBuffer()
+{
+  if (m_handle != 0)
+  {
+    GLCall(glDeleteBuffers(1, &m_handle));
+    m_handle = 0;
+  }
+}
 
 // ------------------------------------------------------------------------------
 
-void GLVertexBuffer::SetBufferLayout(GLBufferLayout _layout)
+GLVertexBuffer::GLVertexBuffer(GLVertexBuffer&& _moved)
+    : m_handle(std::move(_moved.m_handle))
+    , m_usage(std::move(_moved.m_usage))
 {
-  m_layout = std::move(_layout);
+  _moved.m_handle = 0;
+}
+
+// ------------------------------------------------------------------------------
+
+GLVertexBuffer& GLVertexBuffer::operator=(GLVertexBuffer&& _moved)
+{
+  m_handle = std::move(_moved.m_handle);
+  _moved.m_handle = 0;
+  return *this;
 }
 
 // ------------------------------------------------------------------------------
 
 void GLVertexBuffer::SetBufferData(std::uint32_t _sizeInBytes, const void* data)
 {
-  m_sizeOfBufferDataInBytes = _sizeInBytes;
-
   GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_handle));
-  GLCall(glBufferData(GL_ARRAY_BUFFER, m_sizeOfBufferDataInBytes, data,
+  GLCall(glBufferData(GL_ARRAY_BUFFER, _sizeInBytes, data,
                       GetOpenGLBufferUsage(m_usage)));
 }
 
@@ -68,7 +82,6 @@ void GLVertexBuffer::SetBufferData(std::uint32_t _sizeInBytes, const void* data)
 void GLVertexBuffer::Bind() const
 {
   GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_handle));
-  m_layout.Apply();
 }
 
 // ------------------------------------------------------------------------------

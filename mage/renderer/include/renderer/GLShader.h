@@ -26,6 +26,12 @@ public:
   GLShader(const std::string& _vsFilePath, const std::string& _fsFilePath);
   ~GLShader();
 
+  GLShader(const GLShader& _copy) = delete;
+  GLShader(GLShader&& _moved);
+
+  GLShader& operator=(const GLShader& _copy) = delete;
+  GLShader& operator=(GLShader&& _moved);
+
   // ------------------------------------------------------------------------------
 
   void Bind() const;

@@ -225,7 +225,7 @@ template <> inline long double Sqrt(long double _val)
 
 // ------------------------------------------------------------------------------
 
-inline bool IsPowerOfTwo(std::uint32_t _val)
+constexpr inline bool IsPowerOfTwo(std::uint32_t _val)
 {
   return (_val != 0u) && ((_val & (_val - 1u)) == 0u);
 }
@@ -269,14 +269,14 @@ constexpr inline T Max3(const T& _val1, const T& _val2, const T& _val3)
 
 // ------------------------------------------------------------------------------
 
-template <typename T> inline T ToDegrees(const T& _val)
+template <typename T> constexpr inline T ToDegrees(const T& _val)
 {
   return _val * c_radToDeg<T>;
 }
 
 // ------------------------------------------------------------------------------
 
-template <typename T> inline T ToRadians(const T& _val)
+template <typename T> constexpr inline T ToRadians(const T& _val)
 {
   return _val * c_degToRad<T>;
 }
@@ -284,7 +284,7 @@ template <typename T> inline T ToRadians(const T& _val)
 // ------------------------------------------------------------------------------
 
 template <typename T, typename U>
-inline T Lerp(const T& _src, const T& _dst, const U& _alpha)
+constexpr inline T Lerp(const T& _src, const T& _dst, const U& _alpha)
 {
   return static_cast<T>((_src * (static_cast<U>(1) - _alpha)) + _dst * _alpha);
 }
@@ -292,7 +292,7 @@ inline T Lerp(const T& _src, const T& _dst, const U& _alpha)
 // ------------------------------------------------------------------------------
 
 template <typename T>
-inline T Clamp(const T& _val, const T& _min, const T& _max)
+constexpr inline T Clamp(const T& _val, const T& _min, const T& _max)
 {
   if (_val > _max)
   {
@@ -310,11 +310,14 @@ inline T Clamp(const T& _val, const T& _min, const T& _max)
 
 // ------------------------------------------------------------------------------
 
-template <typename T> inline T Square(const T& _val) { return _val * _val; }
+template <typename T> constexpr inline T Square(const T& _val)
+{
+  return _val * _val;
+}
 
 // ------------------------------------------------------------------------------
 
-template <typename T> inline T Cube(const T& _val)
+template <typename T> constexpr inline T Cube(const T& _val)
 {
   return _val * _val * _val;
 }
@@ -322,7 +325,8 @@ template <typename T> inline T Cube(const T& _val)
 // ------------------------------------------------------------------------------
 
 template <typename T>
-inline bool Equals(const T& _val1, const T& _val2, const T& _errorMargin)
+constexpr inline bool Equals(const T& _val1, const T& _val2,
+                             const T& _errorMargin)
 {
   return Abs(_val1 - _val2) < _errorMargin;
 }

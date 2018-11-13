@@ -15,6 +15,12 @@ public:
   GLIndexBuffer();
   ~GLIndexBuffer();
 
+  GLIndexBuffer(const GLIndexBuffer& _copy) = delete;
+  GLIndexBuffer(GLIndexBuffer&& _moved);
+
+  GLIndexBuffer& operator=(const GLIndexBuffer& _copy) = delete;
+  GLIndexBuffer& operator=(GLIndexBuffer&& _moved);
+
   // ------------------------------------------------------------------------------
 
   void SetData(std::uint32_t* _data, std::uint32_t _count);

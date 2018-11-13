@@ -59,7 +59,31 @@ GLShader::GLShader(const std::string& _vsFilePath,
 
 // ------------------------------------------------------------------------------
 
-GLShader::~GLShader() { GLCall(glDeleteProgram(m_programHandle)); }
+GLShader::~GLShader()
+{
+  if (m_programHandle != 0)
+  {
+    GLCall(glDeleteProgram(m_programHandle));
+    m_programHandle = 0;
+  }
+}
+
+// ------------------------------------------------------------------------------
+
+GLShader::GLShader(GLShader&& _moved)
+    : m_programHandle(std::move(_moved.m_programHandle))
+{
+  _moved.m_programHandle = 0;
+}
+
+// ------------------------------------------------------------------------------
+
+GLShader& GLShader::operator=(GLShader&& _moved)
+{
+  m_programHandle = std::move(_moved.m_programHandle);
+  _moved.m_programHandle = 0;
+  return *this;
+}
 
 // ------------------------------------------------------------------------------
 
@@ -219,7 +243,7 @@ std::uint32_t GLShader::CompileShader(const char* _source, ShaderType _type)
 
     GLCall(glDeleteShader(shaderId));
 
-    std::printf("%s\n", &(errorLog[0]));
+    std::printf("Shader Compilation %s\n", &(errorLog[0]));
     throw RUNTIME_ERROR("Shader failed to compile");
   }
 
@@ -235,9 +259,9 @@ void GLShader::LinkShaders(std::uint32_t _vsShaderHandle,
   GLCall(glAttachShader(m_programHandle, _fsShaderHandle));
 
   GLCall(glBindAttribLocation(m_programHandle, 0, "in_Position"));
-  GLCall(glBindAttribLocation(m_programHandle, 1, "in_Color"));
-  GLCall(glBindAttribLocation(m_programHandle, 2, "in_TexCoord"));
-  GLCall(glBindAttribLocation(m_programHandle, 3, "in_Normal"));
+  GLCall(glBindAttribLocation(m_programHandle, 1, "in_Normal"));
+  GLCall(glBindAttribLocation(m_programHandle, 2, "in_Color"));
+  GLCall(glBindAttribLocation(m_programHandle, 3, "in_TexCoord"));
 
   GLCall(glLinkProgram(m_programHandle));
 
@@ -259,7 +283,7 @@ void GLShader::LinkShaders(std::uint32_t _vsShaderHandle,
     GLCall(glDeleteShader(_fsShaderHandle));
 
     // print the error log and quit
-    std::printf("%s\n", &errorLog[0]);
+    std::printf("Shader Linking %s\n", &errorLog[0]);
     throw RUNTIME_ERROR("Shaders failed to link!");
   }
 

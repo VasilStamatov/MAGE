@@ -46,16 +46,18 @@ public:
   // ------------------------------------------------------------------------------
 
   template <typename... TArgs>
-  void AddComponent(Entity _entity, TArgs&&... _constructionArgs)
+  ComponentType& AddComponent(Entity _entity, TArgs&&... _constructionArgs)
   {
     if (FindComponentInstanceByEntity(_entity) != m_components.end())
     {
       // component already exists for this entity
-      return;
+      return GetComponent(_entity);
     }
 
     m_components.emplace_back(
         _entity, ComponentType(std::forward<TArgs>(_constructionArgs)...));
+
+    return m_components.back().m_data;
   }
 
   // ------------------------------------------------------------------------------

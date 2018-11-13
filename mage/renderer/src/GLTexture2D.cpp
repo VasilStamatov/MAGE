@@ -103,7 +103,31 @@ GLTexture2D::GLTexture2D(const std::string& _filepath,
 
 // ------------------------------------------------------------------------------
 
-GLTexture2D::~GLTexture2D() { GLCall(glDeleteTextures(1, &m_handle)); }
+GLTexture2D::~GLTexture2D()
+{
+  if (m_handle != 0)
+  {
+    GLCall(glDeleteTextures(1, &m_handle));
+    m_handle = 0;
+  }
+}
+
+// ------------------------------------------------------------------------------
+
+GLTexture2D::GLTexture2D(GLTexture2D&& _moved)
+    : m_handle(std::move(_moved.m_handle))
+{
+  _moved.m_handle = 0;
+}
+
+// ------------------------------------------------------------------------------
+
+GLTexture2D& GLTexture2D::operator=(GLTexture2D&& _moved)
+{
+  m_handle = std::move(_moved.m_handle);
+  _moved.m_handle = 0;
+  return *this;
+}
 
 // ------------------------------------------------------------------------------
 
@@ -178,5 +202,5 @@ bool GLTexture2D::operator==(const GLTexture2D& _other) const
 
 // ------------------------------------------------------------------------------
 
-} // namespace renderer
+} // namespace graphics
 } // namespace mage

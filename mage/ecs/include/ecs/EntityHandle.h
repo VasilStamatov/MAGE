@@ -25,9 +25,9 @@ public:
   // ------------------------------------------------------------------------------
 
   template <typename ComponentType, typename... TArgs>
-  void AddComponent(TArgs&&... _constructionArgs)
+  ComponentType& AddComponent(TArgs&&... _constructionArgs)
   {
-    m_world.AddComponent<ComponentType>(
+    return m_world.AddComponent<ComponentType>(
         m_entity, std::forward<TArgs>(_constructionArgs)...);
   }
 

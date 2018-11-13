@@ -15,9 +15,16 @@ public:
   GLVertexArray();
   ~GLVertexArray();
 
+  GLVertexArray(const GLVertexArray& _copy) = delete;
+  GLVertexArray(GLVertexArray&& _moved);
+
+  GLVertexArray& operator=(const GLVertexArray& _copy) = delete;
+  GLVertexArray& operator=(GLVertexArray&& _moved);
+
   // ------------------------------------------------------------------------------
 
-  void AttachVertexBuffer(const GLVertexBuffer& _buffer) const;
+  void AttachVertexBuffer(const GLVertexBuffer& _buffer,
+                          const GLBufferLayout& _layout) const;
 
   // ------------------------------------------------------------------------------
 

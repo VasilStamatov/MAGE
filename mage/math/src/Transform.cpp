@@ -10,7 +10,7 @@ namespace math
 Transform::Transform()
     : m_rotation()
     , m_translation()
-    , m_scale()
+    , m_scale(1.0f)
 {
 }
 

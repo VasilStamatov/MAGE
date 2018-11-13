@@ -72,8 +72,8 @@ Video::Video(messaging::MessageBus& _messageBus)
 void Video::Initialize()
 {
   const std::string title = "Application Window";
-  const std::int32_t width = 500;
-  const std::int32_t height = 500;
+  const std::int32_t width = 1024;
+  const std::int32_t height = 576;
   const bool fullscreen = false;
   const bool borderless = false;
 

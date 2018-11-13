@@ -3,7 +3,7 @@
 #include "ecs/World.h"
 #include "input/InputManager.h"
 #include "messaging/MessageBus.h"
-#include "renderer/Renderer.h"
+#include "renderer/RenderDevice.h"
 #include "video/Video.h"
 
 namespace mage
@@ -67,6 +67,10 @@ private:
 
   // ------------------------------------------------------------------------------
 
+  void Render(float _interpolation);
+
+  // ------------------------------------------------------------------------------
+
   void ExitAppEventHandler(OnExitAppEvent* _event);
   void SetTransitionNextEventHandler(OnSetTransitionNextEvent* _event);
   void SetTransitionPrevEventHandler(OnSetTransitionPreviousEvent* _event);
@@ -84,7 +88,7 @@ protected:
 private:
   video::Video m_video;
   input::InputManager m_inputManager;
-  graphics::Renderer m_renderer;
+  graphics::RenderDevice m_renderDevice;
 
   std::int32_t m_currentWorldId;
   std::int32_t m_nextWorldId;

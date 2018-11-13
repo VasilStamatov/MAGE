@@ -252,7 +252,7 @@ public:
       allElementsAreHigherOrEqual &= m_elements[i] >= _rhs.m_elements[i];
     }
 
-    return allElementsAreHigher;
+    return allElementsAreHigherOrEqual;
   }
 
   // ------------------------------------------------------------------------------

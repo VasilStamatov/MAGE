@@ -1,4 +1,4 @@
-#include "graphics/Mesh.h"
+#include "graphics/StaticMesh.h"
 
 #include "exceptions/RuntimeError.h"
 #include "math/Vec.h"
@@ -21,14 +21,29 @@ struct Vertex
   }
 
   math::Vec3f m_pos;
+  math::Vec3f m_normal;
   math::Vec3f m_color;
   math::Vec2f m_texCoords;
-  math::Vec3f m_normal;
 };
 
-Mesh::Mesh(const std::string& _filepath) { Load(_filepath); }
+StaticMesh::StaticMesh(const std::string& _filepath)
+    : m_vertexArrayObject()
+    , m_vertexBuffer(BufferUsage::StaticDraw)
+    , m_indexBufferObject()
+{
+  Load(_filepath);
+}
 
-void Mesh::Load(const std::string& _filepath)
+void StaticMesh::Draw() const
+{
+  m_vertexArrayObject.Bind();
+  m_indexBufferObject.Bind();
+  m_vertexArrayObject.Draw(m_indexBufferObject.GetCount());
+  m_indexBufferObject.Unbind();
+  m_vertexArrayObject.Unbind();
+}
+
+void StaticMesh::Load(const std::string& _filepath)
 {
   tinyobj::attrib_t attrib;
   std::vector<tinyobj::shape_t> shapes;
@@ -80,19 +95,17 @@ void Mesh::Load(const std::string& _filepath)
     }
   }
 
-  GLVertexBuffer vertexBuffer(BufferUsage::StaticDraw);
-  vertexBuffer.SetBufferData(sizeof(Vertex) * vertices.size(), vertices.data());
+  m_vertexBuffer.SetBufferData(sizeof(Vertex) * vertices.size(),
+                               vertices.data());
 
-  // setup the buffer layout (vertex structure must be compliant with shader)
+  // setup the vao data layout (must be compliant with shader input attributes)
   GLBufferLayout bufferLayout;
   bufferLayout.PushFloat(3, false); // first 3 floats (m_position)
+  bufferLayout.PushFloat(3, false); // last 3 floats (m_normals)
   bufferLayout.PushFloat(3, false); // second 3 floats (m_color)
   bufferLayout.PushFloat(2, false); // next 2 floats (m_texCoords)
-  bufferLayout.PushFloat(3, false); // last 3 floats (m_normals)
 
-  vertexBuffer.SetBufferLayout(bufferLayout);
-
-  m_vertexArrayObject.AttachVertexBuffer(vertexBuffer);
+  m_vertexArrayObject.AttachVertexBuffer(m_vertexBuffer, bufferLayout);
 
   m_indexBufferObject.SetData(indices.data(), indices.size());
 }

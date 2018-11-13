@@ -23,7 +23,7 @@ Application::Application()
     , m_gameWorlds()
     , m_video(m_applicationMessageBus)
     , m_inputManager(m_applicationMessageBus)
-    , m_renderer()
+    , m_renderDevice()
     , m_currentWorldId(0)
     , m_nextWorldId(-1)
     , m_state(ApplicationState::Running)
@@ -74,7 +74,9 @@ void Application::Run(int argc, const char** argv)
         (timer.GetElapsedMilli() + c_desiredFrameTimeMS - millisElapsed) /
         c_desiredFrameTimeMS;
 
-    // Render(interpolation);
+    m_gameWorlds[m_currentWorldId]->TickRenderingSystems(interpolation);
+
+    Render(interpolation);
 
     m_video.SwapBuffers();
   }
@@ -108,14 +110,14 @@ void Application::InitializeSubSystems()
 {
   m_video.Initialize();
   m_inputManager.Initialize();
-  m_renderer.Initialize();
+  m_renderDevice.Initialize();
 }
 
 // ------------------------------------------------------------------------------
 
 void Application::ShutdownSubSystems()
 {
-  m_renderer.Shutdown();
+  m_renderDevice.Shutdown();
   m_inputManager.Shutdown();
   m_video.Shutdown();
 }
@@ -127,7 +129,7 @@ void Application::Update(float _deltaTime)
   switch (m_state)
   {
     case ApplicationState::Running:
-      m_gameWorlds[m_currentWorldId]->TickSystems(_deltaTime);
+      m_gameWorlds[m_currentWorldId]->TickGameSystems(_deltaTime);
       break;
 
     case ApplicationState::Transitioning:
@@ -142,6 +144,15 @@ void Application::Update(float _deltaTime)
     default:
       break;
   }
+}
+
+// ------------------------------------------------------------------------------
+
+void Application::Render(float _interpolation)
+{
+  m_renderDevice.ClearBuffer(graphics::RendererBufferType::Color_Depth);
+  m_renderDevice.SetViewport(0, 0, 1024, 576);
+  m_gameWorlds[m_currentWorldId]->TickRenderingSystems(_interpolation);
 }
 
 // ------------------------------------------------------------------------------

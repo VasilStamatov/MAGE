@@ -2,6 +2,8 @@
 
 #include "renderer/GLCommon.h"
 
+#include <type_traits>
+
 #include <glew.h>
 
 namespace mage
@@ -9,10 +11,44 @@ namespace mage
 namespace graphics
 {
 
+// ------------------------------------------------------------------------------
+
 GLIndexBuffer::GLIndexBuffer()
     : m_count(0)
 {
   GLCall(glGenBuffers(1, &m_handle));
+}
+
+// ------------------------------------------------------------------------------
+
+GLIndexBuffer::~GLIndexBuffer()
+{
+  if (m_handle != 0)
+  {
+    GLCall(glDeleteBuffers(1, &m_handle));
+    m_handle = 0;
+  }
+}
+
+// ------------------------------------------------------------------------------
+
+GLIndexBuffer::GLIndexBuffer(GLIndexBuffer&& _moved)
+    : m_handle(std::move(_moved.m_handle))
+    , m_count(std::move(_moved.m_count))
+{
+  _moved.m_handle = 0;
+  _moved.m_count = 0;
+}
+
+// ------------------------------------------------------------------------------
+
+GLIndexBuffer& GLIndexBuffer::operator=(GLIndexBuffer&& _moved)
+{
+  m_handle = std::move(_moved.m_handle);
+  m_count = std::move(_moved.m_count);
+  _moved.m_handle = 0;
+  _moved.m_count = 0;
+  return *this;
 }
 
 // ------------------------------------------------------------------------------
@@ -34,10 +70,6 @@ void GLIndexBuffer::SetData(std::uint16_t* _data, std::uint32_t _count)
   GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_count * sizeof(uint16_t),
                       _data, GL_STATIC_DRAW));
 }
-
-// ------------------------------------------------------------------------------
-
-GLIndexBuffer::~GLIndexBuffer() { GLCall(glDeleteBuffers(1, &m_handle)); }
 
 // ------------------------------------------------------------------------------
 
