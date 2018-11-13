@@ -1,7 +1,7 @@
 #include "renderer/GLTexture2D.h"
 
+#include "exceptions/RuntimeError.h"
 #include "renderer/GLCommon.h"
-#include <exceptions/RuntimeError.h>
 
 #include <glew.h>
 #include <stb_image.h>

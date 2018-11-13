@@ -10,18 +10,26 @@ namespace mage
 namespace graphics
 {
 
+// ------------------------------------------------------------------------------
+
 class Texture2DLibrary
 {
 public:
   Texture2DLibrary();
   ~Texture2DLibrary();
 
+  // ------------------------------------------------------------------------------
+
   std::shared_ptr<GLTexture2D>
   Get(const std::string& _filepath,
       TextureParameters _parameters = TextureParameters());
 
+  // ------------------------------------------------------------------------------
+
   void Clear();
   void Refresh();
+
+  // ------------------------------------------------------------------------------
 
 private:
   struct Texture2DResourceInstance
@@ -33,8 +41,12 @@ private:
     std::uint32_t m_hashedName;
   };
 
+  // ------------------------------------------------------------------------------
+
   std::vector<Texture2DResourceInstance> m_loadedTextures;
 };
+
+// ------------------------------------------------------------------------------
 
 } // namespace graphics
 } // namespace mage

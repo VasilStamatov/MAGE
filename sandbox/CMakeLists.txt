@@ -1,15 +1,20 @@
 project(sandbox)
 
-add_executable(sandbox 
-  src/SandboxApplication.h
-  src/SandboxComponents.h
-  src/SandboxSystems.h
-  src/SandboxWorld.h
-
-  src/main.cpp
+# LOAD the header files
+file(GLOB_RECURSE HEADERS
+  ${CMAKE_CURRENT_SOURCE_DIR}/*.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp
 )
 
-target_include_directories(sandbox PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+# LOAD the source files
+file(GLOB_RECURSE SOURCES
+  ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/*.c
+)
+
+add_executable(sandbox ${HEADERS} ${SOURCES})
+
+target_include_directories(sandbox PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/demo/include)
 
 target_link_libraries(sandbox PRIVATE mage)
 

@@ -168,6 +168,8 @@ void Application::SetTransitionNextEventHandler(
   TransitionToNextWorld();
 }
 
+// ------------------------------------------------------------------------------
+
 void Application::SetTransitionPrevEventHandler(
     OnSetTransitionPreviousEvent* _event)
 {

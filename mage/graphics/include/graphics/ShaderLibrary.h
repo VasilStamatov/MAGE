@@ -10,17 +10,25 @@ namespace mage
 namespace graphics
 {
 
+// ------------------------------------------------------------------------------
+
 class ShaderLibrary
 {
 public:
   ShaderLibrary();
   ~ShaderLibrary();
 
+  // ------------------------------------------------------------------------------
+
   std::shared_ptr<GLShader> Get(const std::string& _vsFilePath,
                                 const std::string& _fsFilePath);
 
+  // ------------------------------------------------------------------------------
+
   void Clear();
   void Refresh();
+
+  // ------------------------------------------------------------------------------
 
 private:
   struct ShaderResourceInstance
@@ -32,8 +40,12 @@ private:
     std::uint32_t m_hashedName;
   };
 
+  // ------------------------------------------------------------------------------
+
   std::vector<ShaderResourceInstance> m_loadedShaders;
 };
+
+// ------------------------------------------------------------------------------
 
 } // namespace graphics
 } // namespace mage

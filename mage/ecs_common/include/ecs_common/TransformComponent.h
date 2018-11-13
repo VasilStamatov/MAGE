@@ -10,10 +10,14 @@ namespace ecs
 namespace common
 {
 
+// ------------------------------------------------------------------------------
+
 struct TransformComponent : public ecs::Component
 {
   math::Transform m_transform;
 };
+
+// ------------------------------------------------------------------------------
 
 } // namespace common
 } // namespace ecs

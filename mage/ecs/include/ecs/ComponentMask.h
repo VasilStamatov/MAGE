@@ -34,15 +34,8 @@ public:
 
   void Reset() noexcept;
 
-  // ------------------------------------------------------------------------------
-
   bool MatchesMask(ComponentMask _mask) const noexcept;
-
-  // ------------------------------------------------------------------------------
-
   bool HasComponent(std::uint32_t _componentTypeId) const noexcept;
-
-  // ------------------------------------------------------------------------------
 
 private:
   std::uint32_t m_componentBitMask;

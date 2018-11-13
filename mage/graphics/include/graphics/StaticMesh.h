@@ -8,6 +8,8 @@ namespace mage
 namespace graphics
 {
 
+// ------------------------------------------------------------------------------
+
 class StaticMesh
 {
 public:
@@ -23,6 +25,8 @@ private:
   GLVertexBuffer m_vertexBuffer;
   GLIndexBuffer m_indexBufferObject;
 };
+
+// ------------------------------------------------------------------------------
 
 } // namespace graphics
 } // namespace mage

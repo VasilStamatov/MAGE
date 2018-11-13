@@ -40,7 +40,7 @@ public:
   ComponentManager()
       : m_components()
   {
-    m_components.reserve(1024);
+    m_components.reserve(64);
   }
 
   // ------------------------------------------------------------------------------
@@ -96,14 +96,14 @@ private:
 private:
   struct ComponentInstance
   {
-    Entity m_ownerEntity;
-    ComponentType m_data;
-
     ComponentInstance(Entity _entity, ComponentType _data)
         : m_ownerEntity(_entity)
         , m_data(std::move(_data))
     {
     }
+
+    Entity m_ownerEntity;
+    ComponentType m_data;
   };
 
   // ------------------------------------------------------------------------------

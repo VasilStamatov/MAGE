@@ -8,10 +8,16 @@ namespace mage
 namespace ecs
 {
 
+// ------------------------------------------------------------------------------
+
 class World;
+
+// ------------------------------------------------------------------------------
 
 namespace common
 {
+
+// ------------------------------------------------------------------------------
 
 struct CameraComponent : public ecs::Component
 {
@@ -19,6 +25,8 @@ struct CameraComponent : public ecs::Component
 
   std::uint32_t m_cameraId;
 };
+
+// ------------------------------------------------------------------------------
 
 } // namespace common
 } // namespace ecs

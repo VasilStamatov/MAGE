@@ -7,12 +7,18 @@ namespace mage
 namespace graphics
 {
 
+// ------------------------------------------------------------------------------
+
 ShaderLibrary::ShaderLibrary()
     : m_loadedShaders()
 {
 }
 
+// ------------------------------------------------------------------------------
+
 ShaderLibrary::~ShaderLibrary() {}
+
+// ------------------------------------------------------------------------------
 
 std::shared_ptr<GLShader> ShaderLibrary::Get(const std::string& _vsFilePath,
                                              const std::string& _fsFilePath)
@@ -37,7 +43,11 @@ std::shared_ptr<GLShader> ShaderLibrary::Get(const std::string& _vsFilePath,
   return m_loadedShaders.back().m_shader;
 }
 
+// ------------------------------------------------------------------------------
+
 void ShaderLibrary::Clear() { m_loadedShaders.clear(); }
+
+// ------------------------------------------------------------------------------
 
 void ShaderLibrary::Refresh()
 {
@@ -49,12 +59,16 @@ void ShaderLibrary::Refresh()
       m_loadedShaders.end());
 }
 
+// ------------------------------------------------------------------------------
+
 ShaderLibrary::ShaderResourceInstance::ShaderResourceInstance(
     std::shared_ptr<GLShader>&& _shader, std::uint32_t _hashedName)
     : m_shader(std::move(_shader))
     , m_hashedName(_hashedName)
 {
 }
+
+// ------------------------------------------------------------------------------
 
 } // namespace graphics
 } // namespace mage

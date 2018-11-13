@@ -7,10 +7,14 @@ namespace mage
 namespace graphics
 {
 
+// ------------------------------------------------------------------------------
+
 Texture2DLibrary::Texture2DLibrary()
     : m_loadedTextures()
 {
 }
+
+// ------------------------------------------------------------------------------
 
 Texture2DLibrary::~Texture2DLibrary() {}
 
@@ -39,7 +43,11 @@ Texture2DLibrary::Get(const std::string& _filepath,
   return m_loadedTextures.back().m_texture;
 }
 
+// ------------------------------------------------------------------------------
+
 void Texture2DLibrary::Clear() { m_loadedTextures.clear(); }
+
+// ------------------------------------------------------------------------------
 
 void Texture2DLibrary::Refresh()
 {
@@ -51,12 +59,16 @@ void Texture2DLibrary::Refresh()
       m_loadedTextures.end());
 }
 
+// ------------------------------------------------------------------------------
+
 Texture2DLibrary::Texture2DResourceInstance::Texture2DResourceInstance(
     std::shared_ptr<GLTexture2D>&& _texture, std::uint32_t _hashedName)
     : m_texture(std::move(_texture))
     , m_hashedName(_hashedName)
 {
 }
+
+// ------------------------------------------------------------------------------
 
 } // namespace graphics
 } // namespace mage

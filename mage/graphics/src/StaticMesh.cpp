@@ -12,6 +12,8 @@ namespace mage
 namespace graphics
 {
 
+// ------------------------------------------------------------------------------
+
 struct Vertex
 {
   bool operator==(const Vertex& _other) const
@@ -26,6 +28,8 @@ struct Vertex
   math::Vec2f m_texCoords;
 };
 
+// ------------------------------------------------------------------------------
+
 StaticMesh::StaticMesh(const std::string& _filepath)
     : m_vertexArrayObject()
     , m_vertexBuffer(BufferUsage::StaticDraw)
@@ -33,6 +37,8 @@ StaticMesh::StaticMesh(const std::string& _filepath)
 {
   Load(_filepath);
 }
+
+// ------------------------------------------------------------------------------
 
 void StaticMesh::Draw() const
 {
@@ -42,6 +48,8 @@ void StaticMesh::Draw() const
   m_indexBufferObject.Unbind();
   m_vertexArrayObject.Unbind();
 }
+
+// ------------------------------------------------------------------------------
 
 void StaticMesh::Load(const std::string& _filepath)
 {
@@ -109,6 +117,8 @@ void StaticMesh::Load(const std::string& _filepath)
 
   m_indexBufferObject.SetData(indices.data(), indices.size());
 }
+
+// ------------------------------------------------------------------------------
 
 } // namespace graphics
 } // namespace mage

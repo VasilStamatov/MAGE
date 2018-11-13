@@ -1,17 +1,15 @@
 
 #include <iostream>
 
-#include "SandboxApplication.h"
+#include "demo/DemoApplication.h"
 
 #include <exceptions/RuntimeError.h>
-#include <filesystem/Filesystem.h>
 
 int main(int argc, const char** argv)
 {
   try
   {
-    std::unique_ptr<SandboxApplication> app =
-        std::make_unique<SandboxApplication>();
+    std::unique_ptr<DemoApplication> app = std::make_unique<DemoApplication>();
     app->Run(argc, argv);
   }
   catch (const mage::exceptions::RuntimeError& e)
