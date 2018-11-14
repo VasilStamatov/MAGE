@@ -223,13 +223,16 @@ void KeyCallback(GLFWwindow* _handle, int _key, int _scancode, int _action,
   InputManager* inputManager =
       static_cast<InputManager*>(glfwGetWindowUserPointer(_handle));
 
-  if (_action != GLFW_RELEASE)
+  switch (_action)
   {
-    inputManager->OnKeyDown(GetInputKeyFromGLFWKey(_key));
-  }
-  else
-  {
-    inputManager->OnKeyUp(GetInputKeyFromGLFWKey(_key));
+    case GLFW_PRESS:
+      inputManager->OnKeyDown(GetInputKeyFromGLFWKey(_key));
+      break;
+    case GLFW_RELEASE:
+      inputManager->OnKeyUp(GetInputKeyFromGLFWKey(_key));
+      break;
+    default:
+      break;
   }
 }
 
