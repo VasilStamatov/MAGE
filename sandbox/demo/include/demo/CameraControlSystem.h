@@ -32,4 +32,6 @@ private:
 
   float m_pitch = 0.0f;
   float m_yaw = 0.0f;
+
+  bool m_escapePressed = false;
 };

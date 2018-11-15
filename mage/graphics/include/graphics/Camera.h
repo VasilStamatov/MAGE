@@ -1,6 +1,6 @@
 #pragma once
 
-#include "math/Transform.h"
+#include "math/Quat.h"
 
 namespace mage
 {
@@ -29,6 +29,8 @@ public:
   math::Mat4f GetProjection() const;
   math::Mat4f GetView() const;
 
+  // ------------------------------------------------------------------------------
+
   math::Vec3f GetRightAxis() const;
   math::Vec3f GetUpAxis() const;
   math::Vec3f GetForwardAxis() const;
@@ -37,7 +39,8 @@ public:
 
 private:
   math::Mat4f m_projection;
-  math::Transform m_transform;
+  math::Quatf m_orientation;
+  math::Vec3f m_position;
 };
 
 // ------------------------------------------------------------------------------

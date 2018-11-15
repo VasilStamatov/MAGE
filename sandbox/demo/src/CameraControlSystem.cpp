@@ -1,5 +1,6 @@
 #include "demo/CameraControlSystem.h"
 
+#include <core/Application.h>
 #include <ecs/World.h>
 #include <ecs_common/CameraComponent.h>
 #include <input/InputManager.h>
@@ -28,6 +29,12 @@ void CameraControlSystem::Initialize(mage::ecs::World& _world)
 
 void CameraControlSystem::Tick(mage::ecs::World& _world, float _deltaTime)
 {
+  if (m_escapePressed)
+  {
+    mage::core::OnExitAppEvent exitApp;
+    _world.GetApplicationMessageBus().Broadcast(&exitApp);
+  }
+
   for (auto&& entity : m_registeredEntities)
   {
     auto& cameraComponent =
@@ -40,16 +47,11 @@ void CameraControlSystem::Tick(mage::ecs::World& _world, float _deltaTime)
 
     camera.SetRotation(orientation);
 
-    // mage::math::Vec3f forwardDir = mage::math::Quatf::RotateVec(
-    //     orientation, mage::math::Vec3f(0.0f, 0.0f, -1.0f));
-    // mage::math::Vec3f rightDir = mage::math::Quatf::RotateVec(
-    //     orientation, mage::math::Vec3f(1.0f, 0.0f, 0.0f));
-    // mage::math::Vec3f upDir = mage::math::Vec3f(0.0f, 1.0f, 0.0f);
+    mage::math::Vec3f accumMove = (camera.GetForwardAxis() * m_forward) +
+                                  (camera.GetRightAxis() * m_right) +
+                                  (camera.GetUpAxis() * m_up);
 
-    // mage::math::Vec3f accumMove =
-    //     (forwardDir * m_forward) + (rightDir * m_right) + (upDir * m_up);
-
-    camera.Translate(mage::math::Vec3f(m_right, m_up, -m_forward));
+    camera.Translate(accumMove);
   }
 }
 
@@ -80,6 +82,11 @@ void CameraControlSystem::OnKeyPress(mage::input::OnKeyPress* _event)
   if (_event->m_key == mage::input::InputKey::E)
   {
     m_up = mage::math::Clamp(m_up + 1.0f, -1.0f, 1.0f);
+  }
+
+  if (_event->m_key == mage::input::InputKey::Escape)
+  {
+    m_escapePressed = true;
   }
 }
 
@@ -122,13 +129,13 @@ void CameraControlSystem::OnMouseMove(
     m_lastMouseY = _event->m_yPos;
   }
 
-  float deltaXMouse = 0.002f * (_event->m_xPos - m_lastMouseX);
-  float deltaYMouse = 0.002f * (_event->m_yPos - m_lastMouseY);
+  float deltaXMouse = 0.005f * (_event->m_xPos - m_lastMouseX);
+  float deltaYMouse = 0.005f * (_event->m_yPos - m_lastMouseY);
 
   m_yaw += deltaXMouse;
   m_pitch += deltaYMouse;
 
-  printf("[m_yaw: %.3f] [m_pitch: %.3f]\n", m_yaw, m_pitch);
+  // printf("[m_yaw: %.3f] [m_pitch: %.3f]\n", m_yaw, m_pitch);
 
   m_lastMouseX = _event->m_xPos;
   m_lastMouseY = _event->m_yPos;
