@@ -178,12 +178,29 @@ public:
 
   static Vec<T, 3> RotateVec(const Quat& _quat, const Vec<T, 3>& _vec)
   {
-    const Vec<T, 3> axesOfRotation(_quat.m_elements[0], _quat.m_elements[1],
-                                   _quat.m_elements[2]);
-    const Vec<T, 3> uv(Cross(axesOfRotation, _vec));
-    const Vec<T, 3> uuv(Cross(axesOfRotation, uv));
+    // const Vec<T, 3> axesOfRotation(_quat.m_elements[0], _quat.m_elements[1],
+    //                                _quat.m_elements[2]);
+    // const Vec<T, 3> uv(Cross(axesOfRotation, _vec));
+    // const Vec<T, 3> uuv(Cross(axesOfRotation, uv));
 
-    return _vec + ((uv * _quat.m_elements[3]) + uuv) * static_cast<T>(2.0);
+    // return _vec + ((uv * _quat.m_elements[3]) + uuv) * static_cast<T>(2.0);
+
+    const float tmpX =
+        (((_quat[3] * _vec[0]) + (_quat[1] * _vec[2])) - (_quat[2] * _vec[1]));
+    const float tmpY =
+        (((_quat[3] * _vec[1]) + (_quat[2] * _vec[0])) - (_quat[0] * _vec[2]));
+    const float tmpZ =
+        (((_quat[3] * _vec[2]) + (_quat[0] * _vec[1])) - (_quat[1] * _vec[0]));
+    const float tmpW =
+        (((_quat[0] * _vec[0]) + (_quat[1] * _vec[1])) + (_quat[2] * _vec[2]));
+
+    return Vec<T, 3>(
+        ((((tmpW * _quat[0]) + (tmpX * _quat[3])) - (tmpY * _quat[2])) +
+         (tmpZ * _quat[1])),
+        ((((tmpW * _quat[1]) + (tmpY * _quat[3])) - (tmpZ * _quat[0])) +
+         (tmpX * _quat[2])),
+        ((((tmpW * _quat[2]) + (tmpZ * _quat[3])) - (tmpX * _quat[1])) +
+         (tmpY * _quat[0])));
   }
 
   // ------------------------------------------------------------------------------
@@ -226,7 +243,8 @@ public:
                 (((m_elements[3] * _rhs.m_elements[3]) -
                   (m_elements[0] * _rhs.m_elements[0])) -
                  (m_elements[1] * _rhs.m_elements[1])) -
-                    (m_elements[2] * _rhs.m_elements[2]));
+                    (m_elements[2] * _rhs.m_elements[2]))
+        .GetNormalized();
   }
 
   // ------------------------------------------------------------------------------

@@ -142,9 +142,6 @@ void Video::Initialize()
   {
     CreateWindowedWindow(std::move(title), width, height);
   }
-
-  OnWindowCreated windowCreatedEvent(*m_window);
-  m_applicationMessageBus.Broadcast(&windowCreatedEvent);
 }
 
 // ------------------------------------------------------------------------------
@@ -157,11 +154,7 @@ void Video::Shutdown()
 
 // ------------------------------------------------------------------------------
 
-void Video::SwapBuffers()
-{
-  glfwPollEvents();
-  m_window->SwapBuffers();
-}
+void Video::SwapBuffers() { m_window->SwapBuffers(); }
 
 // ------------------------------------------------------------------------------
 
@@ -172,8 +165,8 @@ bool Video::ShouldClose() const { return m_window->ShouldClose(); }
 void Video::CreateFullscreenWindow(std::string _title, GLFWmonitor* _monitor,
                                    std::int32_t _width, std::int32_t _height)
 {
-  m_window =
-      std::make_unique<Window>(std::move(_title), _monitor, _width, _height);
+  m_window = std::make_unique<Window>(
+      m_applicationMessageBus, std::move(_title), _monitor, _width, _height);
 }
 
 // ------------------------------------------------------------------------------
@@ -181,7 +174,8 @@ void Video::CreateFullscreenWindow(std::string _title, GLFWmonitor* _monitor,
 void Video::CreateBorderlessFullscreenWindow(std::string _title,
                                              GLFWmonitor* _monitor)
 {
-  m_window = std::make_unique<Window>(std::move(_title), _monitor);
+  m_window = std::make_unique<Window>(m_applicationMessageBus,
+                                      std::move(_title), _monitor);
 }
 
 // ------------------------------------------------------------------------------
@@ -189,7 +183,8 @@ void Video::CreateBorderlessFullscreenWindow(std::string _title,
 void Video::CreateWindowedWindow(std::string _title, std::int32_t _width,
                                  std::int32_t _height)
 {
-  m_window = std::make_unique<Window>(std::move(_title), _width, _height);
+  m_window = std::make_unique<Window>(m_applicationMessageBus,
+                                      std::move(_title), _width, _height);
 }
 
 // ------------------------------------------------------------------------------

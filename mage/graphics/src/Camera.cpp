@@ -15,14 +15,6 @@ Camera::Camera(math::Mat4f _projection)
 
 // ------------------------------------------------------------------------------
 
-math::Mat4f Camera::GetProjection() const { return m_projection; }
-
-// ------------------------------------------------------------------------------
-
-math::Mat4f Camera::GetView() const { return m_transform.ToMatrix(); }
-
-// ------------------------------------------------------------------------------
-
 void Camera::Translate(const math::Vec3f& _translation)
 {
   m_transform.Translate(_translation * -1);
@@ -30,9 +22,9 @@ void Camera::Translate(const math::Vec3f& _translation)
 
 // ------------------------------------------------------------------------------
 
-void Camera::Rotate(const math::Vec3f& _axis, float _angleRad)
+void Camera::Rotate(const math::Quatf& _rotation)
 {
-  m_transform.Rotate(_axis, _angleRad * -1);
+  m_transform.Rotate(_rotation);
 }
 
 // ------------------------------------------------------------------------------
@@ -44,9 +36,32 @@ void Camera::SetPosition(const math::Vec3f _position)
 
 // ------------------------------------------------------------------------------
 
-void Camera::SetRotation(const math::Vec3f& _axis, float _angleRad)
+void Camera::SetRotation(const math::Quatf& _orientation)
 {
-  m_transform.SetRotation(math::Quatf::GenRotation(_angleRad * -1, _axis));
+  m_transform.SetRotation(_orientation);
+}
+
+// ------------------------------------------------------------------------------
+
+math::Mat4f Camera::GetProjection() const { return m_projection; }
+
+// ------------------------------------------------------------------------------
+
+math::Mat4f Camera::GetView() const { return m_transform.ToMatrix(); }
+
+// ------------------------------------------------------------------------------
+
+math::Vec3f Camera::GetRightAxis() const { return m_transform.GetRightAxis(); }
+
+// ------------------------------------------------------------------------------
+
+math::Vec3f Camera::GetUpAxis() const { return m_transform.GetUpAxis(); }
+
+// ------------------------------------------------------------------------------
+
+math::Vec3f Camera::GetForwardAxis() const
+{
+  return m_transform.GetForwardAxis();
 }
 
 // ------------------------------------------------------------------------------

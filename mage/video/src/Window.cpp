@@ -1,5 +1,7 @@
 #include "video/Window.h"
 
+#include "messaging/MessageBus.h"
+
 #include <glfw3.h>
 
 namespace mage
@@ -9,107 +11,78 @@ namespace video
 
 // ------------------------------------------------------------------------------
 
-Window::Frame::Frame(std::int32_t _left, std::int32_t _top, std::int32_t _right,
-                     std::int32_t _bottom)
-    : m_left(_left)
-    , m_top(_top)
-    , m_right(_right)
-    , m_bottom(_bottom)
+// ----- Window Callbacks -----
+namespace
 {
+
+void FramebufferSizeCallback(GLFWwindow* _handle, int _width, int _height)
+{
+  auto* appMessageBus =
+      static_cast<messaging::MessageBus*>(glfwGetWindowUserPointer(_handle));
+
+  OnWindowFramebufferResized framebufferResizedEvent{_width, _height};
+  appMessageBus->Broadcast(&framebufferResizedEvent);
 }
+
+} // namespace
 
 // ------------------------------------------------------------------------------
 
-Window::ScreenPosition::ScreenPosition(std::int32_t _x, std::int32_t _y)
-    : m_x(_x)
-    , m_y(_y)
+Window::Window(messaging::MessageBus& _appMessageBus, std::string _title,
+               GLFWmonitor* _monitor, std::int32_t _width, std::int32_t _height)
+    : m_handle(nullptr)
 {
-}
+  m_handle =
+      glfwCreateWindow(_width, _height, _title.c_str(), _monitor, nullptr);
 
-// ------------------------------------------------------------------------------
+  glfwSetWindowUserPointer(m_handle, &_appMessageBus);
 
-Window::ScreenSize::ScreenSize(std::int32_t _width, std::int32_t _height)
-    : m_width(_width)
-    , m_height(_height)
-{
-}
-
-// ------------------------------------------------------------------------------
-
-Window::Window(std::string _title, GLFWmonitor* _monitor, std::int32_t _width,
-               std::int32_t _height)
-    : m_title(std::move(_title))
-    , m_position(0, 0)
-    , m_size(_width, _height)
-    , m_handle(nullptr)
-{
-  m_handle = glfwCreateWindow(m_size.m_width, m_size.m_height, m_title.c_str(),
-                              _monitor, nullptr);
-
-  glfwGetWindowPos(m_handle, &m_position.m_x, &m_position.m_y);
-
-  // glfwSetFramebufferSizeCallback(m_handle, &FramebufferSizeCallback);
-  // glfwSetWindowCloseCallback(m_handle, &WindowCloseCallback);
-  // glfwSetWindowFocusCallback(m_handle, &WindowFocusCallback);
-  // glfwSetWindowIconifyCallback(m_handle, &WindowIconifyCallback);
-  // glfwSetWindowPosCallback(m_handle, &WindowPositionCallback);
-  // glfwSetWindowRefreshCallback(m_handle, &WindowRefreshCallback);
-  // glfwSetWindowSizeCallback(m_handle, &WindowResizeCallback);
+  glfwSetFramebufferSizeCallback(m_handle, &FramebufferSizeCallback);
 
   MakeCurrent();
+
+  OnWindowCreated windowCreatedEvent{*this};
+  _appMessageBus.Broadcast(&windowCreatedEvent);
 }
 
 // ------------------------------------------------------------------------------
 
-Window::Window(std::string _title, GLFWmonitor* _monitor)
-    : m_title(std::move(_title))
-    , m_position(0, 0)
-    , m_size(0, 0)
-    , m_handle(nullptr)
+Window::Window(messaging::MessageBus& _appMessageBus, std::string _title,
+               GLFWmonitor* _monitor)
+    : m_handle(nullptr)
 {
-  auto* videMode = glfwGetVideoMode(_monitor);
+  auto* videoMode = glfwGetVideoMode(_monitor);
 
-  m_size.m_width = videMode->width;
-  m_size.m_height = videMode->height;
+  m_handle = glfwCreateWindow(videoMode->width, videoMode->height,
+                              _title.c_str(), _monitor, nullptr);
 
-  m_handle = glfwCreateWindow(m_size.m_width, m_size.m_height, m_title.c_str(),
-                              _monitor, nullptr);
+  glfwSetWindowUserPointer(m_handle, &_appMessageBus);
 
-  glfwGetWindowPos(m_handle, &m_position.m_x, &m_position.m_y);
-
-  // glfwSetFramebufferSizeCallback(m_handle, &FramebufferSizeCallback);
-  // glfwSetWindowCloseCallback(m_handle, &WindowCloseCallback);
-  // glfwSetWindowFocusCallback(m_handle, &WindowFocusCallback);
-  // glfwSetWindowIconifyCallback(m_handle, &WindowIconifyCallback);
-  // glfwSetWindowPosCallback(m_handle, &WindowPositionCallback);
-  // glfwSetWindowRefreshCallback(m_handle, &WindowRefreshCallback);
-  // glfwSetWindowSizeCallback(m_handle, &WindowResizeCallback);
+  glfwSetFramebufferSizeCallback(m_handle, &FramebufferSizeCallback);
 
   MakeCurrent();
+
+  OnWindowCreated windowCreatedEvent{*this};
+  _appMessageBus.Broadcast(&windowCreatedEvent);
 }
 
 // ------------------------------------------------------------------------------
 
-Window::Window(std::string _title, std::int32_t _width, std::int32_t _height)
-    : m_title(std::move(_title))
-    , m_position(0, 0)
-    , m_size(_width, _height)
-    , m_handle(nullptr)
+Window::Window(messaging::MessageBus& _appMessageBus, std::string _title,
+               std::int32_t _width, std::int32_t _height)
+    : m_handle(nullptr)
 {
-  m_handle = glfwCreateWindow(m_size.m_width, m_size.m_height, m_title.c_str(),
-                              nullptr, nullptr);
+  m_handle =
+      glfwCreateWindow(_width, _height, _title.c_str(), nullptr, nullptr);
 
-  glfwGetWindowPos(m_handle, &m_position.m_x, &m_position.m_y);
+  glfwSetWindowUserPointer(m_handle, &_appMessageBus);
 
-  // glfwSetFramebufferSizeCallback(m_handle, &FramebufferSizeCallback);
-  // glfwSetWindowCloseCallback(m_handle, &WindowCloseCallback);
-  // glfwSetWindowFocusCallback(m_handle, &WindowFocusCallback);
-  // glfwSetWindowIconifyCallback(m_handle, &WindowIconifyCallback);
-  // glfwSetWindowPosCallback(m_handle, &WindowPositionCallback);
-  // glfwSetWindowRefreshCallback(m_handle, &WindowRefreshCallback);
-  // glfwSetWindowSizeCallback(m_handle, &WindowResizeCallback);
+  glfwSetFramebufferSizeCallback(m_handle, &FramebufferSizeCallback);
 
   MakeCurrent();
+
+  OnWindowCreated windowCreatedEvent{*this};
+  _appMessageBus.Broadcast(&windowCreatedEvent);
 }
 
 // ------------------------------------------------------------------------------
@@ -125,38 +98,6 @@ Window::~Window()
 
 // ------------------------------------------------------------------------------
 
-Window::Window(Window&& _other)
-    : m_title(std::move(_other.m_title))
-    , m_position(std::move(_other.m_position))
-    , m_size(std::move(_other.m_size))
-    , m_handle(_other.m_handle)
-{
-  _other.m_handle = nullptr;
-
-  MakeCurrent();
-}
-
-// ------------------------------------------------------------------------------
-
-Window& Window::operator=(Window&& _rhs)
-{
-  if (m_handle)
-  {
-    glfwDestroyWindow(m_handle);
-  }
-
-  m_title = std::move(_rhs.m_title);
-  m_position = std::move(_rhs.m_position);
-  m_size = std::move(_rhs.m_size);
-  m_handle = std::move(_rhs.m_handle);
-
-  MakeCurrent();
-
-  return *this;
-}
-
-// ------------------------------------------------------------------------------
-
 void Window::MakeCurrent() { glfwMakeContextCurrent(m_handle); }
 
 // ------------------------------------------------------------------------------
@@ -166,36 +107,6 @@ void Window::SwapBuffers() { glfwSwapBuffers(m_handle); }
 // ------------------------------------------------------------------------------
 
 bool Window::ShouldClose() const { return glfwWindowShouldClose(m_handle); }
-
-// ------------------------------------------------------------------------------
-
-Window::ScreenPosition Window::GetPosition() const { return m_position; }
-
-// ------------------------------------------------------------------------------
-
-Window::ScreenSize Window::GetSize() const { return m_size; }
-
-// ------------------------------------------------------------------------------
-
-Window::ScreenSize Window::GetFramebufferSize() const
-{
-  ScreenSize framebufferSize(0, 0);
-  glfwGetFramebufferSize(m_handle, &framebufferSize.m_width,
-                         &framebufferSize.m_height);
-  return framebufferSize;
-}
-
-// ------------------------------------------------------------------------------
-
-Window::Frame Window::GetFrame() const
-{
-  Frame result(0, 0, 0, 0);
-
-  glfwGetWindowFrameSize(m_handle, &result.m_left, &result.m_top,
-                         &result.m_right, &result.m_bottom);
-
-  return result;
-}
 
 // ------------------------------------------------------------------------------
 

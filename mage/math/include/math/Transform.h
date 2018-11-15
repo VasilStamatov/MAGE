@@ -16,8 +16,7 @@ public:
 
   // ------------------------------------------------------------------------------
 
-  void Rotate(const Vec3f& _eulerAnglesRadians);
-  void Rotate(const Vec3f& _axis, float _angleRad);
+  void Rotate(const Quatf& _amountToRotation);
   void Translate(const Vec3f& _translation);
   void Scale(const Vec3f& _scalingToAdd);
 
@@ -35,9 +34,9 @@ public:
 
   // ------------------------------------------------------------------------------
 
-  Vec3f GetRightAxis() const noexcept;
-  Vec3f GetUpAxis() const noexcept;
-  Vec3f GetForwardAxis() const noexcept;
+  Vec3f GetRightAxis() const;
+  Vec3f GetUpAxis() const;
+  Vec3f GetForwardAxis() const;
 
   // ------------------------------------------------------------------------------
 

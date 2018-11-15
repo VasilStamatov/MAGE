@@ -16,20 +16,9 @@ Transform::Transform()
 
 // ------------------------------------------------------------------------------
 
-void Transform::Rotate(const Vec3f& _eulerAnglesRadians)
+void Transform::Rotate(const Quatf& _amountToRotation)
 {
-  Quatf toRotate(_eulerAnglesRadians);
-
-  m_rotation = (toRotate * m_rotation).GetNormalized();
-}
-
-// ------------------------------------------------------------------------------
-
-void Transform::Rotate(const Vec3f& _axis, float _angleRad)
-{
-  Quatf toRotate = Quatf::GenRotation(_angleRad, _axis);
-
-  m_rotation = (toRotate * m_rotation).GetNormalized();
+  m_rotation = _amountToRotation * m_rotation;
 }
 
 // ------------------------------------------------------------------------------
@@ -72,21 +61,21 @@ Vec3f Transform::GetScale() const { return m_scale; }
 
 // ------------------------------------------------------------------------------
 
-Vec3f Transform::GetRightAxis() const noexcept
+Vec3f Transform::GetRightAxis() const
 {
   return Quatf::RotateVec(m_rotation, Vec3f(1.0f, 0.0f, 0.0f));
 }
 
 // ------------------------------------------------------------------------------
 
-Vec3f Transform::GetUpAxis() const noexcept
+Vec3f Transform::GetUpAxis() const
 {
   return Quatf::RotateVec(m_rotation, Vec3f(0.0f, 1.0f, 0.0f));
 }
 
 // ------------------------------------------------------------------------------
 
-Vec3f Transform::GetForwardAxis() const noexcept
+Vec3f Transform::GetForwardAxis() const
 {
   return Quatf::RotateVec(m_rotation, Vec3f(0.0f, 0.0f, -1.0f));
 }
@@ -95,23 +84,23 @@ Vec3f Transform::GetForwardAxis() const noexcept
 
 Mat4f Transform::ToMatrix() const
 {
-  float x2 = m_rotation[0] + m_rotation[0];
-  float y2 = m_rotation[1] + m_rotation[1];
-  float z2 = m_rotation[2] + m_rotation[2];
+  const float x2 = m_rotation[0] + m_rotation[0];
+  const float y2 = m_rotation[1] + m_rotation[1];
+  const float z2 = m_rotation[2] + m_rotation[2];
 
-  float xx2 = m_rotation[0] * x2;
-  float yy2 = m_rotation[1] * y2;
-  float zz2 = m_rotation[2] * z2;
-  float xy2 = m_rotation[0] * y2;
-  float yz2 = m_rotation[1] * z2;
-  float xz2 = m_rotation[0] * z2;
-  float xw2 = m_rotation[3] * x2;
-  float yw2 = m_rotation[3] * y2;
-  float zw2 = m_rotation[3] * z2;
+  const float xx2 = m_rotation[0] * x2;
+  const float yy2 = m_rotation[1] * y2;
+  const float zz2 = m_rotation[2] * z2;
+  const float xy2 = m_rotation[0] * y2;
+  const float yz2 = m_rotation[1] * z2;
+  const float xz2 = m_rotation[0] * z2;
+  const float xw2 = m_rotation[3] * x2;
+  const float yw2 = m_rotation[3] * y2;
+  const float zw2 = m_rotation[3] * z2;
 
-  float s0 = m_scale[0];
-  float s1 = m_scale[1];
-  float s2 = m_scale[2];
+  const float s0 = m_scale[0];
+  const float s1 = m_scale[1];
+  const float s2 = m_scale[2];
 
   float matrixData[16] = {(1.0f - (yy2 + zz2)) * s0,
                           (xy2 - zw2) * s1,

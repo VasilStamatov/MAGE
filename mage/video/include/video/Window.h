@@ -8,6 +8,12 @@ struct GLFWwindow;
 
 namespace mage
 {
+
+namespace messaging
+{
+class MessageBus;
+}
+
 namespace video
 {
 
@@ -16,48 +22,14 @@ namespace video
 class Window
 {
 public:
-  // ------------------------------------------------------------------------------
+  Window(messaging::MessageBus& _appMessageBus, std::string _title,
+         GLFWmonitor* _monitor, std::int32_t _width, std::int32_t _height);
 
-  struct Frame
-  {
-    Frame(std::int32_t _left, std::int32_t _top, std::int32_t _right,
-          std::int32_t _bottom);
+  Window(messaging::MessageBus& _appMessageBus, std::string _title,
+         GLFWmonitor* _monitor);
 
-    std::int32_t m_left;
-    std::int32_t m_top;
-    std::int32_t m_right;
-    std::int32_t m_bottom;
-  };
-
-  // ------------------------------------------------------------------------------
-
-  struct ScreenPosition
-  {
-    ScreenPosition(std::int32_t _x, std::int32_t _y);
-
-    std::int32_t m_x;
-    std::int32_t m_y;
-  };
-
-  // ------------------------------------------------------------------------------
-
-  struct ScreenSize
-  {
-    ScreenSize(std::int32_t _width, std::int32_t _height);
-
-    std::int32_t m_width;
-    std::int32_t m_height;
-  };
-
-  // ------------------------------------------------------------------------------
-
-public:
-  // ------------------------------------------------------------------------------
-
-  Window(std::string _title, GLFWmonitor* _monitor, std::int32_t _width,
-         std::int32_t _height);
-  Window(std::string _title, GLFWmonitor* _monitor);
-  Window(std::string _title, std::int32_t _width, std::int32_t _height);
+  Window(messaging::MessageBus& _appMessageBus, std::string _title,
+         std::int32_t _width, std::int32_t _height);
 
   // ------------------------------------------------------------------------------
 
@@ -70,8 +42,8 @@ public:
 
   // ------------------------------------------------------------------------------
 
-  Window(Window&& _other);
-  Window& operator=(Window&& _rhs);
+  Window(Window&& _other) = delete;
+  Window& operator=(Window&& _rhs) = delete;
 
   // ------------------------------------------------------------------------------
 
@@ -81,10 +53,6 @@ public:
   // ------------------------------------------------------------------------------
 
   bool ShouldClose() const;
-  ScreenPosition GetPosition() const;
-  ScreenSize GetSize() const;
-  ScreenSize GetFramebufferSize() const;
-  Frame GetFrame() const;
 
   // ------------------------------------------------------------------------------
 
@@ -93,12 +61,22 @@ public:
   // ------------------------------------------------------------------------------
 
 private:
-  std::string m_title;
-
-  ScreenPosition m_position;
-  ScreenSize m_size;
-
   GLFWwindow* m_handle;
+};
+
+// ------------------------------------------------------------------------------
+
+// ----- Events ------
+
+struct OnWindowFramebufferResized
+{
+  std::int32_t m_width;
+  std::int32_t m_height;
+};
+
+struct OnWindowCreated
+{
+  Window& m_window;
 };
 
 // ------------------------------------------------------------------------------

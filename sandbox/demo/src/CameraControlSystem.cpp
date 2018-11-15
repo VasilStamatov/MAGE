@@ -15,59 +15,115 @@ void CameraControlSystem::Initialize(mage::ecs::World& _world)
 {
   auto& appMsgBus = _world.GetApplicationMessageBus();
 
-  for (auto&& entity : m_registeredEntities)
-  {
-    auto& CameraControls = _world.GetComponent<CameraControlComponent>(entity);
-
-    mage::input::AddBindingEvent forwardBind;
-
-    forwardBind.m_key = mage::input::InputKey::W;
-    forwardBind.m_callback = [&CameraControls]() {
-      CameraControls.m_forward = -1.0f;
-    };
-
-    mage::input::AddBindingEvent backwardBind;
-
-    backwardBind.m_key = mage::input::InputKey::S;
-    backwardBind.m_callback = [&CameraControls]() {
-      CameraControls.m_forward = 1.0f;
-    };
-
-    mage::input::AddBindingEvent rightBind;
-
-    rightBind.m_key = mage::input::InputKey::D;
-    rightBind.m_callback = [&CameraControls]() {
-      CameraControls.m_right = 1.0f;
-    };
-
-    mage::input::AddBindingEvent leftBind;
-
-    leftBind.m_key = mage::input::InputKey::A;
-    leftBind.m_callback = [&CameraControls]() {
-      CameraControls.m_right = -1.0f;
-    };
-
-    appMsgBus.Broadcast(&forwardBind);
-    appMsgBus.Broadcast(&backwardBind);
-    appMsgBus.Broadcast(&rightBind);
-    appMsgBus.Broadcast(&leftBind);
-  }
+  appMsgBus.Subscribe(this, &CameraControlSystem::OnKeyPress);
+  appMsgBus.Subscribe(this, &CameraControlSystem::OnKeyRelease);
+  appMsgBus.Subscribe(this, &CameraControlSystem::OnMouseMove);
 }
 
 void CameraControlSystem::Tick(mage::ecs::World& _world, float _deltaTime)
 {
   for (auto&& entity : m_registeredEntities)
   {
-    auto& cameraControlComponent =
-        _world.GetComponent<CameraControlComponent>(entity);
     auto& cameraComponent =
         _world.GetComponent<mage::ecs::common::CameraComponent>(entity);
 
-    _world.GetCamera(cameraComponent.m_cameraId)
-        .Translate(mage::math::Vec3f(cameraControlComponent.m_right, 0.0f,
-                                     cameraControlComponent.m_forward));
+    auto& camera = _world.GetCamera(cameraComponent.m_cameraId);
 
-    cameraControlComponent.m_forward = 0;
-    cameraControlComponent.m_right = 0;
+    mage::math::Quatf orientation = mage::math::Quatf::GenRotationX(m_pitch) *
+                                    mage::math::Quatf::GenRotationY(m_yaw);
+
+    camera.SetRotation(orientation);
+
+    // mage::math::Vec3f forwardDir = mage::math::Quatf::RotateVec(
+    //     orientation, mage::math::Vec3f(0.0f, 0.0f, -1.0f));
+    // mage::math::Vec3f rightDir = mage::math::Quatf::RotateVec(
+    //     orientation, mage::math::Vec3f(1.0f, 0.0f, 0.0f));
+    // mage::math::Vec3f upDir = mage::math::Vec3f(0.0f, 1.0f, 0.0f);
+
+    // mage::math::Vec3f accumMove =
+    //     (forwardDir * m_forward) + (rightDir * m_right) + (upDir * m_up);
+
+    camera.Translate(mage::math::Vec3f(m_right, m_up, -m_forward));
   }
+}
+
+void CameraControlSystem::OnKeyPress(mage::input::OnKeyPress* _event)
+{
+  if (_event->m_key == mage::input::InputKey::W)
+  {
+    m_forward = mage::math::Clamp(m_forward + 1.0f, -1.0f, 1.0f);
+  }
+  if (_event->m_key == mage::input::InputKey::S)
+  {
+    m_forward = mage::math::Clamp(m_forward - 1.0f, -1.0f, 1.0f);
+  }
+
+  if (_event->m_key == mage::input::InputKey::A)
+  {
+    m_right = mage::math::Clamp(m_right - 1.0f, -1.0f, 1.0f);
+  }
+  if (_event->m_key == mage::input::InputKey::D)
+  {
+    m_right = mage::math::Clamp(m_right + 1.0f, -1.0f, 1.0f);
+  }
+
+  if (_event->m_key == mage::input::InputKey::Q)
+  {
+    m_up = mage::math::Clamp(m_up - 1.0f, -1.0f, 1.0f);
+  }
+  if (_event->m_key == mage::input::InputKey::E)
+  {
+    m_up = mage::math::Clamp(m_up + 1.0f, -1.0f, 1.0f);
+  }
+}
+
+void CameraControlSystem::OnKeyRelease(mage::input::OnKeyRelease* _event)
+{
+  if (_event->m_key == mage::input::InputKey::W)
+  {
+    m_forward = mage::math::Clamp(m_forward - 1.0f, -1.0f, 1.0f);
+  }
+  if (_event->m_key == mage::input::InputKey::S)
+  {
+    m_forward = mage::math::Clamp(m_forward + 1.0f, -1.0f, 1.0f);
+  }
+
+  if (_event->m_key == mage::input::InputKey::A)
+  {
+    m_right = mage::math::Clamp(m_right + 1.0f, -1.0f, 1.0f);
+  }
+  if (_event->m_key == mage::input::InputKey::D)
+  {
+    m_right = mage::math::Clamp(m_right - 1.0f, -1.0f, 1.0f);
+  }
+
+  if (_event->m_key == mage::input::InputKey::Q)
+  {
+    m_up = mage::math::Clamp(m_up + 1.0f, -1.0f, 1.0f);
+  }
+  if (_event->m_key == mage::input::InputKey::E)
+  {
+    m_up = mage::math::Clamp(m_up - 1.0f, -1.0f, 1.0f);
+  }
+}
+
+void CameraControlSystem::OnMouseMove(
+    mage::input::CursorPositionMovedEvent* _event)
+{
+  if (m_lastMouseX == 0.0f && m_lastMouseY == 0.0f)
+  {
+    m_lastMouseX = _event->m_xPos;
+    m_lastMouseY = _event->m_yPos;
+  }
+
+  float deltaXMouse = 0.002f * (_event->m_xPos - m_lastMouseX);
+  float deltaYMouse = 0.002f * (_event->m_yPos - m_lastMouseY);
+
+  m_yaw += deltaXMouse;
+  m_pitch += deltaYMouse;
+
+  // printf("[m_yaw: %.3f] [m_pitch: %.3f]\n", m_yaw, m_pitch);
+
+  m_lastMouseX = _event->m_xPos;
+  m_lastMouseY = _event->m_yPos;
 }

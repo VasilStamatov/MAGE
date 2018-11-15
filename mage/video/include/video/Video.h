@@ -4,25 +4,8 @@
 
 namespace mage
 {
-
-namespace messaging
-{
-class MessageBus;
-}
-
 namespace video
 {
-
-// ------------------------------------------------------------------------------
-
-struct OnWindowCreated
-{
-  OnWindowCreated(Window& _window)
-      : m_window(_window)
-  {
-  }
-  Window& m_window;
-};
 
 // ------------------------------------------------------------------------------
 

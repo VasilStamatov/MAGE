@@ -1,7 +1,7 @@
 #include "input/InputManager.h"
 
 #include "messaging/MessageBus.h"
-#include "video/Video.h"
+#include "video/Window.h"
 
 #include <glfw3.h>
 
@@ -220,58 +220,63 @@ InputKey GetInputKeyFromGLFWKey(int _key)
 void KeyCallback(GLFWwindow* _handle, int _key, int _scancode, int _action,
                  int _modifiers)
 {
-  InputManager* inputManager =
-      static_cast<InputManager*>(glfwGetWindowUserPointer(_handle));
+  auto* appMessageBus =
+      static_cast<messaging::MessageBus*>(glfwGetWindowUserPointer(_handle));
 
-  switch (_action)
+  if (_action == GLFW_PRESS)
   {
-    case GLFW_PRESS:
-      inputManager->OnKeyDown(GetInputKeyFromGLFWKey(_key));
-      break;
-    case GLFW_RELEASE:
-      inputManager->OnKeyUp(GetInputKeyFromGLFWKey(_key));
-      break;
-    default:
-      break;
+    OnKeyPress keyPressEvent{GetInputKeyFromGLFWKey(_key)};
+    appMessageBus->Broadcast(&keyPressEvent);
+  }
+  else if (_action == GLFW_RELEASE)
+  {
+    OnKeyRelease keyReleaseEvent{GetInputKeyFromGLFWKey(_key)};
+    appMessageBus->Broadcast(&keyReleaseEvent);
   }
 }
 
 // ------------------------------------------------------------------------------
 
-void MouseButtonCallback(GLFWwindow* _window, int _button, int _action,
+void MouseButtonCallback(GLFWwindow* _handle, int _button, int _action,
                          int _modifiers)
 {
-  InputManager* inputManager =
-      static_cast<InputManager*>(glfwGetWindowUserPointer(_window));
+  auto* appMessageBus =
+      static_cast<messaging::MessageBus*>(glfwGetWindowUserPointer(_handle));
 
-  if (_action != GLFW_RELEASE)
+  if (_action == GLFW_PRESS)
   {
-    inputManager->OnKeyDown(GetInputKeyFromGLFWKey(_button));
+    OnKeyPress keyPressEvent{GetInputKeyFromGLFWKey(_button)};
+    appMessageBus->Broadcast(&keyPressEvent);
   }
-  else
+  else if (_action == GLFW_RELEASE)
   {
-    inputManager->OnKeyUp(GetInputKeyFromGLFWKey(_button));
+    OnKeyRelease keyReleaseEvent{GetInputKeyFromGLFWKey(_button)};
+    appMessageBus->Broadcast(&keyReleaseEvent);
   }
 }
 
 // ------------------------------------------------------------------------------
 
-void CursorPositionCallback(GLFWwindow* _window, double _posX, double _posY)
+void CursorPositionCallback(GLFWwindow* _handle, double _posX, double _posY)
 {
-  InputManager* inputManager =
-      static_cast<InputManager*>(glfwGetWindowUserPointer(_window));
+  auto* appMessageBus =
+      static_cast<messaging::MessageBus*>(glfwGetWindowUserPointer(_handle));
 
-  inputManager->OnCursorMoved(_posX, _posY);
+  CursorPositionMovedEvent event{static_cast<float>(_posX),
+                                 static_cast<float>(_posY)};
+  appMessageBus->Broadcast(&event);
 }
 
 // ------------------------------------------------------------------------------
 
-void MouseScrollCallback(GLFWwindow* _window, double _xOffset, double _yOffset)
+void MouseScrollCallback(GLFWwindow* _handle, double _xOffset, double _yOffset)
 {
-  InputManager* inputManager =
-      static_cast<InputManager*>(glfwGetWindowUserPointer(_window));
+  auto* appMessageBus =
+      static_cast<messaging::MessageBus*>(glfwGetWindowUserPointer(_handle));
 
-  inputManager->OnMouseScrollChanged(_xOffset, _yOffset);
+  MouseScrollChangedEvent event{static_cast<float>(_xOffset),
+                                static_cast<float>(_yOffset)};
+  appMessageBus->Broadcast(&event);
 }
 
 // ------------------------------------------------------------------------------
@@ -281,12 +286,8 @@ void MouseScrollCallback(GLFWwindow* _window, double _xOffset, double _yOffset)
 // ------------------------------------------------------------------------------
 
 InputManager::InputManager(messaging::MessageBus& _messageBus)
-    : m_bindings()
-    , m_pressedKeys()
-    , m_applicationMessageBus(_messageBus)
 {
-  m_applicationMessageBus.Subscribe(this, &InputManager::OnWindowCreatedEvent);
-  m_applicationMessageBus.Subscribe(this, &InputManager::OnAddBindingEvent);
+  _messageBus.Subscribe(this, &InputManager::OnWindowCreatedEvent);
 }
 
 // ------------------------------------------------------------------------------
@@ -299,80 +300,18 @@ void InputManager::Shutdown() {}
 
 // ------------------------------------------------------------------------------
 
-void InputManager::Update()
-{
-  glfwPollEvents();
-
-  for (auto&& pressedKeyIndex : m_pressedKeys)
-  {
-    m_bindings[pressedKeyIndex]();
-  }
-}
+void InputManager::Update() { glfwPollEvents(); }
 
 // ------------------------------------------------------------------------------
 
 void InputManager::OnWindowCreatedEvent(video::OnWindowCreated* _event)
 {
   GLFWwindow* handle = _event->m_window.GetHandle();
-  glfwSetWindowUserPointer(handle, this);
 
   glfwSetKeyCallback(handle, KeyCallback);
   glfwSetMouseButtonCallback(handle, MouseButtonCallback);
   glfwSetScrollCallback(handle, MouseScrollCallback);
   glfwSetCursorPosCallback(handle, CursorPositionCallback);
-}
-
-// ------------------------------------------------------------------------------
-
-void InputManager::OnAddBindingEvent(AddBindingEvent* _event)
-{
-  m_bindings[(int)_event->m_key] = _event->m_callback;
-}
-
-// ------------------------------------------------------------------------------
-
-void InputManager::OnKeyDown(InputKey _key)
-{
-  auto iterator =
-      std::find(m_pressedKeys.begin(), m_pressedKeys.end(), (int)_key);
-
-  if (iterator == m_pressedKeys.end())
-  {
-    // only add if there is a callback bound
-    if (m_bindings[(int)_key] != nullptr)
-    {
-      m_pressedKeys.push_back((int)_key);
-    }
-  }
-}
-
-// ------------------------------------------------------------------------------
-
-void InputManager::OnKeyUp(InputKey _key)
-{
-  auto iterator =
-      std::find(m_pressedKeys.begin(), m_pressedKeys.end(), (int)_key);
-
-  if (iterator != m_pressedKeys.end())
-  {
-    m_pressedKeys.erase(iterator);
-  }
-}
-
-// ------------------------------------------------------------------------------
-
-void InputManager::OnCursorMoved(double _xPos, double _yPos)
-{
-  CursorPositionMovedEvent event{_xPos, _yPos};
-  m_applicationMessageBus.Broadcast(&event);
-}
-
-// ------------------------------------------------------------------------------
-
-void InputManager::OnMouseScrollChanged(double _xOffset, double _yOffset)
-{
-  MouseScrollChangedEvent event{_xOffset, _yOffset};
-  m_applicationMessageBus.Broadcast(&event);
 }
 
 // ------------------------------------------------------------------------------
