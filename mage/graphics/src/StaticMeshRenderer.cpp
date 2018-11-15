@@ -10,8 +10,10 @@ namespace graphics
 
 // ------------------------------------------------------------------------------
 
-StaticMeshComponent::StaticMeshComponent(const std::string& _meshFile)
+StaticMeshComponent::StaticMeshComponent(const std::string& _meshFile,
+                                         const std::string& _materialFile)
     : m_mesh(_meshFile)
+    , m_material(_materialFile)
 {
 }
 
@@ -41,7 +43,9 @@ void StaticMeshRenderer::Render(mage::ecs::World& _world, const Camera& _camera,
 
     m_shader.SetUniformMat4("in_Model", transform.m_transform.ToMatrix());
 
+    staticMesh.m_material.Bind();
     staticMesh.m_mesh.Draw();
+    staticMesh.m_material.Unbind();
   }
 }
 

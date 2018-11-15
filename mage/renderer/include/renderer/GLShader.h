@@ -42,29 +42,29 @@ public:
 
   // ------------------------------------------------------------------------------
 
-  void SetUniform1f(const std::string& _name, float _value);
+  void SetUniform1f(const std::string& _name, float _value) const;
   void SetUniform1fv(const std::string& _name, float* _value,
-                     std::int32_t _count);
-  void SetUniform1i(const std::string& _name, std::int32_t _value);
+                     std::int32_t _count) const;
+  void SetUniform1i(const std::string& _name, std::int32_t _value) const;
   void SetUniform1iv(const std::string& _name, std::int32_t* _value,
-                     std::int32_t _count);
-  void SetUniform2f(const std::string& _name, const math::Vec2f& _vector);
-  void SetUniform3f(const std::string& _name, const math::Vec3f& _vector);
-  void SetUniform4f(const std::string& _name, const math::Vec4f& _vector);
-  void SetUniformMat4(const std::string& _name, math::Mat4f& _matrix);
+                     std::int32_t _count) const;
+  void SetUniform2f(const std::string& _name, const math::Vec2f& _vector) const;
+  void SetUniform3f(const std::string& _name, const math::Vec3f& _vector) const;
+  void SetUniform4f(const std::string& _name, const math::Vec4f& _vector) const;
+  void SetUniformMat4(const std::string& _name, math::Mat4f _matrix) const;
 
   // ------------------------------------------------------------------------------
 
-  void SetUniform1f(std::uint32_t _location, float _value);
+  void SetUniform1f(std::uint32_t _location, float _value) const;
   void SetUniform1fv(std::uint32_t _location, float* _value,
-                     std::int32_t _count);
-  void SetUniform1i(std::uint32_t _location, std::int32_t _value);
+                     std::int32_t _count) const;
+  void SetUniform1i(std::uint32_t _location, std::int32_t _value) const;
   void SetUniform1iv(std::uint32_t _location, std::int32_t* _value,
-                     std::int32_t _count);
-  void SetUniform2f(std::uint32_t _location, const math::Vec2f& _vector);
-  void SetUniform3f(std::uint32_t _location, const math::Vec3f& _vector);
-  void SetUniform4f(std::uint32_t _location, const math::Vec4f& _vector);
-  void SetUniformMat4(std::uint32_t _location, math::Mat4f& _matrix);
+                     std::int32_t _count) const;
+  void SetUniform2f(std::uint32_t _location, const math::Vec2f& _vector) const;
+  void SetUniform3f(std::uint32_t _location, const math::Vec3f& _vector) const;
+  void SetUniform4f(std::uint32_t _location, const math::Vec4f& _vector) const;
+  void SetUniformMat4(std::uint32_t _location, math::Mat4f _matrix) const;
 
   // ------------------------------------------------------------------------------
 
@@ -82,7 +82,7 @@ private:
 
   // ------------------------------------------------------------------------------
 
-  std::int32_t GetUniformLocation(const std::string& _name);
+  std::int32_t GetUniformLocation(const std::string& _name) const;
 
   // ------------------------------------------------------------------------------
 

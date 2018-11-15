@@ -94,7 +94,7 @@ void GLShader::Unbind() const { GLCall(glUseProgram(0)); }
 
 // ------------------------------------------------------------------------------
 
-void GLShader::SetUniform1f(const std::string& _name, float _value)
+void GLShader::SetUniform1f(const std::string& _name, float _value) const
 {
   SetUniform1f(GetUniformLocation(_name), _value);
 }
@@ -102,14 +102,14 @@ void GLShader::SetUniform1f(const std::string& _name, float _value)
 // ------------------------------------------------------------------------------
 
 void GLShader::SetUniform1fv(const std::string& _name, float* _value,
-                             std::int32_t _count)
+                             std::int32_t _count) const
 {
   SetUniform1fv(GetUniformLocation(_name), _value, _count);
 }
 
 // ------------------------------------------------------------------------------
 
-void GLShader::SetUniform1i(const std::string& _name, std::int32_t _value)
+void GLShader::SetUniform1i(const std::string& _name, std::int32_t _value) const
 {
   SetUniform1i(GetUniformLocation(_name), _value);
 }
@@ -117,7 +117,7 @@ void GLShader::SetUniform1i(const std::string& _name, std::int32_t _value)
 // ------------------------------------------------------------------------------
 
 void GLShader::SetUniform1iv(const std::string& _name, std::int32_t* _value,
-                             std::int32_t _count)
+                             std::int32_t _count) const
 {
   SetUniform1iv(GetUniformLocation(_name), _value, _count);
 }
@@ -125,7 +125,7 @@ void GLShader::SetUniform1iv(const std::string& _name, std::int32_t* _value,
 // ------------------------------------------------------------------------------
 
 void GLShader::SetUniform2f(const std::string& _name,
-                            const math::Vec2f& _vector)
+                            const math::Vec2f& _vector) const
 {
   SetUniform2f(GetUniformLocation(_name), _vector);
 }
@@ -133,7 +133,7 @@ void GLShader::SetUniform2f(const std::string& _name,
 // ------------------------------------------------------------------------------
 
 void GLShader::SetUniform3f(const std::string& _name,
-                            const math::Vec3f& _vector)
+                            const math::Vec3f& _vector) const
 {
   SetUniform3f(GetUniformLocation(_name), _vector);
 }
@@ -141,21 +141,22 @@ void GLShader::SetUniform3f(const std::string& _name,
 // ------------------------------------------------------------------------------
 
 void GLShader::SetUniform4f(const std::string& _name,
-                            const math::Vec4f& _vector)
+                            const math::Vec4f& _vector) const
 {
   SetUniform4f(GetUniformLocation(_name), _vector);
 }
 
 // ------------------------------------------------------------------------------
 
-void GLShader::SetUniformMat4(const std::string& _name, math::Mat4f& _matrix)
+void GLShader::SetUniformMat4(const std::string& _name,
+                              math::Mat4f _matrix) const
 {
   SetUniformMat4(GetUniformLocation(_name), _matrix);
 }
 
 // ------------------------------------------------------------------------------
 
-void GLShader::SetUniform1f(std::uint32_t _location, float _value)
+void GLShader::SetUniform1f(std::uint32_t _location, float _value) const
 {
   GLCall(glUniform1f(_location, _value));
 }
@@ -163,14 +164,14 @@ void GLShader::SetUniform1f(std::uint32_t _location, float _value)
 // ------------------------------------------------------------------------------
 
 void GLShader::SetUniform1fv(std::uint32_t _location, float* _value,
-                             std::int32_t _count)
+                             std::int32_t _count) const
 {
   GLCall(glUniform1fv(_location, _count, _value));
 }
 
 // ------------------------------------------------------------------------------
 
-void GLShader::SetUniform1i(std::uint32_t _location, std::int32_t _value)
+void GLShader::SetUniform1i(std::uint32_t _location, std::int32_t _value) const
 {
   GLCall(glUniform1i(_location, _value));
 }
@@ -178,28 +179,31 @@ void GLShader::SetUniform1i(std::uint32_t _location, std::int32_t _value)
 // ------------------------------------------------------------------------------
 
 void GLShader::SetUniform1iv(std::uint32_t _location, std::int32_t* _value,
-                             std::int32_t _count)
+                             std::int32_t _count) const
 {
   GLCall(glUniform1iv(_location, _count, _value));
 }
 
 // ------------------------------------------------------------------------------
 
-void GLShader::SetUniform2f(std::uint32_t _location, const math::Vec2f& _vector)
+void GLShader::SetUniform2f(std::uint32_t _location,
+                            const math::Vec2f& _vector) const
 {
   GLCall(glUniform2f(_location, _vector[0], _vector[1]));
 }
 
 // ------------------------------------------------------------------------------
 
-void GLShader::SetUniform3f(std::uint32_t _location, const math::Vec3f& _vector)
+void GLShader::SetUniform3f(std::uint32_t _location,
+                            const math::Vec3f& _vector) const
 {
   GLCall(glUniform3f(_location, _vector[0], _vector[1], _vector[2]));
 }
 
 // ------------------------------------------------------------------------------
 
-void GLShader::SetUniform4f(std::uint32_t _location, const math::Vec4f& _vector)
+void GLShader::SetUniform4f(std::uint32_t _location,
+                            const math::Vec4f& _vector) const
 {
   GLCall(
       glUniform4f(_location, _vector[0], _vector[1], _vector[2], _vector[3]));
@@ -207,7 +211,8 @@ void GLShader::SetUniform4f(std::uint32_t _location, const math::Vec4f& _vector)
 
 // ------------------------------------------------------------------------------
 
-void GLShader::SetUniformMat4(std::uint32_t _location, math::Mat4f& _matrix)
+void GLShader::SetUniformMat4(std::uint32_t _location,
+                              math::Mat4f _matrix) const
 {
   // Transpose flag is set to GL_TRUE, because the matrix class is row-major
   GLCall(glUniformMatrix4fv(_location, 1, GL_TRUE, &_matrix[0]));
@@ -295,7 +300,7 @@ void GLShader::LinkShaders(std::uint32_t _vsShaderHandle,
 
 // ------------------------------------------------------------------------------
 
-std::int32_t GLShader::GetUniformLocation(const std::string& _name)
+std::int32_t GLShader::GetUniformLocation(const std::string& _name) const
 {
   GLCall(GLint result = glGetUniformLocation(m_programHandle, _name.c_str()));
 

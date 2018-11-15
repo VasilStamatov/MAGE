@@ -12,6 +12,7 @@ World::World(messaging::MessageBus& _applicationMessageBus)
     , m_entityManager()
     , m_gameSystems()
     , m_renderingSystems()
+    , m_cameras()
     , m_applicationMessageBus(_applicationMessageBus)
 {
 }

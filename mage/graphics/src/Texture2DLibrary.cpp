@@ -18,6 +18,8 @@ Texture2DLibrary::Texture2DLibrary()
 
 Texture2DLibrary::~Texture2DLibrary() {}
 
+// ------------------------------------------------------------------------------
+
 std::shared_ptr<GLTexture2D>
 Texture2DLibrary::Get(const std::string& _filepath,
                       TextureParameters _parameters)

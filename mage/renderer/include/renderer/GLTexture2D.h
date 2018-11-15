@@ -58,6 +58,7 @@ struct TextureParameters
 class GLTexture2D
 {
 public:
+  GLTexture2D();
   GLTexture2D(const std::string& _filepath,
               TextureParameters _parameters = TextureParameters());
   ~GLTexture2D();

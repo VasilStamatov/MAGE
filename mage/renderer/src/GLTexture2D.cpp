@@ -78,7 +78,7 @@ GLenum GetGLTextureFilter(TextureFilter _filter)
 TextureParameters::TextureParameters()
     : m_format(TextureFormat::RGBA)
     , m_filter(TextureFilter::Linear)
-    , m_wrap(TextureWrap::Clamp)
+    , m_wrap(TextureWrap::ClampToEdge)
 {
 }
 
@@ -89,6 +89,13 @@ TextureParameters::TextureParameters(TextureFormat _format,
     : m_format(_format)
     , m_filter(_filter)
     , m_wrap(_wrap)
+{
+}
+
+// ------------------------------------------------------------------------------
+
+GLTexture2D::GLTexture2D()
+    : m_handle(0)
 {
 }
 
@@ -144,6 +151,7 @@ void GLTexture2D::LoadTexture(const std::string& _filepath,
     desiredChannels = 3;
   }
 
+  stbi_set_flip_vertically_on_load(true);
   unsigned char* data =
       stbi_load(_filepath.c_str(), &width, &height, &channels, desiredChannels);
 
@@ -156,7 +164,9 @@ void GLTexture2D::LoadTexture(const std::string& _filepath,
   GLCall(glBindTexture(GL_TEXTURE_2D, m_handle));
 
   GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                         GetGLTextureFilter(_parameters.m_filter)));
+                         _parameters.m_filter == TextureFilter::Linear
+                             ? GL_LINEAR_MIPMAP_LINEAR
+                             : GL_NEAREST));
 
   GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
                          GetGLTextureFilter(_parameters.m_filter)));

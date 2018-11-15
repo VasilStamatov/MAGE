@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Material.h"
 #include "StaticMesh.h"
 
 #include "ecs/RenderingSystem.h"
@@ -13,9 +14,11 @@ namespace graphics
 
 struct StaticMeshComponent : public ecs::Component
 {
-  StaticMeshComponent(const std::string& _meshFile);
+  StaticMeshComponent(const std::string& _meshFile,
+                      const std::string& _materialFile);
 
   StaticMesh m_mesh;
+  Material m_material;
 };
 
 // ------------------------------------------------------------------------------

@@ -37,5 +37,5 @@ void GameWorld::AddEntitiesAndComponents()
 
   auto& staticMeshComp =
       renderedEntity.AddComponent<mage::graphics::StaticMeshComponent>(
-          "./res/models/cube.obj");
+          "./res/models/cube.obj", "./res/textures/test.png");
 }
