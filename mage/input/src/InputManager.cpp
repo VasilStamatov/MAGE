@@ -286,8 +286,10 @@ void MouseScrollCallback(GLFWwindow* _handle, double _xOffset, double _yOffset)
 // ------------------------------------------------------------------------------
 
 InputManager::InputManager(messaging::MessageBus& _messageBus)
+    : m_windowHandle(nullptr)
 {
   _messageBus.Subscribe(this, &InputManager::OnWindowCreatedEvent);
+  _messageBus.Subscribe(this, &InputManager::OnSetCursorStateEvent);
 }
 
 // ------------------------------------------------------------------------------
@@ -306,12 +308,34 @@ void InputManager::Update() { glfwPollEvents(); }
 
 void InputManager::OnWindowCreatedEvent(video::OnWindowCreated* _event)
 {
-  GLFWwindow* handle = _event->m_window.GetHandle();
+  m_windowHandle = _event->m_window.GetHandle();
 
-  glfwSetKeyCallback(handle, KeyCallback);
-  glfwSetMouseButtonCallback(handle, MouseButtonCallback);
-  glfwSetScrollCallback(handle, MouseScrollCallback);
-  glfwSetCursorPosCallback(handle, CursorPositionCallback);
+  glfwSetKeyCallback(m_windowHandle, KeyCallback);
+  glfwSetMouseButtonCallback(m_windowHandle, MouseButtonCallback);
+  glfwSetScrollCallback(m_windowHandle, MouseScrollCallback);
+  glfwSetCursorPosCallback(m_windowHandle, CursorPositionCallback);
+}
+
+// ------------------------------------------------------------------------------
+
+void InputManager::OnSetCursorStateEvent(SetCursorStateEvent* _event)
+{
+  int mode = GLFW_CURSOR_NORMAL;
+
+  switch (_event->m_newState)
+  {
+    case CursorState::Visible:
+      mode = GLFW_CURSOR_NORMAL;
+      break;
+    case CursorState::Hidden:
+      mode = GLFW_CURSOR_HIDDEN;
+      break;
+    case CursorState::Disabled:
+      mode = GLFW_CURSOR_DISABLED;
+      break;
+  }
+
+  glfwSetInputMode(m_windowHandle, GLFW_CURSOR, mode);
 }
 
 // ------------------------------------------------------------------------------

@@ -5,6 +5,8 @@
 #include <array>
 #include <functional>
 
+struct GLFWwindow;
+
 namespace mage
 {
 
@@ -28,6 +30,21 @@ namespace input
 {
 
 // ------------------------------------------------------------------------------
+
+enum class CursorState
+{
+  Visible, // makes the cursor visible and behaving normally
+  Hidden,  // makes the cursor invisible when it is over the client area of the
+           // window but does not restrict the cursor from leaving
+  Disabled // hides and grabs the cursor, providing virtual and unlimited cursor
+           // movement
+};
+
+// Received events
+struct SetCursorStateEvent
+{
+  CursorState m_newState;
+};
 
 // Broadcasted events
 struct CursorPositionMovedEvent
@@ -76,6 +93,11 @@ public:
   void OnWindowCreatedEvent(video::OnWindowCreated* _event);
 
   // ------------------------------------------------------------------------------
+
+  void OnSetCursorStateEvent(SetCursorStateEvent* _event);
+
+private:
+  GLFWwindow* m_windowHandle;
 };
 
 // ------------------------------------------------------------------------------

@@ -18,6 +18,12 @@ void CameraControlSystem::Initialize(mage::ecs::World& _world)
   appMsgBus.Subscribe(this, &CameraControlSystem::OnKeyPress);
   appMsgBus.Subscribe(this, &CameraControlSystem::OnKeyRelease);
   appMsgBus.Subscribe(this, &CameraControlSystem::OnMouseMove);
+
+  // Remove the cursor in fps mode
+  mage::input::SetCursorStateEvent cursorState{
+      mage::input::CursorState::Disabled};
+
+  appMsgBus.Broadcast(&cursorState);
 }
 
 void CameraControlSystem::Tick(mage::ecs::World& _world, float _deltaTime)
@@ -122,7 +128,7 @@ void CameraControlSystem::OnMouseMove(
   m_yaw += deltaXMouse;
   m_pitch += deltaYMouse;
 
-  // printf("[m_yaw: %.3f] [m_pitch: %.3f]\n", m_yaw, m_pitch);
+  printf("[m_yaw: %.3f] [m_pitch: %.3f]\n", m_yaw, m_pitch);
 
   m_lastMouseX = _event->m_xPos;
   m_lastMouseY = _event->m_yPos;
