@@ -1,5 +1,6 @@
 #pragma once
 
+#include "audio/AudioDevice.h"
 #include "ecs/World.h"
 #include "input/InputManager.h"
 #include "messaging/MessageBus.h"
@@ -82,6 +83,7 @@ protected:
 private:
   video::Video m_video;
   input::InputManager m_inputManager;
+  audio::AudioDevice m_audioDevice;
   graphics::RenderDevice m_renderDevice;
 
   std::int32_t m_currentWorldId;

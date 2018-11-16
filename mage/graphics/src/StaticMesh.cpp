@@ -5,7 +5,7 @@
 
 #include <unordered_map>
 
-#include <tiny_obj_loader.h>
+#include <tinyobj/tiny_obj_loader.h>
 
 namespace mage
 {

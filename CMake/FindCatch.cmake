@@ -16,8 +16,7 @@ set( CATCH_SEARCH_PATHS
 
 find_path( CATCH_INCLUDE_DIR
   NAMES
-    catch.hpp
-    catch.h
+    catch
   PATHS
     ${CATCH_SEARCH_PATHS}
   PATH_SUFFIXES

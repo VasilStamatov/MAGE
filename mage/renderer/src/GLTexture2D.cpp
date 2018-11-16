@@ -3,8 +3,8 @@
 #include "exceptions/RuntimeError.h"
 #include "renderer/GLCommon.h"
 
-#include <glew.h>
-#include <stb_image.h>
+#include <GLEW/glew.h>
+#include <stb/stb_image.h>
 
 namespace mage
 {

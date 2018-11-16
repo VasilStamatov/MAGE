@@ -16,13 +16,13 @@ set( GLEW_SEARCH_PATHS
 
 find_path( GLEW_INCLUDE_DIR
   NAMES
-    glew.h
+    GLEW
   PATHS
     ${GLEW_SEARCH_PATHS}
   PATH_SUFFIXES
-    include/GL
+    include
   DOC
-    "The directory where glew.h resides"
+    "The directory where glew resides"
 )
 
 find_library( GLEW_LIBRARIES 

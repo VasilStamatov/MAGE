@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-#include <glew.h>
+#include <GLEW/glew.h>
 
 namespace mage
 {

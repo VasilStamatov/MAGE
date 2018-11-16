@@ -30,6 +30,7 @@ target_compile_features(mage PUBLIC cxx_std_17)
 
 # Include the location of the header files
 target_include_directories(mage 
+  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/audio/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/core/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ecs/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ecs_common/include
@@ -49,6 +50,9 @@ include(${CMAKE_SCRIPTS_DIR}/FindGLEW.cmake)
 include(${CMAKE_SCRIPTS_DIR}/FindGLFW.cmake)
 include(${CMAKE_SCRIPTS_DIR}/FindSTB.cmake)
 include(${CMAKE_SCRIPTS_DIR}/FindTinyObj.cmake)
+include(${CMAKE_SCRIPTS_DIR}/FindOpenAL-Soft.cmake)
+include(${CMAKE_SCRIPTS_DIR}/FindOgg.cmake)
+include(${CMAKE_SCRIPTS_DIR}/FindVorbis.cmake)
 
 # Include dependencies headers
 target_include_directories(mage
@@ -57,6 +61,9 @@ target_include_directories(mage
   PRIVATE ${GLFW_INCLUDE_DIR}
   PRIVATE ${STB_INCLUDE_DIR}
   PRIVATE ${TINY_OBJ_LOADER_INCLUDE_DIR}
+  PRIVATE ${OPENAL_SOFT_INCLUDE_DIR}
+  PRIVATE ${OGG_INCLUDE_DIR}
+  PRIVATE ${VORBIS_INCLUDE_DIR}
 )
 
 # Link dependency libraries to this target library
@@ -64,4 +71,7 @@ target_link_libraries(mage
   PRIVATE ${OPENGL_LIBRARIES}
   PRIVATE ${GLEW_LIBRARIES}
   PRIVATE ${GLFW_LIBRARIES}
+  PRIVATE ${OPENAL_SOFT_LIBRARIES}
+  PRIVATE ${OGG_LIBRARIES}
+  PRIVATE ${VORBIS_LIBRARIES}
 )

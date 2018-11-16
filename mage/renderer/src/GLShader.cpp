@@ -6,7 +6,7 @@
 
 #include <vector>
 
-#include <glew.h>
+#include <GLEW/glew.h>
 
 namespace mage
 {

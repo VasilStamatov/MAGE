@@ -16,14 +16,13 @@ set( GLFW_SEARCH_PATHS
 
 find_path( GLFW_INCLUDE_DIR
   NAMES
-    glfw3.h
-    glfw3native.h
+    GLFW
   PATHS
     ${GLFW_SEARCH_PATHS}
   PATH_SUFFIXES
-    include/GLFW
+    include
   DOC
-    "The directory where glfw3.h and glfw3native.h resides"
+    "The directory where glfw resides"
 )
 
 find_library( GLFW_LIBRARIES 
@@ -32,7 +31,7 @@ find_library( GLFW_LIBRARIES
   PATHS
     ${GLFW_SEARCH_PATHS}
   PATH_SUFFIXES
-    lib
+    lib/${CMAKE_BUILD_TYPE}/x64
   DOC
     "The glfw3 lib files"
 )

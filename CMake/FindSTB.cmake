@@ -16,7 +16,7 @@ set( STB_SEARCH_PATHS
 
 find_path( STB_INCLUDE_DIR
   NAMES
-    stb_image.h
+    stb
   PATHS
     ${STB_SEARCH_PATHS}
   PATH_SUFFIXES

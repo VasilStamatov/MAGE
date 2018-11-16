@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 
-#include <glew.h>
+#include <GLEW/glew.h>
 
 namespace mage
 {

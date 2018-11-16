@@ -37,3 +37,10 @@ foreach(file IN LISTS RES)
   configure_file(${CMAKE_SOURCE_DIR}/res/${file} ${sandbox_BINARY_DIR}/res/${file} COPYONLY)
 endforeach()
 
+if (MSVC)
+  add_custom_command(TARGET sandbox POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      "${CMAKE_SOURCE_DIR}/contrib/bin/${CMAKE_BUILD_TYPE}/x64/OpenAL32.dll"
+      "$<TARGET_FILE_DIR:sandbox>"
+  )
+endif()

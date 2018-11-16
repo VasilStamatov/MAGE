@@ -16,7 +16,7 @@ set( TINY_OBJ_LOADER_SEARCH_PATHS
 
 find_path( TINY_OBJ_LOADER_INCLUDE_DIR
   NAMES
-    tiny_obj_loader.h
+    tinyobj
   PATHS
     ${TINY_OBJ_LOADER_SEARCH_PATHS}
   PATH_SUFFIXES

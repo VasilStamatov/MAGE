@@ -2,7 +2,7 @@
 
 #include "renderer/GLCommon.h"
 
-#include <glew.h>
+#include <GLEW/glew.h>
 
 namespace mage
 {

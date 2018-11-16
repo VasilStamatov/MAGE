@@ -23,6 +23,7 @@ Application::Application()
     , m_gameWorlds()
     , m_video(m_applicationMessageBus)
     , m_inputManager(m_applicationMessageBus)
+    , m_audioDevice()
     , m_renderDevice()
     , m_currentWorldId(0)
     , m_nextWorldId(-1)
@@ -111,6 +112,7 @@ void Application::InitializeSubSystems()
   m_video.Initialize();
   m_inputManager.Initialize();
   m_renderDevice.Initialize();
+  m_audioDevice.Initialize();
 }
 
 // ------------------------------------------------------------------------------
@@ -118,6 +120,7 @@ void Application::InitializeSubSystems()
 void Application::ShutdownSubSystems()
 {
   m_gameWorlds.clear();
+  m_audioDevice.Shutdown();
   m_renderDevice.Shutdown();
   m_inputManager.Shutdown();
   m_video.Shutdown();

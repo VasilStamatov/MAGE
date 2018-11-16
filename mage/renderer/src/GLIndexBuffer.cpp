@@ -4,7 +4,7 @@
 
 #include <type_traits>
 
-#include <glew.h>
+#include <GLEW/glew.h>
 
 namespace mage
 {
