@@ -30,21 +30,5 @@ SCENARIO("Component Manager functionality usage", "[ECS]")
         REQUIRE(component.m_data == dataForComponent);
       }
     }
-
-    WHEN("A component is added to an entity multiple times")
-    {
-      componentManager.AddComponent<TestComponent1>(testEntity,
-                                                    dataForComponent);
-
-      std::uint32_t otherData = 36;
-
-      componentManager.AddComponent<TestComponent1>(testEntity, otherData);
-
-      THEN("Subsequent adds don't modify the existing component")
-      {
-        TestComponent1& component = componentManager.GetComponent(testEntity);
-        REQUIRE(component.m_data == dataForComponent);
-      }
-    }
   }
 }

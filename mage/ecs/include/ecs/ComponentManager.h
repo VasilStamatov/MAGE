@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <assert.h>
+#include <unordered_map>
 #include <vector>
 
 namespace mage
@@ -38,7 +39,8 @@ class ComponentManager : public BaseComponentManager
 
 public:
   ComponentManager()
-      : m_components()
+      : m_entityIdToComponentIndex()
+      , m_components()
   {
     m_components.reserve(64);
   }
@@ -48,67 +50,52 @@ public:
   template <typename... TArgs>
   ComponentType& AddComponent(Entity _entity, TArgs&&... _constructionArgs)
   {
-    if (FindComponentInstanceByEntity(_entity) != m_components.end())
-    {
-      // component already exists for this entity
-      return GetComponent(_entity);
-    }
+    assert(m_entityIdToComponentIndex.count(_entity.m_id) == 0);
 
-    m_components.emplace_back(
-        _entity, ComponentType(std::forward<TArgs>(_constructionArgs)...));
-
-    return m_components.back().m_data;
+    m_components.emplace_back(std::forward<TArgs>(_constructionArgs)...);
+    m_entityIdToComponentIndex[_entity.m_id] = m_components.size() - 1;
+    return m_components.back();
   }
 
   // ------------------------------------------------------------------------------
 
   void RemoveComponent(Entity _entity) override
   {
-    auto foundIterator = FindComponentInstanceByEntity(_entity);
-    if (foundIterator != m_components.end())
+    using std::swap;
+
+    auto componentIndexToRemove = m_entityIdToComponentIndex[_entity.m_id];
+    auto lastComponentIndex = m_components.size() - 1;
+
+    swap(m_components[componentIndexToRemove],
+         m_components[lastComponentIndex]);
+
+    m_components.pop_back();
+
+    for (auto&& entry : m_entityIdToComponentIndex)
     {
-      m_components.erase(foundIterator);
+      if (entry.second == lastComponentIndex)
+      {
+        entry.second = componentIndexToRemove;
+        break;
+      }
     }
+
+    m_entityIdToComponentIndex.erase(_entity.m_id);
   }
 
   // ------------------------------------------------------------------------------
 
   ComponentType& GetComponent(Entity _entity)
   {
-    auto foundIterator = FindComponentInstanceByEntity(_entity);
-    assert(foundIterator != m_components.end());
-    return foundIterator->m_data;
+    assert(m_entityIdToComponentIndex.count(_entity.m_id) == 1);
+    return m_components[m_entityIdToComponentIndex[_entity.m_id]];
   }
 
-  // ------------------------------------------------------------------------------
+  std::vector<ComponentType>& GetAllComponents() { return m_components; }
 
 private:
-  auto FindComponentInstanceByEntity(Entity _entity)
-  {
-    return std::find_if(m_components.begin(), m_components.end(),
-                        [_entity](const ComponentInstance& _element) {
-                          return _element.m_ownerEntity == _entity;
-                        });
-  }
-
-  // ------------------------------------------------------------------------------
-
-private:
-  struct ComponentInstance
-  {
-    ComponentInstance(Entity _entity, ComponentType _data)
-        : m_ownerEntity(_entity)
-        , m_data(std::move(_data))
-    {
-    }
-
-    Entity m_ownerEntity;
-    ComponentType m_data;
-  };
-
-  // ------------------------------------------------------------------------------
-
-  std::vector<ComponentInstance> m_components;
+  std::unordered_map<std::uint32_t, std::uint32_t> m_entityIdToComponentIndex;
+  std::vector<ComponentType> m_components;
 };
 
 // ------------------------------------------------------------------------------

@@ -56,7 +56,7 @@ bool ALLogCall(const char* _function, const char* _file, int _line)
   std::uint32_t error = ALCheckError();
   if (error != AL_NO_ERROR)
   {
-    std::string errorString("[GL ERROR] : " + ALErrorToString(error) + '\n' +
+    std::string errorString("[AL ERROR] : " + ALErrorToString(error) + '\n' +
                             "\t File: " + _file + '\n' +
                             "\t Function: " + _function + '\n' +
                             "\t Line: " + std::to_string(_line) + '\n');

@@ -34,7 +34,7 @@ SCENARIO("Quaternion Math tests", "[Math]")
       Quatf result = quat * quat2;
       THEN("Result is equal to expected")
       {
-        REQUIRE(result == Quatf(1.0f, 1.0f, 1.0f, 1.0f));
+        REQUIRE(result == Quatf(0.5f, 0.5f, 0.5f, 0.5f));
       }
     }
 
