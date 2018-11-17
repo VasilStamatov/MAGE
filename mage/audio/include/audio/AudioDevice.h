@@ -53,8 +53,8 @@ public:
   AudioSourceHandle CreateAudioSource();
   void DestroyAudioSource(AudioSourceHandle _handle);
 
-  void PlaySound(AudioSourceHandle _source, AudioBufferHandle _sound,
-                 const math::Vec3f& _sourcePos);
+  void SetSourceSound(AudioSourceHandle _source, AudioBufferHandle _sound);
+  void PlaySource(AudioSourceHandle _source, const math::Vec3f& _sourcePos);
 
 private:
   class Impl;

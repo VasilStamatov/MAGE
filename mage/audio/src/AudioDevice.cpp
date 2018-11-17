@@ -12,8 +12,6 @@
 
 #include <AL/al.h>
 #include <AL/alc.h>
-#include <ogg/ogg.h>
-#include <vorbis/vorbisfile.h>
 
 // ------------------------------------------------------------------------------
 
@@ -119,8 +117,8 @@ public:
   AudioSourceHandle CreateAudioSource();
   void DestroyAudioSource(AudioSourceHandle _handle);
 
-  void PlaySound(AudioSourceHandle _source, AudioBufferHandle _sound,
-                 const math::Vec3f& _sourcePos);
+  void SetSourceSound(AudioSourceHandle _source, AudioBufferHandle _sound);
+  void PlaySource(AudioSourceHandle _source, const math::Vec3f& _sourcePos);
 
 private:
   ALCdevice* m_device;
@@ -187,10 +185,18 @@ void AudioDevice::DestroyAudioSource(AudioSourceHandle _handle)
 
 // ------------------------------------------------------------------------------
 
-void AudioDevice::PlaySound(AudioSourceHandle _source, AudioBufferHandle _sound,
-                            const math::Vec3f& _sourcePos)
+void AudioDevice::SetSourceSound(AudioSourceHandle _source,
+                                 AudioBufferHandle _sound)
 {
-  m_impl->PlaySound(_source, _sound, _sourcePos);
+  m_impl->SetSourceSound(_source, _sound);
+}
+
+// ------------------------------------------------------------------------------
+
+void AudioDevice::PlaySource(AudioSourceHandle _source,
+                             const math::Vec3f& _sourcePos)
+{
+  m_impl->PlaySource(_source, _sourcePos);
 }
 
 // ------------------------------------------------------------------------------
@@ -319,18 +325,27 @@ void AudioDevice::Impl::DestroyAudioSource(AudioSourceHandle _handle)
 
 // ------------------------------------------------------------------------------
 
-void AudioDevice::Impl::PlaySound(AudioSourceHandle _source,
-                                  AudioBufferHandle _sound,
-                                  const math::Vec3f& _sourcePos)
+void AudioDevice::Impl::SetSourceSound(AudioSourceHandle _source,
+                                       AudioBufferHandle _sound)
 {
   assert(_source.m_generation == m_audioSourcesGenerations[_source.m_index]);
   assert(_sound.m_generation == m_audioBufferGenerations[_sound.m_index]);
 
+  ALCall(alSourcei(m_audioSourceBuffers[_source.m_index], AL_BUFFER,
+                   m_audioDataBuffers[_sound.m_index]));
+}
+
+// ------------------------------------------------------------------------------
+
+void AudioDevice::Impl::PlaySource(AudioSourceHandle _source,
+                                   const math::Vec3f& _sourcePos)
+{
+  assert(_source.m_generation == m_audioSourcesGenerations[_source.m_index]);
+
   ALCall(alSource3f(m_audioSourceBuffers[_source.m_index], AL_POSITION,
                     _sourcePos[0], _sourcePos[1], _sourcePos[2]));
 
-  ALCall(alSourcei(m_audioSourceBuffers[_source.m_index], AL_BUFFER,
-                   m_audioDataBuffers[_sound.m_index]));
+  ALCall(alSourcePlay(m_audioSourceBuffers[_source.m_index]));
 }
 
 // ------------------------------------------------------------------------------
