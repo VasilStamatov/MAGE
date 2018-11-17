@@ -37,6 +37,8 @@ void CameraControlSystem::Tick(mage::ecs::World& _world, float _deltaTime)
 
   for (auto&& entity : m_registeredEntities)
   {
+    auto& cameraControlComponent =
+        _world.GetComponent<CameraControlComponent>(entity);
     auto& cameraComponent =
         _world.GetComponent<mage::ecs::common::CameraComponent>(entity);
 
@@ -45,13 +47,13 @@ void CameraControlSystem::Tick(mage::ecs::World& _world, float _deltaTime)
     mage::math::Quatf orientation = mage::math::Quatf::GenRotationX(m_pitch) *
                                     mage::math::Quatf::GenRotationY(m_yaw);
 
-    camera.SetRotation(orientation);
+    camera.SetRotation(orientation * cameraControlComponent.m_rotationSpeed);
 
     mage::math::Vec3f accumMove = (camera.GetForwardAxis() * m_forward) +
                                   (camera.GetRightAxis() * m_right) +
                                   (camera.GetUpAxis() * m_up);
 
-    camera.Translate(accumMove);
+    camera.Translate(accumMove * cameraControlComponent.m_movementSpeed);
   }
 }
 

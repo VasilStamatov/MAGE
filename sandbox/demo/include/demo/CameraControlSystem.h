@@ -5,8 +5,8 @@
 
 struct CameraControlComponent : public mage::ecs::Component
 {
-  float m_forward = 0.0f;
-  float m_right = 0.0f;
+  float m_movementSpeed = 1.0f;
+  float m_rotationSpeed = 1.0f;
 };
 
 class CameraControlSystem : public mage::ecs::GameSystem
