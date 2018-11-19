@@ -49,15 +49,15 @@ void Transform::SetScale(const Vec3f& _scale) { m_scale = _scale; }
 
 // ------------------------------------------------------------------------------
 
-Quatf Transform::GetRotation() const { return m_rotation; }
+const Quatf& Transform::GetRotation() const { return m_rotation; }
 
 // ------------------------------------------------------------------------------
 
-Vec3f Transform::GetTranslation() const { return m_translation; }
+const Vec3f& Transform::GetTranslation() const { return m_translation; }
 
 // ------------------------------------------------------------------------------
 
-Vec3f Transform::GetScale() const { return m_scale; }
+const Vec3f& Transform::GetScale() const { return m_scale; }
 
 // ------------------------------------------------------------------------------
 

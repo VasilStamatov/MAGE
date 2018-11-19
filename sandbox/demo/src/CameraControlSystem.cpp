@@ -1,14 +1,17 @@
 #include "demo/CameraControlSystem.h"
 
+#include <audio/SoundEffectSystem.h>
 #include <core/Application.h>
 #include <ecs/World.h>
 #include <ecs_common/CameraComponent.h>
+#include <ecs_common/TransformComponent.h>
 #include <input/InputManager.h>
 #include <messaging/MessageBus.h>
 
 CameraControlSystem::CameraControlSystem()
 {
   m_systemSignature.AddComponent<mage::ecs::common::CameraComponent>();
+  m_systemSignature.AddComponent<mage::ecs::common::TransformComponent>();
   m_systemSignature.AddComponent<CameraControlComponent>();
 }
 
@@ -41,19 +44,35 @@ void CameraControlSystem::Tick(mage::ecs::World& _world, float _deltaTime)
         _world.GetComponent<CameraControlComponent>(entity);
     auto& cameraComponent =
         _world.GetComponent<mage::ecs::common::CameraComponent>(entity);
+    auto& transform =
+        _world.GetComponent<mage::ecs::common::TransformComponent>(entity)
+            .m_transform;
 
     auto& camera = _world.GetCamera(cameraComponent.m_cameraId);
 
-    mage::math::Quatf orientation = mage::math::Quatf::GenRotationX(m_pitch) *
-                                    mage::math::Quatf::GenRotationY(m_yaw);
+    mage::math::Quatf orientation = (mage::math::Quatf::GenRotationX(m_pitch) *
+                                     mage::math::Quatf::GenRotationY(m_yaw)) *
+                                    cameraControlComponent.m_rotationSpeed;
 
-    camera.SetRotation(orientation * cameraControlComponent.m_rotationSpeed);
+    transform.SetRotation(orientation.GetConjugated());
 
-    mage::math::Vec3f accumMove = (camera.GetForwardAxis() * m_forward) +
-                                  (camera.GetRightAxis() * m_right) +
-                                  (camera.GetUpAxis() * m_up);
+    mage::math::Vec3f accumMove = (transform.GetForwardAxis() * m_forward) +
+                                  (transform.GetRightAxis() * m_right) +
+                                  (mage::math::Vec3f(0.0f, 1.0f, 0.0f) * m_up);
 
-    camera.Translate(accumMove * cameraControlComponent.m_movementSpeed);
+    transform.Translate(accumMove * cameraControlComponent.m_movementSpeed);
+
+    camera.SetView(orientation.ToMat4() * mage::math::GenTranslationMat(
+                                              transform.GetTranslation() * -1));
+
+    if (m_playSoundPressed)
+    {
+      _world.AddComponent<mage::audio::PlaySoundEffect>(
+          entity, _world.GetSoundLibrary().GetAudioClip(
+                      "./res/audio/Blip_Select11.ogg"));
+
+      m_playSoundPressed = false;
+    }
   }
 }
 
@@ -89,6 +108,11 @@ void CameraControlSystem::OnKeyPress(mage::input::OnKeyPress* _event)
   if (_event->m_key == mage::input::InputKey::Escape)
   {
     m_escapePressed = true;
+  }
+
+  if (_event->m_key == mage::input::InputKey::Space)
+  {
+    m_playSoundPressed = true;
   }
 }
 

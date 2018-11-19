@@ -28,9 +28,9 @@ public:
 
   // ------------------------------------------------------------------------------
 
-  Quatf GetRotation() const;
-  Vec3f GetTranslation() const;
-  Vec3f GetScale() const;
+  const Quatf& GetRotation() const;
+  const Vec3f& GetTranslation() const;
+  const Vec3f& GetScale() const;
 
   // ------------------------------------------------------------------------------
 

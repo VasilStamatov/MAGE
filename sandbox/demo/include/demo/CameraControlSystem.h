@@ -34,4 +34,5 @@ private:
   float m_yaw = 0.0f;
 
   bool m_escapePressed = false;
+  bool m_playSoundPressed = false;
 };
