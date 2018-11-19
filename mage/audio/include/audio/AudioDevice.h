@@ -43,18 +43,36 @@ public:
   AudioDevice();
   ~AudioDevice();
 
+  // ------------------------------------------------------------------------------
+
   void Initialize();
   void Shutdown();
+
+  // ------------------------------------------------------------------------------
 
   AudioBufferHandle CreateAudioBuffer(AudioFormat _format, const void* _data,
                                       int _size, int _frequency);
   void DestroyAudioBuffer(AudioBufferHandle _handle);
 
+  // ------------------------------------------------------------------------------
+
   AudioSourceHandle CreateAudioSource();
   void DestroyAudioSource(AudioSourceHandle _handle);
 
-  void SetSourceSound(AudioSourceHandle _source, AudioBufferHandle _sound);
+  // ------------------------------------------------------------------------------
+
+  bool IsSourcePlaying(AudioSourceHandle _source) const;
+
+  // ------------------------------------------------------------------------------
+
+  void SetSourceSound(AudioSourceHandle _source, AudioBufferHandle _sound,
+                      float _volume, float _variance);
+
   void PlaySource(AudioSourceHandle _source, const math::Vec3f& _sourcePos);
+
+  // ------------------------------------------------------------------------------
+
+  void SetListenerPosition(const math::Vec3f& _listenerPos);
 
 private:
   class Impl;

@@ -14,6 +14,7 @@ namespace audio
 
 SoundLibrary::SoundLibrary(AudioDevice& _audioDevice)
     : m_audioClips()
+    , m_audioSources()
     , m_audioDevice(_audioDevice)
 {
 }
@@ -46,6 +47,32 @@ AudioBufferHandle SoundLibrary::GetAudioClip(const std::string& _audioFile)
   assert(m_audioClips.count(hashedName) == 1);
 
   return m_audioClips[hashedName];
+}
+
+// ------------------------------------------------------------------------------
+
+void SoundLibrary::AddAudioSource(const std::string& _unqiueSourceName)
+{
+  std::hash<std::string> hashFunction;
+  std::uint32_t hashedName = hashFunction(_unqiueSourceName);
+
+  assert(m_audioSources.count(hashedName) == 0);
+
+  AudioSourceHandle handle = m_audioDevice.CreateAudioSource();
+  m_audioSources[hashedName] = handle;
+}
+
+// ------------------------------------------------------------------------------
+
+AudioSourceHandle
+SoundLibrary::GetAudioSource(const std::string& _unqiueSourceName)
+{
+  std::hash<std::string> hashFunction;
+  std::uint32_t hashedName = hashFunction(_unqiueSourceName);
+
+  assert(m_audioSources.count(hashedName) == 1);
+
+  return m_audioSources[hashedName];
 }
 
 // ------------------------------------------------------------------------------

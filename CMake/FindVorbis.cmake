@@ -25,21 +25,47 @@ find_path( VORBIS_INCLUDE_DIR
     "The vorbis include directory"
 )
 
-find_library( VORBIS_LIBRARIES 
+find_library( VORBIS 
   NAMES
     vorbis
+  PATHS
+    ${VORBIS_SEARCH_PATHS}
+  PATH_SUFFIXES
+    lib/${CMAKE_BUILD_TYPE}/x64
+  DOC
+    "The vorbis lib file"
+)
+
+find_library( VORBISENC
+  NAMES
     vorbisenc
+  PATHS
+    ${VORBIS_SEARCH_PATHS}
+  PATH_SUFFIXES
+    lib/${CMAKE_BUILD_TYPE}/x64
+  DOC
+    "The vorbisenc lib file"
+)
+
+find_library( VORBISFILE
+  NAMES
     vorbisfile
   PATHS
     ${VORBIS_SEARCH_PATHS}
   PATH_SUFFIXES
     lib/${CMAKE_BUILD_TYPE}/x64
   DOC
-    "The vorbis lib files"
+    "The vorbisfile lib file"
+)
+
+set(VORBIS_LIBRARIES
+      ${VORBIS}
+      ${VORBISENC}
+      ${VORBISFILE}
 )
 
 # Check if we found it!
-if ( VORBIS_INCLUDE_DIR AND VORBIS_LIBRARIES )
+if ( VORBIS_INCLUDE_DIR AND VORBIS AND VORBISENC AND VORBISFILE )
   set( VORBIS_FOUND TRUE )
   message( STATUS "Looking for VORBIS - found include : ${VORBIS_INCLUDE_DIR} and lib : ${VORBIS_LIBRARIES}" )
 else ()
