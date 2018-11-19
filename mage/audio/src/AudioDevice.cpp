@@ -110,15 +110,31 @@ public:
   void Initialize();
   void Shutdown();
 
+  // ------------------------------------------------------------------------------
+
   AudioBufferHandle CreateAudioBuffer(AudioFormat _format, const void* _data,
                                       int _size, int _frequency);
   void DestroyAudioBuffer(AudioBufferHandle _handle);
 
+  // ------------------------------------------------------------------------------
+
   AudioSourceHandle CreateAudioSource();
   void DestroyAudioSource(AudioSourceHandle _handle);
 
-  void SetSourceSound(AudioSourceHandle _source, AudioBufferHandle _sound);
+  // ------------------------------------------------------------------------------
+
+  bool IsSourcePlaying(AudioSourceHandle _source) const;
+
+  // ------------------------------------------------------------------------------
+
+  void SetSourceSound(AudioSourceHandle _source, AudioBufferHandle _sound,
+                      float _volume, float _variance);
+
   void PlaySource(AudioSourceHandle _source, const math::Vec3f& _sourcePos);
+
+  // ------------------------------------------------------------------------------
+
+  void SetListenerPosition(const math::Vec3f& _listenerPos);
 
 private:
   ALCdevice* m_device;
@@ -185,10 +201,18 @@ void AudioDevice::DestroyAudioSource(AudioSourceHandle _handle)
 
 // ------------------------------------------------------------------------------
 
-void AudioDevice::SetSourceSound(AudioSourceHandle _source,
-                                 AudioBufferHandle _sound)
+bool AudioDevice::IsSourcePlaying(AudioSourceHandle _source) const
 {
-  m_impl->SetSourceSound(_source, _sound);
+  return m_impl->IsSourcePlaying(_source);
+}
+
+// ------------------------------------------------------------------------------
+
+void AudioDevice::SetSourceSound(AudioSourceHandle _source,
+                                 AudioBufferHandle _sound, float _volume,
+                                 float _variance)
+{
+  m_impl->SetSourceSound(_source, _sound, _volume, _variance);
 }
 
 // ------------------------------------------------------------------------------
@@ -197,6 +221,11 @@ void AudioDevice::PlaySource(AudioSourceHandle _source,
                              const math::Vec3f& _sourcePos)
 {
   m_impl->PlaySource(_source, _sourcePos);
+}
+
+void AudioDevice::SetListenerPosition(const math::Vec3f& _listenerPos)
+{
+  m_impl->SetListenerPosition(_listenerPos);
 }
 
 // ------------------------------------------------------------------------------
@@ -325,12 +354,26 @@ void AudioDevice::Impl::DestroyAudioSource(AudioSourceHandle _handle)
 
 // ------------------------------------------------------------------------------
 
+bool AudioDevice::Impl::IsSourcePlaying(AudioSourceHandle _source) const
+{
+  ALint sourceState = 0;
+  ALCall(alGetSourcei(m_audioSourceBuffers[_source.m_index], AL_SOURCE_STATE,
+                      &sourceState));
+
+  return sourceState == AL_PLAYING;
+}
+
+// ------------------------------------------------------------------------------
+
 void AudioDevice::Impl::SetSourceSound(AudioSourceHandle _source,
-                                       AudioBufferHandle _sound)
+                                       AudioBufferHandle _sound, float _volume,
+                                       float _variance)
 {
   assert(_source.m_generation == m_audioSourcesGenerations[_source.m_index]);
   assert(_sound.m_generation == m_audioBufferGenerations[_sound.m_index]);
 
+  ALCall(alSourcef(m_audioSourceBuffers[_source.m_index], AL_PITCH, _variance));
+  ALCall(alSourcef(m_audioSourceBuffers[_source.m_index], AL_GAIN, _volume));
   ALCall(alSourcei(m_audioSourceBuffers[_source.m_index], AL_BUFFER,
                    m_audioDataBuffers[_sound.m_index]));
 }
@@ -349,6 +392,12 @@ void AudioDevice::Impl::PlaySource(AudioSourceHandle _source,
 }
 
 // ------------------------------------------------------------------------------
+
+void AudioDevice::Impl::SetListenerPosition(const math::Vec3f& _listenerPos)
+{
+  ALCall(alListener3f(AL_POSITION, _listenerPos[0], _listenerPos[2],
+                      _listenerPos[2]));
+}
 
 } // namespace audio
 } // namespace mage
