@@ -50,6 +50,8 @@ public:
 
   // ------------------------------------------------------------------------------
 
+  const std::vector<ComponentMask>& GetAllEntityMasks() const;
+
 private:
   std::vector<std::int32_t> m_freeEntityIds;
   std::vector<ComponentMask> m_entityComponentMasks;

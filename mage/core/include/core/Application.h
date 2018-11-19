@@ -45,6 +45,9 @@ public:
 
   void Run(int argc, const char** argv);
 
+  audio::AudioDevice& GetAudioDevice() { return m_audioDevice; }
+  messaging::MessageBus& GetMessageBus() { return m_applicationMessageBus; }
+
 private:
   void Stop();
 

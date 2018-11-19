@@ -75,5 +75,12 @@ void EntityManager::ResetComponentMask(Entity _entity) noexcept
 
 // ------------------------------------------------------------------------------
 
+const std::vector<ComponentMask>& EntityManager::GetAllEntityMasks() const
+{
+  return m_entityComponentMasks;
+}
+
+// ------------------------------------------------------------------------------
+
 } // namespace ecs
 } // namespace mage

@@ -69,13 +69,12 @@ void Application::Run(int argc, const char** argv)
 
       m_inputManager.Update();
       Update(1.0f);
+      m_gameWorlds[m_currentWorldId]->RefreshEntityState();
     }
 
     float interpolation =
         (timer.GetElapsedMilli() + c_desiredFrameTimeMS - millisElapsed) /
         c_desiredFrameTimeMS;
-
-    m_gameWorlds[m_currentWorldId]->TickRenderingSystems(interpolation);
 
     Render(interpolation);
 

@@ -1,5 +1,7 @@
 #include "ecs/World.h"
 
+#include "core/Application.h"
+
 namespace mage
 {
 namespace ecs
@@ -7,13 +9,14 @@ namespace ecs
 
 // ------------------------------------------------------------------------------
 
-World::World(messaging::MessageBus& _applicationMessageBus)
+World::World(core::Application& _application)
     : m_componentManagers()
     , m_entityManager()
     , m_gameSystems()
     , m_renderingSystems()
     , m_cameras()
-    , m_applicationMessageBus(_applicationMessageBus)
+    , m_soundLibrary(_application.GetAudioDevice())
+    , m_applicationMessageBus(_application.GetMessageBus())
 {
 }
 
@@ -68,30 +71,73 @@ EntityHandle World::CreateEntity()
 
 void World::DestroyEntity(Entity& _entity)
 {
-  ComponentMask mask = m_entityManager.GetComponentMaskForEntity(_entity);
+  m_entitiesToRemove.push_back(_entity);
+}
 
-  for (auto i = 0; i < c_maxNumberOfComponentTypes; i++)
+// ------------------------------------------------------------------------------
+
+void World::RefreshEntityState()
+{
+  if (m_entitiesToRemove.empty() && m_modifiedEntities.empty())
   {
-    if (mask.HasComponent(i))
+    // no need to refresh any entities
+    return;
+  }
+
+  // Remove entities destroyed from the last update
+  for (size_t i = 0; i < m_entitiesToRemove.size(); i++)
+  {
+    ComponentMask mask =
+        m_entityManager.GetComponentMaskForEntity(m_entitiesToRemove[i]);
+
+    for (auto componentId = 0; componentId < c_maxNumberOfComponentTypes;
+         componentId++)
     {
-      m_componentManagers[i]->RemoveComponent(_entity);
+      if (mask.HasComponent(componentId))
+      {
+        m_componentManagers[componentId]->RemoveComponent(
+            m_entitiesToRemove[i]);
+      }
+    }
+
+    m_entityManager.ResetComponentMask(m_entitiesToRemove[i]);
+    m_entityManager.RecycleEntity(m_entitiesToRemove[i]);
+  }
+
+  // move the removed entities into the modified container
+  if (m_modifiedEntities.empty())
+  {
+    m_modifiedEntities = std::move(m_entitiesToRemove);
+  }
+  else
+  {
+    m_modifiedEntities.reserve(m_modifiedEntities.size() +
+                               m_entitiesToRemove.size());
+
+    std::move(std::begin(m_entitiesToRemove), std::end(m_entitiesToRemove),
+              std::back_inserter(m_modifiedEntities));
+
+    m_entitiesToRemove.clear();
+  }
+
+  // Update the system's registered entities with the ones modified last update
+  for (size_t i = 0; i < m_modifiedEntities.size(); i++)
+  {
+    for (auto&& gameSystem : m_gameSystems)
+    {
+      gameSystem->OnEntityComponentMaskChange(
+          m_modifiedEntities[i],
+          m_entityManager.GetComponentMaskForEntity(m_modifiedEntities[i]));
+    }
+    for (auto&& renderingSystem : m_renderingSystems)
+    {
+      renderingSystem->OnEntityComponentMaskChange(
+          m_modifiedEntities[i],
+          m_entityManager.GetComponentMaskForEntity(m_modifiedEntities[i]));
     }
   }
 
-  m_entityManager.ResetComponentMask(_entity);
-
-  for (auto&& system : m_gameSystems)
-  {
-    system->OnEntityComponentMaskChange(
-        _entity, m_entityManager.GetComponentMaskForEntity(_entity));
-  }
-  for (auto&& system : m_renderingSystems)
-  {
-    system->OnEntityComponentMaskChange(
-        _entity, m_entityManager.GetComponentMaskForEntity(_entity));
-  }
-
-  m_entityManager.RecycleEntity(_entity);
+  m_modifiedEntities.clear();
 }
 
 // ------------------------------------------------------------------------------
@@ -153,6 +199,10 @@ messaging::MessageBus& World::GetApplicationMessageBus()
 {
   return m_applicationMessageBus;
 }
+
+// ------------------------------------------------------------------------------
+
+audio::SoundLibrary& World::GetSoundLibrary() { return m_soundLibrary; }
 
 // ------------------------------------------------------------------------------
 

@@ -5,11 +5,17 @@
 #include "EntityManager.h"
 #include "GameSystem.h"
 #include "RenderingSystem.h"
+#include "audio/SoundLibrary.h"
 
 #include <array>
 
 namespace mage
 {
+
+namespace core
+{
+class Application;
+}
 
 namespace messaging
 {
@@ -24,7 +30,7 @@ namespace ecs
 class World
 {
 public:
-  World(messaging::MessageBus& _applicationMessageBus);
+  World(core::Application& _application);
   virtual ~World();
 
   // ------------------------------------------------------------------------------
@@ -40,6 +46,10 @@ public:
 
   EntityHandle CreateEntity();
   void DestroyEntity(Entity& _entity);
+
+  // ------------------------------------------------------------------------------
+
+  void RefreshEntityState();
 
   // ------------------------------------------------------------------------------
 
@@ -69,15 +79,10 @@ public:
 
     m_entityManager.AddComponent<ComponentType>(_entity);
 
-    for (auto&& system : m_gameSystems)
+    if (std::find(m_modifiedEntities.begin(), m_modifiedEntities.end(),
+                  _entity) == m_modifiedEntities.end())
     {
-      system->OnEntityComponentMaskChange(
-          _entity, m_entityManager.GetComponentMaskForEntity(_entity));
-    }
-    for (auto&& system : m_renderingSystems)
-    {
-      system->OnEntityComponentMaskChange(
-          _entity, m_entityManager.GetComponentMaskForEntity(_entity));
+      m_modifiedEntities.push_back(_entity);
     }
 
     return componentRef;
@@ -94,15 +99,10 @@ public:
 
     m_entityManager.RemoveComponent<ComponentType>(_entity);
 
-    for (auto&& system : m_gameSystems)
+    if (std::find(m_modifiedEntities.begin(), m_modifiedEntities.end(),
+                  _entity) == m_modifiedEntities.end())
     {
-      system->OnEntityComponentMaskChange(
-          _entity, m_entityManager.GetComponentMaskForEntity(_entity));
-    }
-    for (auto&& system : m_renderingSystems)
-    {
-      system->OnEntityComponentMaskChange(
-          _entity, m_entityManager.GetComponentMaskForEntity(_entity));
+      m_modifiedEntities.push_back(_entity);
     }
   }
 
@@ -117,7 +117,18 @@ public:
 
   // ------------------------------------------------------------------------------
 
+  template <typename ComponentType>
+  std::vector<ComponentType>& GetAllComponentsOfType()
+  {
+    ComponentManager<ComponentType>* manager =
+        GetPtrToDerivedComponentManager<ComponentType>();
+    return manager->GetAllComponents();
+  }
+
+  // ------------------------------------------------------------------------------
+
   messaging::MessageBus& GetApplicationMessageBus();
+  audio::SoundLibrary& GetSoundLibrary();
 
   // ------------------------------------------------------------------------------
 
@@ -147,11 +158,14 @@ protected:
   std::array<std::unique_ptr<BaseComponentManager>, c_maxNumberOfComponentTypes>
       m_componentManagers;
   EntityManager m_entityManager;
+  std::vector<Entity> m_entitiesToRemove;
+  std::vector<Entity> m_modifiedEntities;
   std::vector<std::unique_ptr<GameSystem>> m_gameSystems;
   std::vector<std::unique_ptr<RenderingSystem>> m_renderingSystems;
 
   std::vector<graphics::Camera> m_cameras;
 
+  audio::SoundLibrary m_soundLibrary;
   messaging::MessageBus& m_applicationMessageBus;
 };
 
