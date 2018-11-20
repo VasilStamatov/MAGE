@@ -3,6 +3,8 @@
 #include "ecs/World.h"
 #include "ecs_common/TransformComponent.h"
 
+#include <iostream>
+
 namespace mage
 {
 namespace audio
@@ -23,10 +25,12 @@ void SoundListenerSystem::Tick(ecs::World& _world, float _deltaTime)
 {
   for (auto&& entity : m_registeredEntities)
   {
-    auto& transform =
-        _world.GetComponent<ecs::common::TransformComponent>(entity);
+    auto& location =
+        _world.GetComponent<ecs::common::TransformComponent>(entity)
+            .m_transform.GetTranslation();
 
-    m_audioDevice.SetListenerPosition(transform.m_transform.GetTranslation());
+    // std::cout << "Setting Location To: " << location << std::endl;
+    m_audioDevice.SetListenerPosition(location);
   }
 }
 

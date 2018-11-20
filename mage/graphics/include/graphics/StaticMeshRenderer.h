@@ -14,8 +14,7 @@ namespace graphics
 
 struct StaticMeshComponent : public ecs::Component
 {
-  StaticMeshComponent(const std::string& _meshFile,
-                      const std::string& _materialFile);
+  StaticMeshComponent(OBJModel& _objMesh, const std::string& _materialFile);
 
   StaticMesh m_mesh;
   Material m_material;

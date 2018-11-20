@@ -53,6 +53,7 @@ void Application::Run(int argc, const char** argv)
   }
 
   m_gameWorlds[m_currentWorldId]->OnEnter();
+  m_gameWorlds[m_currentWorldId]->RefreshEntityState();
 
   Timer timer;
   float millisElapsed = timer.GetElapsedMilli();

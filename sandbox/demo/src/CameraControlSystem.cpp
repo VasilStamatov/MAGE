@@ -5,7 +5,6 @@
 #include <ecs/World.h>
 #include <ecs_common/CameraComponent.h>
 #include <ecs_common/TransformComponent.h>
-#include <input/InputManager.h>
 #include <messaging/MessageBus.h>
 
 CameraControlSystem::CameraControlSystem()
@@ -19,8 +18,8 @@ void CameraControlSystem::Initialize(mage::ecs::World& _world)
 {
   auto& appMsgBus = _world.GetApplicationMessageBus();
 
-  appMsgBus.Subscribe(this, &CameraControlSystem::OnKeyPress);
-  appMsgBus.Subscribe(this, &CameraControlSystem::OnKeyRelease);
+  // appMsgBus.Subscribe(this, &CameraControlSystem::OnKeyPress);
+  // appMsgBus.Subscribe(this, &CameraControlSystem::OnKeyRelease);
   appMsgBus.Subscribe(this, &CameraControlSystem::OnMouseMove);
 
   // Remove the cursor in fps mode

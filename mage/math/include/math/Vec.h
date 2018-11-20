@@ -307,7 +307,7 @@ public:
 
   T GetSquaredMagnitude() const
   {
-    T rtn = 0;
+    T rtn = static_cast<T>(0.0);
 
     for (auto i = 0; i < Size; i++)
     {
@@ -337,7 +337,7 @@ public:
 
   T Dot(const Vec& _other) const noexcept
   {
-    T rtn = 0;
+    T rtn = static_cast<T>(0.0);
 
     for (auto i = 0; i < Size; i++)
     {

@@ -40,7 +40,7 @@ AABB AABB::Transform(const Mat4f& _transform) const
       Vec4f(m_maxExtent[0], m_maxExtent[1], m_minExtent[2], 1.0f);
 
   Vec4f TopLeftBehind =
-      Vec4f(m_minExtent[0], m_minExtent[1], m_minExtent[2], 1.0f);
+      Vec4f(m_minExtent[0], m_maxExtent[1], m_minExtent[2], 1.0f);
 
   Vec4f TopLeftFront =
       Vec4f(m_minExtent[0], m_maxExtent[1], m_maxExtent[2], 1.0f);
@@ -73,11 +73,11 @@ AABB AABB::Transform(const Mat4f& _transform) const
           TopLeftFront),
       bottomLeftFront);
 
-  Vec4f max = GetMinValues(
-      GetMinValues(
-          GetMinValues(
-              GetMinValues(
-                  GetMinValues(GetMinValues(GetMinValues(bottomLeftBehind,
+  Vec4f max = GetMaxValues(
+      GetMaxValues(
+          GetMaxValues(
+              GetMaxValues(
+                  GetMaxValues(GetMaxValues(GetMaxValues(bottomLeftBehind,
                                                          topRightFront),
                                             bottomRightBehind),
                                bottomRightFront),

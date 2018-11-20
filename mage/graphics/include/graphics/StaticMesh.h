@@ -1,5 +1,7 @@
 #pragma once
 
+#include "OBJModel.h"
+
 #include "renderer/GLIndexBuffer.h"
 #include "renderer/GLVertexArray.h"
 
@@ -13,12 +15,10 @@ namespace graphics
 class StaticMesh
 {
 public:
-  StaticMesh(const std::string& _filepath);
+  StaticMesh(std::vector<Vertex>& _vertices,
+             std::vector<std::uint32_t>& _indices);
 
   void Draw() const;
-
-private:
-  void Load(const std::string& _filepath);
 
 private:
   GLVertexArray m_vertexArrayObject;

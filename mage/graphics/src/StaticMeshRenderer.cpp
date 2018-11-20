@@ -10,9 +10,9 @@ namespace graphics
 
 // ------------------------------------------------------------------------------
 
-StaticMeshComponent::StaticMeshComponent(const std::string& _meshFile,
+StaticMeshComponent::StaticMeshComponent(OBJModel& _objMesh,
                                          const std::string& _materialFile)
-    : m_mesh(_meshFile)
+    : m_mesh(_objMesh.GetVertices(), _objMesh.GetIndices())
     , m_material(_materialFile)
 {
 }
