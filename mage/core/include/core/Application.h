@@ -46,6 +46,7 @@ public:
   void Run(int argc, const char** argv);
 
   audio::AudioDevice& GetAudioDevice() { return m_audioDevice; }
+  graphics::RenderDevice& GetRenderDevice() { return m_renderDevice; }
   messaging::MessageBus& GetMessageBus() { return m_applicationMessageBus; }
 
 private:

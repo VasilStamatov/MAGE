@@ -53,8 +53,8 @@ void GameWorld::AddEntitiesAndComponents()
     auto camera = CreateEntity();
 
     auto& cameraComp = camera.AddComponent<mage::ecs::common::CameraComponent>(
-        *this, mage::math::GenPerspectiveMat(mage::math::ToRadians(70.0f),
-                                             16.0f / 9.0f, 0.1f, 100.0f));
+        *this, mage::math::Vec4i32(0, 0, 1024, 576), 70.0f, 0.1f, 100.0f, true);
+
     auto& transformComp =
         camera.AddComponent<mage::ecs::common::TransformComponent>();
 

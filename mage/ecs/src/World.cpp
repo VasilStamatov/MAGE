@@ -14,9 +14,10 @@ World::World(core::Application& _application)
     , m_entityManager()
     , m_gameSystems()
     , m_renderingSystems()
+    , m_guiSystems()
     , m_cameras()
     , m_soundLibrary(_application.GetAudioDevice())
-    , m_applicationMessageBus(_application.GetMessageBus())
+    , m_application(_application)
 {
 }
 
@@ -44,6 +45,10 @@ void World::OnEnter()
   {
     system->Initialize(*this);
   }
+  for (auto&& system : m_guiSystems)
+  {
+    system->Initialize(*this);
+  }
 }
 
 // ------------------------------------------------------------------------------
@@ -55,6 +60,10 @@ void World::OnExit()
     system->Uninitialize(*this);
   }
   for (auto&& system : m_renderingSystems)
+  {
+    system->Uninitialize(*this);
+  }
+  for (auto&& system : m_guiSystems)
   {
     system->Uninitialize(*this);
   }
@@ -135,6 +144,12 @@ void World::RefreshEntityState()
           m_modifiedEntities[i],
           m_entityManager.GetComponentMaskForEntity(m_modifiedEntities[i]));
     }
+    for (auto&& guiSystem : m_guiSystems)
+    {
+      guiSystem->OnEntityComponentMaskChange(
+          m_modifiedEntities[i],
+          m_entityManager.GetComponentMaskForEntity(m_modifiedEntities[i]));
+    }
   }
 
   m_modifiedEntities.clear();
@@ -168,9 +183,12 @@ void World::AddRenderingSystem(std::unique_ptr<RenderingSystem> _system)
 
 void World::TickRenderingSystems(float _deltaTime)
 {
-  for (auto&& system : m_renderingSystems)
+  for (const auto& camera : m_cameras)
   {
-    for (const auto& camera : m_cameras)
+    const math::Vec4i32& viewport = camera.GetViewport();
+    m_application.GetRenderDevice().SetViewport(viewport[0], viewport[1],
+                                                viewport[2], viewport[3]);
+    for (auto&& system : m_renderingSystems)
     {
       system->Render(*this, camera, _deltaTime);
     }
@@ -179,15 +197,45 @@ void World::TickRenderingSystems(float _deltaTime)
 
 // ------------------------------------------------------------------------------
 
-std::uint32_t World::AddCamera(math::Mat4f _projectionMat)
+void World::AddGUISystem(std::unique_ptr<RenderingSystem> _system)
 {
-  m_cameras.emplace_back(std::move(_projectionMat));
+  m_guiSystems.push_back(std::move(_system));
+}
+
+// ------------------------------------------------------------------------------
+
+void World::TickGUISystems(float _deltaTime)
+{
+  for (const auto& camera : m_cameras)
+  {
+    for (auto&& system : m_guiSystems)
+    {
+      system->Render(*this, camera, _deltaTime);
+    }
+  }
+}
+
+// ------------------------------------------------------------------------------
+
+std::uint32_t World::AddCamera(const math::Vec4i32& _viewport,
+                               float _fovDegrees, float _near, float _far,
+                               bool _listenForWindowResize)
+{
+  if (_listenForWindowResize)
+  {
+    m_cameras.emplace_back(_viewport, _fovDegrees, _near, _far,
+                           m_application.GetMessageBus());
+  }
+  else
+  {
+    m_cameras.emplace_back(_viewport, _fovDegrees, _near, _far);
+  }
   return m_cameras.size() - 1;
 }
 
 // ------------------------------------------------------------------------------
 
-graphics::Camera& World::GetCamera(std::uint32_t _id)
+graphics::PerspectiveCamera& World::GetCamera(std::uint32_t _id)
 {
   assert(_id < m_cameras.size());
   return m_cameras[_id];
@@ -197,7 +245,7 @@ graphics::Camera& World::GetCamera(std::uint32_t _id)
 
 messaging::MessageBus& World::GetApplicationMessageBus()
 {
-  return m_applicationMessageBus;
+  return m_application.GetMessageBus();
 }
 
 // ------------------------------------------------------------------------------

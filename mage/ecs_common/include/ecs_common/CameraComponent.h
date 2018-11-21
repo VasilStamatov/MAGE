@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ecs/Component.h"
-#include "graphics/Camera.h"
+#include "graphics/PerspectiveCamera.h"
 
 namespace mage
 {
@@ -21,7 +21,9 @@ namespace common
 
 struct CameraComponent : public ecs::Component
 {
-  CameraComponent(World& _world, math::Mat4f _projectionMat);
+  CameraComponent(World& _world, const math::Vec4i32& _viewport,
+                  float _fovDegrees, float _near, float _far,
+                  bool _listenForWindowResize);
 
   std::uint32_t m_cameraId;
 };

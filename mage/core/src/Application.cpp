@@ -155,8 +155,8 @@ void Application::Update(float _deltaTime)
 void Application::Render(float _interpolation)
 {
   m_renderDevice.ClearBuffer(graphics::RendererBufferType::Color_Depth);
-  m_renderDevice.SetViewport(0, 0, 1024, 576);
   m_gameWorlds[m_currentWorldId]->TickRenderingSystems(_interpolation);
+  m_gameWorlds[m_currentWorldId]->TickGUISystems(_interpolation);
 }
 
 // ------------------------------------------------------------------------------

@@ -63,8 +63,14 @@ public:
 
   // ------------------------------------------------------------------------------
 
-  std::uint32_t AddCamera(math::Mat4f _projectionMat);
-  graphics::Camera& GetCamera(std::uint32_t _id);
+  void AddGUISystem(std::unique_ptr<RenderingSystem> _system);
+  void TickGUISystems(float _deltaTime);
+
+  // ------------------------------------------------------------------------------
+
+  std::uint32_t AddCamera(const math::Vec4i32& _viewport, float _fovDegrees,
+                          float _near, float _far, bool _listenForWindowResize);
+  graphics::PerspectiveCamera& GetCamera(std::uint32_t _id);
 
   // ------------------------------------------------------------------------------
 
@@ -162,11 +168,12 @@ protected:
   std::vector<Entity> m_modifiedEntities;
   std::vector<std::unique_ptr<GameSystem>> m_gameSystems;
   std::vector<std::unique_ptr<RenderingSystem>> m_renderingSystems;
+  std::vector<std::unique_ptr<RenderingSystem>> m_guiSystems;
 
-  std::vector<graphics::Camera> m_cameras;
+  std::vector<graphics::PerspectiveCamera> m_cameras;
 
   audio::SoundLibrary m_soundLibrary;
-  messaging::MessageBus& m_applicationMessageBus;
+  core::Application& m_application;
 };
 
 // ------------------------------------------------------------------------------

@@ -11,8 +11,11 @@ namespace common
 
 // ------------------------------------------------------------------------------
 
-CameraComponent::CameraComponent(World& _world, math::Mat4f _projectionMat)
-    : m_cameraId(_world.AddCamera(std::move(_projectionMat)))
+CameraComponent::CameraComponent(World& _world, const math::Vec4i32& _viewport,
+                                 float _fovDegrees, float _near, float _far,
+                                 bool _listenForWindowResize)
+    : m_cameraId(_world.AddCamera(_viewport, _fovDegrees, _near, _far,
+                                  _listenForWindowResize))
 {
 }
 

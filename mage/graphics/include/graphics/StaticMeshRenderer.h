@@ -27,7 +27,8 @@ class StaticMeshRenderer : public ecs::RenderingSystem
 public:
   StaticMeshRenderer(GLShader _shader);
 
-  virtual void Render(mage::ecs::World& _world, const Camera& _camera,
+  virtual void Render(mage::ecs::World& _world,
+                      const PerspectiveCamera& _camera,
                       float _deltaTime) override;
 };
 
