@@ -32,6 +32,10 @@ public:
 
   // ------------------------------------------------------------------------------
 
+  std::pair<int, int> GetWindowFramebufferSize();
+
+  // ------------------------------------------------------------------------------
+
 private:
   void CreateFullscreenWindow(std::string _title, GLFWmonitor* _monitor,
                               std::int32_t _width, std::int32_t _height);

@@ -68,9 +68,13 @@ public:
 
   // ------------------------------------------------------------------------------
 
-  std::uint32_t AddCamera(const math::Vec4i32& _viewport, float _fovDegrees,
-                          float _near, float _far, bool _listenForWindowResize);
-  graphics::PerspectiveCamera& GetCamera(std::uint32_t _id);
+  std::uint32_t AddPerspectiveCamera(const math::Vec4i32& _viewport,
+                                     float _fovDegrees, float _near, float _far,
+                                     bool _listenForWindowResize);
+  std::uint32_t AddOrthographicCamera(const math::Vec4i32& _viewport,
+                                      float _near, float _far,
+                                      bool _listenForWindowResize);
+  graphics::Camera& GetCamera(std::uint32_t _id);
 
   // ------------------------------------------------------------------------------
 
@@ -170,7 +174,8 @@ protected:
   std::vector<std::unique_ptr<RenderingSystem>> m_renderingSystems;
   std::vector<std::unique_ptr<RenderingSystem>> m_guiSystems;
 
-  std::vector<graphics::PerspectiveCamera> m_cameras;
+  std::vector<graphics::Camera> m_cameras;
+  graphics::Camera m_screenCamera;
 
   audio::SoundLibrary m_soundLibrary;
   core::Application& m_application;

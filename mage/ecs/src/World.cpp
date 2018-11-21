@@ -16,6 +16,11 @@ World::World(core::Application& _application)
     , m_renderingSystems()
     , m_guiSystems()
     , m_cameras()
+    , m_screenCamera(
+          math::Vec4i32(
+              0.0f, _application.GetVideo().GetWindowFramebufferSize().first,
+              0.0f, _application.GetVideo().GetWindowFramebufferSize().second),
+          -1.0f, 1.0f, _application.GetMessageBus())
     , m_soundLibrary(_application.GetAudioDevice())
     , m_application(_application)
 {
@@ -206,20 +211,18 @@ void World::AddGUISystem(std::unique_ptr<RenderingSystem> _system)
 
 void World::TickGUISystems(float _deltaTime)
 {
-  for (const auto& camera : m_cameras)
+  for (auto&& system : m_guiSystems)
   {
-    for (auto&& system : m_guiSystems)
-    {
-      system->Render(*this, camera, _deltaTime);
-    }
+    system->Render(*this, m_screenCamera, _deltaTime);
   }
 }
 
 // ------------------------------------------------------------------------------
 
-std::uint32_t World::AddCamera(const math::Vec4i32& _viewport,
-                               float _fovDegrees, float _near, float _far,
-                               bool _listenForWindowResize)
+std::uint32_t World::AddPerspectiveCamera(const math::Vec4i32& _viewport,
+                                          float _fovDegrees, float _near,
+                                          float _far,
+                                          bool _listenForWindowResize)
 {
   if (_listenForWindowResize)
   {
@@ -235,7 +238,25 @@ std::uint32_t World::AddCamera(const math::Vec4i32& _viewport,
 
 // ------------------------------------------------------------------------------
 
-graphics::PerspectiveCamera& World::GetCamera(std::uint32_t _id)
+std::uint32_t World::AddOrthographicCamera(const math::Vec4i32& _viewport,
+                                           float _near, float _far,
+                                           bool _listenForWindowResize)
+{
+  if (_listenForWindowResize)
+  {
+    m_cameras.emplace_back(_viewport, _near, _far,
+                           m_application.GetMessageBus());
+  }
+  else
+  {
+    m_cameras.emplace_back(_viewport, _near, _far);
+  }
+  return m_cameras.size() - 1;
+}
+
+// ------------------------------------------------------------------------------
+
+graphics::Camera& World::GetCamera(std::uint32_t _id)
 {
   assert(_id < m_cameras.size());
   return m_cameras[_id];

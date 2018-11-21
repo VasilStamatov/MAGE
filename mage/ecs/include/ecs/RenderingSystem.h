@@ -2,7 +2,7 @@
 
 #include "System.h"
 
-#include "graphics/PerspectiveCamera.h"
+#include "graphics/Camera.h"
 #include "renderer/GLShader.h"
 
 namespace mage
@@ -18,7 +18,7 @@ public:
   RenderingSystem(graphics::GLShader _shader);
   virtual ~RenderingSystem();
 
-  virtual void Render(World& _world, const graphics::PerspectiveCamera& _camera,
+  virtual void Render(World& _world, const graphics::Camera& _camera,
                       float _deltaTime) = 0;
 
 protected:

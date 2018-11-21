@@ -28,8 +28,7 @@ StaticMeshRenderer::StaticMeshRenderer(GLShader _shader)
 
 // ------------------------------------------------------------------------------
 
-void StaticMeshRenderer::Render(mage::ecs::World& _world,
-                                const PerspectiveCamera& _camera,
+void StaticMeshRenderer::Render(mage::ecs::World& _world, const Camera& _camera,
                                 float _deltaTime)
 {
   m_shader.Bind();

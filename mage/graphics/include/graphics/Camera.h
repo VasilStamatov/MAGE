@@ -20,13 +20,19 @@ namespace graphics
 
 // ------------------------------------------------------------------------------
 
-class PerspectiveCamera
+class Camera
 {
 public:
-  PerspectiveCamera(const math::Vec4i32& _viewport, float _fovDegrees,
-                    float _near, float _far);
-  PerspectiveCamera(const math::Vec4i32& _viewport, float _fovDegrees,
-                    float _near, float _far, messaging::MessageBus& _msgBus);
+  // Perspective
+  Camera(const math::Vec4i32& _viewport, float _fovDegrees, float _near,
+         float _far);
+  Camera(const math::Vec4i32& _viewport, float _fovDegrees, float _near,
+         float _far, messaging::MessageBus& _msgBus);
+
+  // Ortho
+  Camera(const math::Vec4i32& _viewport, float _near, float _far);
+  Camera(const math::Vec4i32& _viewport, float _near, float _far,
+         messaging::MessageBus& _msgBus);
 
   // ------------------------------------------------------------------------------
 
@@ -53,6 +59,8 @@ private:
   float m_fovDegrees;
   float m_near;
   float m_far;
+
+  bool m_isOrtho;
 };
 
 // ------------------------------------------------------------------------------

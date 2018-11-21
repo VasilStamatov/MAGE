@@ -48,6 +48,7 @@ public:
   audio::AudioDevice& GetAudioDevice() { return m_audioDevice; }
   graphics::RenderDevice& GetRenderDevice() { return m_renderDevice; }
   messaging::MessageBus& GetMessageBus() { return m_applicationMessageBus; }
+  video::Video& GetVideo() { return m_video; }
 
 private:
   void Stop();

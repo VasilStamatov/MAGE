@@ -114,5 +114,17 @@ GLFWwindow* Window::GetHandle() const { return m_handle; }
 
 // ------------------------------------------------------------------------------
 
+std::pair<int, int> Window::GetFramebufferSize()
+{
+  int width;
+  int height;
+
+  glfwGetFramebufferSize(m_handle, &width, &height);
+
+  return std::make_pair(width, height);
+}
+
+// ------------------------------------------------------------------------------
+
 } // namespace video
 } // namespace mage

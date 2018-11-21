@@ -162,6 +162,13 @@ bool Video::ShouldClose() const { return m_window->ShouldClose(); }
 
 // ------------------------------------------------------------------------------
 
+std::pair<int, int> Video::GetWindowFramebufferSize()
+{
+  return m_window->GetFramebufferSize();
+}
+
+// ------------------------------------------------------------------------------
+
 void Video::CreateFullscreenWindow(std::string _title, GLFWmonitor* _monitor,
                                    std::int32_t _width, std::int32_t _height)
 {
