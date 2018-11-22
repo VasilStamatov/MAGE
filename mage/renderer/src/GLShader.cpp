@@ -262,11 +262,6 @@ void GLShader::LinkShaders(std::uint32_t _vsShaderHandle,
   GLCall(glAttachShader(m_programHandle, _vsShaderHandle));
   GLCall(glAttachShader(m_programHandle, _fsShaderHandle));
 
-  GLCall(glBindAttribLocation(m_programHandle, 0, "in_Position"));
-  GLCall(glBindAttribLocation(m_programHandle, 1, "in_Normal"));
-  GLCall(glBindAttribLocation(m_programHandle, 2, "in_Color"));
-  GLCall(glBindAttribLocation(m_programHandle, 3, "in_TexCoord"));
-
   GLCall(glLinkProgram(m_programHandle));
 
   GLint isLinked = 0;

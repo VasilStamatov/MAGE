@@ -16,13 +16,12 @@ struct Vertex
 {
   bool operator==(const Vertex& _other) const
   {
-    return m_pos == _other.m_pos && m_color == _other.m_color &&
-           m_texCoords == _other.m_texCoords && m_normal == _other.m_normal;
+    return m_pos == _other.m_pos && m_texCoords == _other.m_texCoords &&
+           m_normal == _other.m_normal;
   }
 
   math::Vec3f m_pos;
   math::Vec3f m_normal;
-  math::Vec3f m_color;
   math::Vec2f m_texCoords;
 };
 

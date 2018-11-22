@@ -35,10 +35,6 @@ OBJModel::OBJModel(const std::string& _objFile)
       vertex.m_pos[1] = attrib.vertices[3 * index.vertex_index + 1];
       vertex.m_pos[2] = attrib.vertices[3 * index.vertex_index + 2];
 
-      vertex.m_color[0] = attrib.colors[3 * index.vertex_index + 0];
-      vertex.m_color[1] = attrib.colors[3 * index.vertex_index + 1];
-      vertex.m_color[2] = attrib.colors[3 * index.vertex_index + 2];
-
       vertex.m_texCoords[0] = attrib.texcoords[2 * index.texcoord_index + 0];
       vertex.m_texCoords[1] = attrib.texcoords[2 * index.texcoord_index + 1];
 

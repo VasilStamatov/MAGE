@@ -16,11 +16,10 @@ StaticMesh::StaticMesh(std::vector<Vertex>& _vertices,
   m_vertexBuffer.SetBufferData(sizeof(Vertex) * _vertices.size(),
                                _vertices.data());
 
-  // setup the vao data layout (must be compliant with shader input attributes)
+  // setup the vao data layout (must be equal to the shader attribute layout)
   GLBufferLayout bufferLayout;
   bufferLayout.PushFloat(3, false); // first 3 floats (m_position)
   bufferLayout.PushFloat(3, false); // last 3 floats (m_normals)
-  bufferLayout.PushFloat(3, false); // second 3 floats (m_color)
   bufferLayout.PushFloat(2, false); // next 2 floats (m_texCoords)
 
   m_vertexArrayObject.AttachVertexBuffer(m_vertexBuffer, bufferLayout);

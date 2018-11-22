@@ -20,8 +20,6 @@ GLenum GetGLTextureWrap(TextureWrap _wrap)
 {
   switch (_wrap)
   {
-    case TextureWrap::Clamp:
-      return GL_CLAMP;
     case TextureWrap::ClampToBorder:
       return GL_CLAMP_TO_BORDER;
     case TextureWrap::ClampToEdge:
@@ -94,9 +92,11 @@ TextureParameters::TextureParameters(TextureFormat _format,
 
 // ------------------------------------------------------------------------------
 
-GLTexture2D::GLTexture2D()
+GLTexture2D::GLTexture2D(std::uint32_t _width, std::uint32_t _height,
+                         TextureParameters _parameters)
     : m_handle(0)
 {
+  GenTexture(_width, _height, nullptr, _parameters);
 }
 
 // ------------------------------------------------------------------------------
@@ -160,6 +160,16 @@ void GLTexture2D::LoadTexture(const std::string& _filepath,
     throw RUNTIME_ERROR("Could not load image " + _filepath);
   }
 
+  GenTexture(width, height, data, _parameters);
+
+  free(data);
+}
+
+// ------------------------------------------------------------------------------
+
+void GLTexture2D::GenTexture(uint32_t _width, std::uint32_t _height,
+                             std::uint8_t* _data, TextureParameters _parameters)
+{
   GLCall(glGenTextures(1, &m_handle));
   GLCall(glBindTexture(GL_TEXTURE_2D, m_handle));
 
@@ -177,11 +187,10 @@ void GLTexture2D::LoadTexture(const std::string& _filepath,
   GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,
                          GetGLTextureWrap(_parameters.m_wrap)));
 
-  GLCall(glTexImage2D(
-      GL_TEXTURE_2D, 0, GetGLTextureFormat(_parameters.m_format), width, height,
-      0, GetGLTextureFormat(_parameters.m_format), GL_UNSIGNED_BYTE, data));
-
-  free(data);
+  GLCall(glTexImage2D(GL_TEXTURE_2D, 0,
+                      GetGLTextureFormat(_parameters.m_format), _width, _height,
+                      0, GetGLTextureFormat(_parameters.m_format),
+                      GL_UNSIGNED_BYTE, _data));
 
   glGenerateMipmap(GL_TEXTURE_2D);
   glBindTexture(GL_TEXTURE_2D, 0);

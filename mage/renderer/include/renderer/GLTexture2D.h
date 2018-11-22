@@ -14,7 +14,6 @@ enum class TextureWrap
 {
   None,
   Repeat,
-  Clamp,
   MirroredRepeat,
   ClampToEdge,
   ClampToBorder
@@ -58,7 +57,8 @@ struct TextureParameters
 class GLTexture2D
 {
 public:
-  GLTexture2D();
+  GLTexture2D(std::uint32_t _width, std::uint32_t _height,
+              TextureParameters _parameters = TextureParameters());
   GLTexture2D(const std::string& _filepath,
               TextureParameters _parameters = TextureParameters());
   ~GLTexture2D();
@@ -84,8 +84,15 @@ public:
 
   // ------------------------------------------------------------------------------
 
+  inline std::uint32_t GetHandle() const { return m_handle; }
+
 private:
   void LoadTexture(const std::string& _filepath, TextureParameters _parameters);
+
+  // ------------------------------------------------------------------------------
+
+  void GenTexture(uint32_t _width, std::uint32_t _height, std::uint8_t* _data,
+                  TextureParameters _parameters);
 
   // ------------------------------------------------------------------------------
 

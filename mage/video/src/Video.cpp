@@ -107,7 +107,7 @@ void Video::Initialize()
 
   videoHints.m_contextHints.m_clientAPI = ContextHints::ClientAPI::OpenGL;
   videoHints.m_contextHints.m_contextVersionMajor = 3;
-  videoHints.m_contextHints.m_contextVersionMinor = 2;
+  videoHints.m_contextHints.m_contextVersionMinor = 3;
 
   videoHints.m_contextHints.m_openGLForwardCompatible = true;
   videoHints.m_contextHints.m_openGLProfile = ContextHints::OpenGLProfile::Core;
