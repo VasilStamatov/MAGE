@@ -14,13 +14,16 @@ World::World(core::Application& _application)
     , m_entityManager()
     , m_gameSystems()
     , m_renderingSystems()
+    , m_postProcessEffects()
     , m_guiSystems()
     , m_cameras()
     , m_screenCamera(
           math::Vec4i32(
-              0.0f, _application.GetVideo().GetWindowFramebufferSize().first,
-              0.0f, _application.GetVideo().GetWindowFramebufferSize().second),
+              0.0f, 0.0f,
+              _application.GetVideo().GetWindowFramebufferSize().first,
+              _application.GetVideo().GetWindowFramebufferSize().second),
           -1.0f, 1.0f, _application.GetMessageBus())
+    , m_toScreenRenderPass()
     , m_soundLibrary(_application.GetAudioDevice())
     , m_application(_application)
 {
@@ -188,16 +191,78 @@ void World::AddRenderingSystem(std::unique_ptr<RenderingSystem> _system)
 
 void World::TickRenderingSystems(float _deltaTime)
 {
+  m_application.GetRenderDevice().ClearBuffer(
+      graphics::RendererBufferType::Color_Depth);
+
   for (const auto& camera : m_cameras)
   {
-    const math::Vec4i32& viewport = camera.GetViewport();
-    m_application.GetRenderDevice().SetViewport(viewport[0], viewport[1],
-                                                viewport[2], viewport[3]);
+    graphics::GLFramebuffer2D* target = camera.GetRenderTarget();
+    if (target != nullptr)
+    {
+      target->Bind();
+      target->Clear();
+    }
+    else
+    {
+      const math::Vec4i32& viewport = camera.GetViewport();
+      m_application.GetRenderDevice().SetViewport(viewport[0], viewport[1],
+                                                  viewport[2], viewport[3]);
+    }
+
     for (auto&& system : m_renderingSystems)
     {
       system->Render(*this, camera, _deltaTime);
     }
+
+    if (target != nullptr)
+    {
+      target->Unbind();
+    }
   }
+}
+
+// ------------------------------------------------------------------------------
+
+void World::AddPostProcessPass(
+    std::unique_ptr<graphics::PostProcessPass> _postProcess)
+{
+  m_postProcessEffects.push_back(std::move(_postProcess));
+}
+
+// ------------------------------------------------------------------------------
+
+void World::ApplyPostProcesses()
+{
+  const math::Vec4i32& viewport = m_screenCamera.GetViewport();
+
+  m_application.GetRenderDevice().SetDepthTesting(false);
+  m_application.GetRenderDevice().SetCulling(false);
+
+  for (const auto& camera : m_cameras)
+  {
+    graphics::GLFramebuffer2D* source = camera.GetRenderTarget();
+
+    if (source == nullptr)
+    {
+      continue;
+    }
+
+    graphics::GLFramebuffer2D output(source->GetWidth(), source->GetHeight());
+
+    for (auto&& postProcessEffect : m_postProcessEffects)
+    {
+      postProcessEffect->Apply(*source, &output);
+
+      m_toScreenRenderPass.Apply(output, source);
+    }
+
+    m_application.GetRenderDevice().SetViewport(viewport[0], viewport[1],
+                                                viewport[2], viewport[3]);
+    m_toScreenRenderPass.Apply(output, nullptr);
+  }
+
+  m_application.GetRenderDevice().SetDepthTesting(true);
+  m_application.GetRenderDevice().SetCulling(true);
 }
 
 // ------------------------------------------------------------------------------

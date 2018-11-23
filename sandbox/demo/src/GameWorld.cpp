@@ -36,6 +36,8 @@ void GameWorld::AddSystems()
   AddRenderingSystem(std::make_unique<mage::graphics::StaticMeshRenderer>(
       mage::graphics::GLShader("./res/shaders/StaticMesh.vert",
                                "./res/shaders/StaticMesh.frag")));
+
+  AddPostProcessPass(std::make_unique<mage::graphics::NullPostProcessPass>());
 }
 
 void GameWorld::AddEntitiesAndComponents()
@@ -54,6 +56,8 @@ void GameWorld::AddEntitiesAndComponents()
 
     auto& cameraComp = camera.AddComponent<mage::ecs::common::CameraComponent>(
         *this, mage::math::Vec4i32(0, 0, 1024, 576), 70.0f, 0.1f, 100.0f, true);
+
+    GetCamera(cameraComp.m_cameraId).MakeRenderToTarget(1024, 1024);
 
     auto& transformComp =
         camera.AddComponent<mage::ecs::common::TransformComponent>();

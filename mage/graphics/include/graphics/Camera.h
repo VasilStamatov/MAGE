@@ -1,6 +1,9 @@
 #pragma once
 
 #include "math/Quat.h"
+#include "renderer/GLFramebuffer2D.h"
+
+#include <memory>
 
 namespace mage
 {
@@ -47,6 +50,15 @@ public:
 
   const math::Vec4i32& GetViewport() const;
 
+  // ------------------------------------------------------------------------------
+
+  void MakeRenderToTarget();
+  void MakeRenderToTarget(std::uint32_t _width, std::uint32_t _height);
+
+  // ------------------------------------------------------------------------------
+
+  GLFramebuffer2D* GetRenderTarget() const;
+
 private:
   void
   WindowFramebufferResizedHandler(video::OnWindowFramebufferResized* _event);
@@ -59,6 +71,8 @@ private:
   float m_fovDegrees;
   float m_near;
   float m_far;
+
+  std::unique_ptr<GLFramebuffer2D> m_renderTarget;
 
   bool m_isOrtho;
 };

@@ -117,5 +117,27 @@ void Camera::WindowFramebufferResizedHandler(
   }
 }
 
+// ------------------------------------------------------------------------------
+
+void Camera::MakeRenderToTarget()
+{
+  m_renderTarget =
+      std::make_unique<GLFramebuffer2D>(m_viewport[2], m_viewport[3]);
+}
+
+// ------------------------------------------------------------------------------
+
+void Camera::MakeRenderToTarget(std::uint32_t _width, std::uint32_t _height)
+{
+  m_renderTarget = std::make_unique<GLFramebuffer2D>(_width, _height);
+}
+
+// ------------------------------------------------------------------------------
+
+GLFramebuffer2D* Camera::GetRenderTarget() const
+{
+  return m_renderTarget.get();
+}
+
 } // namespace graphics
 } // namespace mage

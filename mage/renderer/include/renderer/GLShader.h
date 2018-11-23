@@ -20,10 +20,19 @@ enum class ShaderType
 
 // ------------------------------------------------------------------------------
 
+struct ShaderSourceCode
+{
+  const char* m_vsSource;
+  const char* m_fsSource;
+};
+
+// ------------------------------------------------------------------------------
+
 class GLShader
 {
 public:
   GLShader(const std::string& _vsFilePath, const std::string& _fsFilePath);
+  GLShader(const ShaderSourceCode& _sources);
   ~GLShader();
 
   GLShader(const GLShader& _copy) = delete;

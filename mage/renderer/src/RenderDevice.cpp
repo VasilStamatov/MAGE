@@ -156,6 +156,20 @@ void RenderDevice::SetBlend(bool _enabled)
 
 // ------------------------------------------------------------------------------
 
+void RenderDevice::SetCulling(bool _enabled)
+{
+  if (_enabled)
+  {
+    GLCall(glEnable(GL_CULL_FACE));
+  }
+  else
+  {
+    GLCall(glDisable(GL_CULL_FACE));
+  }
+}
+
+// ------------------------------------------------------------------------------
+
 void RenderDevice::SetViewport(std::uint32_t _x, std::uint32_t _y,
                                std::uint32_t _width, std::uint32_t _height)
 {

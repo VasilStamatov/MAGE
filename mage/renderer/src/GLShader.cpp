@@ -58,6 +58,21 @@ GLShader::GLShader(const std::string& _vsFilePath,
 
 // ------------------------------------------------------------------------------
 
+GLShader::GLShader(const ShaderSourceCode& _sources)
+{
+  GLCall(m_programHandle = glCreateProgram());
+
+  std::uint32_t vsShaderHandle =
+      CompileShader(_sources.m_vsSource, ShaderType::Vertex);
+
+  std::uint32_t fsShaderHandle =
+      CompileShader(_sources.m_fsSource, ShaderType::Fragment);
+
+  LinkShaders(vsShaderHandle, fsShaderHandle);
+}
+
+// ------------------------------------------------------------------------------
+
 GLShader::~GLShader()
 {
   if (m_programHandle != 0)
