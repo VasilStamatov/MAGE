@@ -1,4 +1,4 @@
-#include "graphics/NullPostProcessPass.h"
+#include "graphics/CopyToTargetPipeline.h"
 
 namespace mage
 {
@@ -35,33 +35,37 @@ void main()
 {
   vec4 tex = texture(in_Texture, ex_TexCoord);
   FragColor = tex;
-  // FragColor = vec4(ex_TexCoord.x,ex_TexCoord.y, 1.0, 1.0);
 }
 )";
 
 // ------------------------------------------------------------------------------
 
-NullPostProcessPass::NullPostProcessPass()
-    : PostProcessPass(GLShader(
-          ShaderSourceCode{s_nullPassVertexShader, s_nullPassFragmentShader}))
+CopyToTargetPipeline::CopyToTargetPipeline()
+    : m_nullPassShader(
+          ShaderSourceCode{s_nullPassVertexShader, s_nullPassFragmentShader})
 {
 }
 
 // ------------------------------------------------------------------------------
 
-NullPostProcessPass::~NullPostProcessPass() {}
+CopyToTargetPipeline::~CopyToTargetPipeline() {}
 
 // ------------------------------------------------------------------------------
 
-void NullPostProcessPass::Apply(GLFramebuffer2D& _source,
-                                GLFramebuffer2D* _target)
+void CopyToTargetPipeline::Execute(GLFramebuffer2D& _source,
+                                   GLFramebuffer2D& _target)
 {
-  if (_target != nullptr)
-  {
-    _target->Bind();
-  }
+  m_nullPassShader.Bind();
 
-  m_shader.Bind();
+  if (_source.GetTexture() == _target.GetTexture())
+  {
+    // If they are the same, assume that rendering to the screen is requested.
+    _target.Unbind();
+  }
+  else
+  {
+    _target.Bind();
+  }
 
   _source.GetTexture().Bind(0);
 
@@ -73,10 +77,7 @@ void NullPostProcessPass::Apply(GLFramebuffer2D& _source,
 
   _source.GetTexture().Unbind(0);
 
-  if (_target != nullptr)
-  {
-    _target->Unbind();
-  }
+  _target.Unbind();
 }
 
 // ------------------------------------------------------------------------------

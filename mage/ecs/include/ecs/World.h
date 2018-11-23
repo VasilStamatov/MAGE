@@ -6,7 +6,7 @@
 #include "GameSystem.h"
 #include "RenderingSystem.h"
 #include "audio/SoundLibrary.h"
-#include "graphics/NullPostProcessPass.h"
+#include "graphics/CopyToTargetPipeline.h"
 
 #include <array>
 
@@ -64,8 +64,8 @@ public:
 
   // ------------------------------------------------------------------------------
 
-  void
-  AddPostProcessPass(std::unique_ptr<graphics::PostProcessPass> _postProcess);
+  void AddPostProcessPass(
+      std::unique_ptr<graphics::PostProcessPipeline> _postProcess);
   void ApplyPostProcesses();
 
   // ------------------------------------------------------------------------------
@@ -179,13 +179,13 @@ protected:
   std::vector<Entity> m_modifiedEntities;
   std::vector<std::unique_ptr<GameSystem>> m_gameSystems;
   std::vector<std::unique_ptr<RenderingSystem>> m_renderingSystems;
-  std::vector<std::unique_ptr<graphics::PostProcessPass>> m_postProcessEffects;
+  std::vector<std::unique_ptr<graphics::PostProcessPipeline>> m_postProcesses;
   std::vector<std::unique_ptr<RenderingSystem>> m_guiSystems;
 
   std::vector<graphics::Camera> m_cameras;
   graphics::Camera m_screenCamera;
 
-  graphics::NullPostProcessPass m_toScreenRenderPass;
+  graphics::CopyToTargetPipeline m_copyToTargetPass;
 
   audio::SoundLibrary m_soundLibrary;
   core::Application& m_application;

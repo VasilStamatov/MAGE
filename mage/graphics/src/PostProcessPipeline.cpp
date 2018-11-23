@@ -1,4 +1,4 @@
-#include "graphics/PostProcessPass.h"
+#include "graphics/PostProcessPipeline.h"
 
 namespace mage
 {
@@ -21,9 +21,8 @@ struct PostProcessShaderAttrib
 
 // ------------------------------------------------------------------------------
 
-PostProcessPass::PostProcessPass(GLShader _postProcessShader)
-    : m_shader(std::move(_postProcessShader))
-    , m_screenVAO()
+PostProcessPipeline::PostProcessPipeline()
+    : m_screenVAO()
     , m_screenVBO(BufferUsage::StaticDraw)
     , m_screenIBO()
 {
@@ -55,10 +54,6 @@ PostProcessPass::PostProcessPass(GLShader _postProcessShader)
 
   m_screenIBO.SetData(indices.data(), indices.size());
 }
-
-// ------------------------------------------------------------------------------
-
-PostProcessPass::~PostProcessPass() {}
 
 // ------------------------------------------------------------------------------
 

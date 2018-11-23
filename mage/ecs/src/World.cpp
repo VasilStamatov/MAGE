@@ -14,7 +14,7 @@ World::World(core::Application& _application)
     , m_entityManager()
     , m_gameSystems()
     , m_renderingSystems()
-    , m_postProcessEffects()
+    , m_postProcesses()
     , m_guiSystems()
     , m_cameras()
     , m_screenCamera(
@@ -23,7 +23,7 @@ World::World(core::Application& _application)
               _application.GetVideo().GetWindowFramebufferSize().first,
               _application.GetVideo().GetWindowFramebufferSize().second),
           -1.0f, 1.0f, _application.GetMessageBus())
-    , m_toScreenRenderPass()
+    , m_copyToTargetPass()
     , m_soundLibrary(_application.GetAudioDevice())
     , m_application(_application)
 {
@@ -224,22 +224,21 @@ void World::TickRenderingSystems(float _deltaTime)
 // ------------------------------------------------------------------------------
 
 void World::AddPostProcessPass(
-    std::unique_ptr<graphics::PostProcessPass> _postProcess)
+    std::unique_ptr<graphics::PostProcessPipeline> _postProcess)
 {
-  m_postProcessEffects.push_back(std::move(_postProcess));
+  m_postProcesses.push_back(std::move(_postProcess));
 }
 
 // ------------------------------------------------------------------------------
 
 void World::ApplyPostProcesses()
 {
-  const math::Vec4i32& viewport = m_screenCamera.GetViewport();
-
   m_application.GetRenderDevice().SetDepthTesting(false);
   m_application.GetRenderDevice().SetCulling(false);
 
   for (const auto& camera : m_cameras)
   {
+    const math::Vec4i32& viewport = camera.GetViewport();
     graphics::GLFramebuffer2D* source = camera.GetRenderTarget();
 
     if (source == nullptr)
@@ -249,20 +248,20 @@ void World::ApplyPostProcesses()
 
     graphics::GLFramebuffer2D output(source->GetWidth(), source->GetHeight());
 
-    for (auto&& postProcessEffect : m_postProcessEffects)
+    for (auto&& postProcessEffect : m_postProcesses)
     {
-      postProcessEffect->Apply(*source, &output);
+      postProcessEffect->Execute(*source, output);
 
-      m_toScreenRenderPass.Apply(output, source);
+      // Copy back into source to be up-to-date for next process
+      m_copyToTargetPass.Execute(output, *source);
     }
 
     m_application.GetRenderDevice().SetViewport(viewport[0], viewport[1],
                                                 viewport[2], viewport[3]);
-    m_toScreenRenderPass.Apply(output, nullptr);
-  }
 
-  m_application.GetRenderDevice().SetDepthTesting(true);
-  m_application.GetRenderDevice().SetCulling(true);
+    // Render To Screen
+    m_copyToTargetPass.Execute(output, output);
+  }
 }
 
 // ------------------------------------------------------------------------------
@@ -276,10 +275,17 @@ void World::AddGUISystem(std::unique_ptr<RenderingSystem> _system)
 
 void World::TickGUISystems(float _deltaTime)
 {
+  const math::Vec4i32& viewport = m_screenCamera.GetViewport();
+  m_application.GetRenderDevice().SetViewport(viewport[0], viewport[1],
+                                              viewport[2], viewport[3]);
+
   for (auto&& system : m_guiSystems)
   {
     system->Render(*this, m_screenCamera, _deltaTime);
   }
+
+  m_application.GetRenderDevice().SetDepthTesting(true);
+  m_application.GetRenderDevice().SetCulling(true);
 }
 
 // ------------------------------------------------------------------------------

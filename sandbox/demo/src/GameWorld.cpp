@@ -7,6 +7,7 @@
 #include <core/Application.h>
 #include <ecs_common/CameraComponent.h>
 #include <ecs_common/TransformComponent.h>
+#include <graphics/BlurPipeline.h>
 #include <graphics/StaticMeshRenderer.h>
 #include <physics/AABBCollisionSystem.h>
 #include <physics/BasicCollisionResolution.h>
@@ -37,7 +38,16 @@ void GameWorld::AddSystems()
       mage::graphics::GLShader("./res/shaders/StaticMesh.vert",
                                "./res/shaders/StaticMesh.frag")));
 
-  AddPostProcessPass(std::make_unique<mage::graphics::NullPostProcessPass>());
+  // AddPostProcessPass(std::make_unique<mage::graphics::BlurPipeline>(
+  //     mage::graphics::GLShader("./res/shaders/ScreenCoordPass.vert",
+  //                              "./res/shaders/LightKeyPass.frag"),
+  //     mage::graphics::GLShader("./res/shaders/ScreenCoordPass.vert",
+  //                              "./res/shaders/Blur.frag"),
+  //     mage::graphics::GLShader("./res/shaders/ScreenCoordPass.vert",
+  //                              "./res/shaders/AdditiveMerge.frag"),
+  //     8));
+
+  AddPostProcessPass(std::make_unique<mage::graphics::CopyToTargetPipeline>());
 }
 
 void GameWorld::AddEntitiesAndComponents()
@@ -57,7 +67,7 @@ void GameWorld::AddEntitiesAndComponents()
     auto& cameraComp = camera.AddComponent<mage::ecs::common::CameraComponent>(
         *this, mage::math::Vec4i32(0, 0, 1024, 576), 70.0f, 0.1f, 100.0f, true);
 
-    GetCamera(cameraComp.m_cameraId).MakeRenderToTarget(1024, 1024);
+    GetCamera(cameraComp.m_cameraId).MakeRenderToTarget();
 
     auto& transformComp =
         camera.AddComponent<mage::ecs::common::TransformComponent>();
