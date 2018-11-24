@@ -94,7 +94,7 @@ void ButtonRenderer::Render(mage::ecs::World& _world,
 
     m_VAO.Bind();
     m_IBO.Bind();
-    m_VAO.Draw(m_IBO.GetCount());
+    m_VAO.DrawElements(m_IBO.GetCount());
     m_IBO.Unbind();
     m_VAO.Unbind();
 

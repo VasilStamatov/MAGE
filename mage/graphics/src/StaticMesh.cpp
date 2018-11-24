@@ -33,7 +33,7 @@ void StaticMesh::Draw() const
 {
   m_vertexArrayObject.Bind();
   m_indexBufferObject.Bind();
-  m_vertexArrayObject.Draw(m_indexBufferObject.GetCount());
+  m_vertexArrayObject.DrawElements(m_indexBufferObject.GetCount());
   m_indexBufferObject.Unbind();
   m_vertexArrayObject.Unbind();
 }

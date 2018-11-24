@@ -1,5 +1,7 @@
 #include "exceptions/RuntimeError.h"
 
+#include <iostream>
+
 namespace mage
 {
 namespace exceptions
@@ -14,6 +16,7 @@ RuntimeError::RuntimeError(std::string _message, std::string _file,
     , m_file(std::move(_file))
     , m_line(std::move(_line))
 {
+  std::cout << GetFullMessage() << std::endl;
 }
 
 // ------------------------------------------------------------------------------

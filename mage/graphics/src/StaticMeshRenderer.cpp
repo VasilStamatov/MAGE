@@ -11,9 +11,9 @@ namespace graphics
 // ------------------------------------------------------------------------------
 
 StaticMeshComponent::StaticMeshComponent(OBJModel& _objMesh,
-                                         const std::string& _materialFile)
+                                         std::shared_ptr<GLTexture2D> _texture)
     : m_mesh(_objMesh.GetVertices(), _objMesh.GetIndices())
-    , m_material(_materialFile)
+    , m_material(_texture)
 {
 }
 

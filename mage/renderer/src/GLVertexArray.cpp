@@ -63,9 +63,17 @@ void GLVertexArray::Unbind() const { GLCall(glBindVertexArray(0)); }
 
 // ------------------------------------------------------------------------------
 
-void GLVertexArray::Draw(std::uint32_t _count) const
+void GLVertexArray::DrawElements(std::uint32_t _indexCount) const
 {
-  GLCall(glDrawElements(GL_TRIANGLES, _count, GL_UNSIGNED_INT, nullptr));
+  GLCall(glDrawElements(GL_TRIANGLES, _indexCount, GL_UNSIGNED_INT, nullptr));
+}
+
+// ------------------------------------------------------------------------------
+
+void GLVertexArray::DrawArrays(std::uint32_t _vertexCount,
+                               std::uint32_t _offset) const
+{
+  GLCall(glDrawArrays(GL_TRIANGLES, _offset, _vertexCount));
 }
 
 // ------------------------------------------------------------------------------

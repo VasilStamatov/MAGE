@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Material.h"
-#include "StaticMesh.h"
-
 #include "ecs/RenderingSystem.h"
+#include "renderer/GLIndexBuffer.h"
+#include "renderer/GLTextureCube.h"
+#include "renderer/GLVertexArray.h"
 
 namespace mage
 {
@@ -12,24 +12,27 @@ namespace graphics
 
 // ------------------------------------------------------------------------------
 
-struct StaticMeshComponent : public ecs::Component
+struct SkyboxComponent : public ecs::Component
 {
-  StaticMeshComponent(OBJModel& _objMesh,
-                      std::shared_ptr<GLTexture2D> _texture);
+  SkyboxComponent(std::string* _sixSkyboxFiles);
 
-  StaticMesh m_mesh;
-  Material m_material;
+  GLTextureCube m_skyboxCube;
 };
 
 // ------------------------------------------------------------------------------
 
-class StaticMeshRenderer : public ecs::RenderingSystem
+class SkyboxRenderer : public ecs::RenderingSystem
 {
 public:
-  StaticMeshRenderer(GLShader _shader);
+  SkyboxRenderer(GLShader _shader);
 
   virtual void Render(mage::ecs::World& _world, const Camera& _camera,
                       float _deltaTime) override;
+
+private:
+  GLVertexArray m_cubeVAO;
+  GLVertexBuffer m_cubeVBO;
+  std::uint32_t m_numCubeVertices;
 };
 
 // ------------------------------------------------------------------------------

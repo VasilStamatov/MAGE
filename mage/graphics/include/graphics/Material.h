@@ -2,8 +2,7 @@
 
 #include "renderer/GLTexture2D.h"
 
-#include <array>
-#include <string>
+#include <memory>
 
 namespace mage
 {
@@ -15,13 +14,13 @@ namespace graphics
 class Material
 {
 public:
-  Material(const std::string& _imageFile);
+  Material(std::shared_ptr<GLTexture2D> _texture);
 
   void Bind();
   void Unbind();
 
 private:
-  GLTexture2D m_texture;
+  std::shared_ptr<GLTexture2D> m_texture;
 };
 
 // ------------------------------------------------------------------------------

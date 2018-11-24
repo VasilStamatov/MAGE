@@ -53,6 +53,32 @@ std::uint32_t GetGLBlendEquation(RendererBlendEquation _equation)
 
 // ------------------------------------------------------------------------------
 
+std::uint32_t GetGLDepthFunc(DepthFunc _func)
+{
+  switch (_func)
+  {
+    case DepthFunc::Never:
+      return GL_NEVER;
+    case DepthFunc::Less:
+      return GL_LESS;
+    case DepthFunc::Equal:
+      return GL_EQUAL;
+    case DepthFunc::LessOrEqual:
+      return GL_LEQUAL;
+    case DepthFunc::Greater:
+      return GL_GREATER;
+    case DepthFunc::NotEqual:
+      return GL_NOTEQUAL;
+    case DepthFunc::GreaterOrEqual:
+      return GL_GEQUAL;
+    case DepthFunc::Always:
+      return GL_ALWAYS;
+  }
+  return 0;
+}
+
+// ------------------------------------------------------------------------------
+
 } // namespace
 
 // ------------------------------------------------------------------------------
@@ -138,6 +164,13 @@ void RenderDevice::SetDepthTesting(bool _enabled)
   {
     GLCall(glDisable(GL_DEPTH_TEST));
   }
+}
+
+// ------------------------------------------------------------------------------
+
+void RenderDevice::SetDepthFunc(DepthFunc _func)
+{
+  GLCall(glDepthFunc(GetGLDepthFunc(_func)));
 }
 
 // ------------------------------------------------------------------------------

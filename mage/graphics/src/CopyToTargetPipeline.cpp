@@ -71,7 +71,7 @@ void CopyToTargetPipeline::Execute(GLFramebuffer2D& _source,
 
   m_screenVAO.Bind();
   m_screenIBO.Bind();
-  m_screenVAO.Draw(m_screenIBO.GetCount());
+  m_screenVAO.DrawElements(m_screenIBO.GetCount());
   m_screenIBO.Unbind();
   m_screenVAO.Unbind();
 

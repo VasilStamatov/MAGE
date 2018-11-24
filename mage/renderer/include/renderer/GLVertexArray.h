@@ -36,9 +36,11 @@ public:
 
   // ------------------------------------------------------------------------------
 
-  void Draw(std::uint32_t _count) const;
+  void DrawElements(std::uint32_t _indexCount) const;
 
   // ------------------------------------------------------------------------------
+
+  void DrawArrays(std::uint32_t _vertexCount, std::uint32_t _offset = 0) const;
 
 private:
   std::uint32_t m_handle;

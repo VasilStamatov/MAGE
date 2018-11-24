@@ -362,5 +362,10 @@ audio::SoundLibrary& World::GetSoundLibrary() { return m_soundLibrary; }
 
 // ------------------------------------------------------------------------------
 
+graphics::RenderDevice& World::GetRenderDevice()
+{
+  return m_application.GetRenderDevice();
+}
+
 } // namespace ecs
 } // namespace mage

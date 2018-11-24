@@ -9,6 +9,7 @@
 #include <ecs_common/CameraComponent.h>
 #include <ecs_common/TransformComponent.h>
 #include <graphics/BlurPipeline.h>
+#include <graphics/SkyboxRenderer.h>
 #include <graphics/StaticMeshRenderer.h>
 #include <gui/Button.h>
 #include <gui/ButtonEventHandler.h>
@@ -42,6 +43,10 @@ void GameWorld::AddSystems()
       mage::graphics::GLShader("./res/shaders/StaticMesh.vert",
                                "./res/shaders/StaticMesh.frag")));
 
+  AddRenderingSystem(
+      std::make_unique<mage::graphics::SkyboxRenderer>(mage::graphics::GLShader(
+          "./res/shaders/Skybox.vert", "./res/shaders/Skybox.frag")));
+
   // AddPostProcessPass(std::make_unique<mage::graphics::BlurPipeline>(
   //     mage::graphics::GLShader("./res/shaders/ScreenCoordPass.vert",
   //                              "./res/shaders/LightKeyPass.frag"),
@@ -74,6 +79,23 @@ void GameWorld::AddEntitiesAndComponents()
 
   // -------------- Load Resources ----------------------------
 
+  // -------------- Make Skybox ----------------------------
+  {
+    auto skybox = CreateEntity();
+
+    std::string skyboxPaths[] = {
+        "./res/textures/sor_lake1/sor_lake1/lake1_rt.JPG",
+        "./res/textures/sor_lake1/sor_lake1/lake1_lf.JPG",
+        "./res/textures/sor_lake1/sor_lake1/lake1_up.JPG",
+        "./res/textures/sor_lake1/sor_lake1/lake1_dn.JPG",
+        "./res/textures/sor_lake1/sor_lake1/lake1_ft.JPG",
+        "./res/textures/sor_lake1/sor_lake1/lake1_bk.JPG"};
+
+    auto& skyboxComp =
+        skybox.AddComponent<mage::graphics::SkyboxComponent>(skyboxPaths);
+  }
+  // -------------- Make Skybox ----------------------------
+
   // ----------------- Make player controlled entity ---------------------
   {
     auto renderedEntity = CreateEntity();
@@ -85,7 +107,7 @@ void GameWorld::AddEntitiesAndComponents()
 
     auto& staticMeshComp =
         renderedEntity.AddComponent<mage::graphics::StaticMeshComponent>(
-            cube, "./res/textures/bricks.jpg");
+            cube, m_textureLibrary.Get("./res/textures/bricks.jpg"));
 
     auto& motionComponent =
         renderedEntity.AddComponent<mage::physics::Motion>();
@@ -105,7 +127,8 @@ void GameWorld::AddEntitiesAndComponents()
         *this, mage::math::Vec4i32(0, 0, 1024, 576), 70.0f, 0.1f, 100.0f, true);
 
     auto& addedCamera = GetCamera(cameraComp.m_cameraId);
-    addedCamera.MakeRenderToTarget();
+
+    // addedCamera.MakeRenderToTarget();
 
     auto& transformComp =
         camera.AddComponent<mage::ecs::common::TransformComponent>()
@@ -147,7 +170,7 @@ void GameWorld::AddEntitiesAndComponents()
 
     auto& staticMeshComp =
         renderedEntity.AddComponent<mage::graphics::StaticMeshComponent>(
-            plane, "./res/textures/sand.jpg");
+            plane, m_textureLibrary.Get("./res/textures/sand.jpg"));
 
     auto& colliderComponent =
         renderedEntity.AddComponent<mage::physics::AABBCollider>(
@@ -168,7 +191,7 @@ void GameWorld::AddEntitiesAndComponents()
 
     auto& staticMeshComp2 =
         renderedEntity2.AddComponent<mage::graphics::StaticMeshComponent>(
-            plane, "./res/textures/sand.jpg");
+            plane, m_textureLibrary.Get("./res/textures/sand.jpg"));
 
     auto& colliderComponent2 =
         renderedEntity2.AddComponent<mage::physics::AABBCollider>(
@@ -176,20 +199,26 @@ void GameWorld::AddEntitiesAndComponents()
 
     // -------- Floor ---------
 
-    auto renderedEntity3 = CreateEntity();
+    // auto renderedEntity3 = CreateEntity();
 
-    auto& transform3 =
-        renderedEntity3.AddComponent<mage::ecs::common::TransformComponent>();
+    // auto& transform3 =
+    //     renderedEntity3.AddComponent<mage::ecs::common::TransformComponent>();
 
-    transform3.m_transform.SetTranslation(mage::math::Vec3f(0.0, 0.0f, -15.0f));
-    transform3.m_transform.SetScale(mage::math::Vec3f(65.0, 1.0f, 65.0f));
+    // transform3.m_transform.SetTranslation(mage::math::Vec3f(0.0, 0.0f,
+    // -15.0f)); transform3.m_transform.SetScale(mage::math::Vec3f(70.0,
+    // 1.0f, 70.0f));
 
-    // transform3.m_transform.Rotate(
-    //     mage::math::Quatf::GenRotationZ(mage::math::ToRadians(-90.0f)));
+    // // transform3.m_transform.Rotate(
+    // //     mage::math::Quatf::GenRotationZ(mage::math::ToRadians(-90.0f)));
 
-    auto& staticMeshComp3 =
-        renderedEntity3.AddComponent<mage::graphics::StaticMeshComponent>(
-            plane, "./res/textures/starfield.jpg");
+    // auto& staticMeshComp3 =
+    //     renderedEntity3.AddComponent<mage::graphics::StaticMeshComponent>(
+    //         plane,
+    //         m_textureLibrary.Get("./res/textures/starfield.jpg"/*, true,
+    //                              mage::graphics::TextureParameters(
+    //                                  mage::graphics::TextureFormat::RGBA,
+    //                                  mage::graphics::TextureFilter::Linear,
+    //                                  mage::graphics::TextureWrap::Repeat)*/));
   }
   // ----------------- Make other entities ---------------------
 

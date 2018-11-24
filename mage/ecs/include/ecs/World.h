@@ -24,6 +24,11 @@ namespace messaging
 class MessageBus;
 }
 
+namespace graphics
+{
+class RenderDevice;
+}
+
 namespace ecs
 {
 
@@ -147,6 +152,7 @@ public:
 
   messaging::MessageBus& GetApplicationMessageBus();
   audio::SoundLibrary& GetSoundLibrary();
+  graphics::RenderDevice& GetRenderDevice();
 
   // ------------------------------------------------------------------------------
 

@@ -38,7 +38,7 @@ void BlurPipeline::Execute(GLFramebuffer2D& _source, GLFramebuffer2D& _target)
   lightSource.Bind();
   _source.GetTexture().Bind(0);
 
-  m_screenVAO.Draw(m_screenIBO.GetCount());
+  m_screenVAO.DrawElements(m_screenIBO.GetCount());
 
   // Output a texture with the bright pixels blurred
   m_blurShader.Bind();
@@ -46,12 +46,12 @@ void BlurPipeline::Execute(GLFramebuffer2D& _source, GLFramebuffer2D& _target)
   {
     blurredLight.Bind();
     lightSource.GetTexture().Bind(0);
-    m_screenVAO.Draw(m_screenIBO.GetCount());
+    m_screenVAO.DrawElements(m_screenIBO.GetCount());
 
     // Render back into ligthsource for further iterations
     lightSource.Bind();
     blurredLight.GetTexture().Bind(0);
-    m_screenVAO.Draw(m_screenIBO.GetCount());
+    m_screenVAO.DrawElements(m_screenIBO.GetCount());
   }
 
   // Merge the blurred texture with the original source
@@ -59,7 +59,7 @@ void BlurPipeline::Execute(GLFramebuffer2D& _source, GLFramebuffer2D& _target)
   _target.Bind();
   _source.GetTexture().Bind(0);
   blurredLight.GetTexture().Bind(1);
-  m_screenVAO.Draw(m_screenIBO.GetCount());
+  m_screenVAO.DrawElements(m_screenIBO.GetCount());
 
   // Reset State
   blurredLight.GetTexture().Unbind(1);
