@@ -24,9 +24,10 @@ struct SoundEffectSource : public ecs::Component
 
 struct PlaySoundEffect : public ecs::Component
 {
-  PlaySoundEffect(AudioBufferHandle _soundClip);
+  PlaySoundEffect(AudioBufferHandle _soundClip, bool _looping = false);
 
   AudioBufferHandle m_soundClip;
+  bool m_looping;
 };
 
 // ------------------------------------------------------------------------------

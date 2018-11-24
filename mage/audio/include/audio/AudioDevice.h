@@ -66,9 +66,11 @@ public:
   // ------------------------------------------------------------------------------
 
   void SetSourceSound(AudioSourceHandle _source, AudioBufferHandle _sound,
-                      float _volume, float _variance);
+                      float _volume, float _variance, bool _looping = false);
 
   void PlaySource(AudioSourceHandle _source, const math::Vec3f& _sourcePos);
+
+  void StopPlayingSource(AudioSourceHandle _source);
 
   // ------------------------------------------------------------------------------
 

@@ -128,9 +128,11 @@ public:
   // ------------------------------------------------------------------------------
 
   void SetSourceSound(AudioSourceHandle _source, AudioBufferHandle _sound,
-                      float _volume, float _variance);
+                      float _volume, float _variance, bool _looping);
 
   void PlaySource(AudioSourceHandle _source, const math::Vec3f& _sourcePos);
+
+  void StopPlayingSource(AudioSourceHandle _source);
 
   // ------------------------------------------------------------------------------
 
@@ -210,9 +212,9 @@ bool AudioDevice::IsSourcePlaying(AudioSourceHandle _source) const
 
 void AudioDevice::SetSourceSound(AudioSourceHandle _source,
                                  AudioBufferHandle _sound, float _volume,
-                                 float _variance)
+                                 float _variance, bool _looping)
 {
-  m_impl->SetSourceSound(_source, _sound, _volume, _variance);
+  m_impl->SetSourceSound(_source, _sound, _volume, _variance, _looping);
 }
 
 // ------------------------------------------------------------------------------
@@ -223,9 +225,18 @@ void AudioDevice::PlaySource(AudioSourceHandle _source,
   m_impl->PlaySource(_source, _sourcePos);
 }
 
+// ------------------------------------------------------------------------------
+
 void AudioDevice::SetListenerPosition(const math::Vec3f& _listenerPos)
 {
   m_impl->SetListenerPosition(_listenerPos);
+}
+
+// ------------------------------------------------------------------------------
+
+void AudioDevice::StopPlayingSource(AudioSourceHandle _source)
+{
+  m_impl->StopPlayingSource(_source);
 }
 
 // ------------------------------------------------------------------------------
@@ -367,13 +378,16 @@ bool AudioDevice::Impl::IsSourcePlaying(AudioSourceHandle _source) const
 
 void AudioDevice::Impl::SetSourceSound(AudioSourceHandle _source,
                                        AudioBufferHandle _sound, float _volume,
-                                       float _variance)
+                                       float _variance, bool _looping)
 {
   assert(_source.m_generation == m_audioSourcesGenerations[_source.m_index]);
   assert(_sound.m_generation == m_audioBufferGenerations[_sound.m_index]);
 
   ALCall(alSourcef(m_audioSourceBuffers[_source.m_index], AL_PITCH, _variance));
   ALCall(alSourcef(m_audioSourceBuffers[_source.m_index], AL_GAIN, _volume));
+  ALCall(
+      alSourcef(m_audioSourceBuffers[_source.m_index], AL_LOOPING, _looping));
+
   ALCall(alSourcei(m_audioSourceBuffers[_source.m_index], AL_BUFFER,
                    m_audioDataBuffers[_sound.m_index]));
 }
@@ -393,11 +407,22 @@ void AudioDevice::Impl::PlaySource(AudioSourceHandle _source,
 
 // ------------------------------------------------------------------------------
 
+void AudioDevice::Impl::StopPlayingSource(AudioSourceHandle _source)
+{
+  assert(_source.m_generation == m_audioSourcesGenerations[_source.m_index]);
+
+  ALCall(alSourceStop(m_audioSourceBuffers[_source.m_index]));
+}
+
+// ------------------------------------------------------------------------------
+
 void AudioDevice::Impl::SetListenerPosition(const math::Vec3f& _listenerPos)
 {
   ALCall(alListener3f(AL_POSITION, _listenerPos[0], _listenerPos[2],
                       _listenerPos[2]));
 }
+
+// ------------------------------------------------------------------------------
 
 } // namespace audio
 } // namespace mage

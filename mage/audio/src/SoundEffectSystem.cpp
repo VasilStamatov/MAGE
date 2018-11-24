@@ -23,8 +23,9 @@ SoundEffectSource::SoundEffectSource(AudioSourceHandle _audioSource, float _vol,
 
 // ------------------------------------------------------------------------------
 
-PlaySoundEffect::PlaySoundEffect(AudioBufferHandle _soundClip)
+PlaySoundEffect::PlaySoundEffect(AudioBufferHandle _soundClip, bool _looping)
     : m_soundClip(std::move(_soundClip))
+    , m_looping(_looping)
 {
 }
 
@@ -60,7 +61,8 @@ void SoundEffectSystem::Tick(ecs::World& _world, float _deltaTime)
     // std::cout << "Playing Source From: " << location << std::endl;
 
     m_audioDevice.SetSourceSound(source.m_source, soundEffect.m_soundClip,
-                                 source.m_volume, source.m_variance);
+                                 source.m_volume, source.m_variance,
+                                 soundEffect.m_looping);
 
     m_audioDevice.PlaySource(source.m_source, location);
 
