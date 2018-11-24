@@ -1,5 +1,6 @@
 #include "demo/GameWorld.h"
 
+#include "demo/BlurPipeline.h"
 #include "demo/CameraControlSystem.h"
 #include "demo/MovementControlSystem.h"
 
@@ -8,7 +9,6 @@
 #include <core/Application.h>
 #include <ecs_common/CameraComponent.h>
 #include <ecs_common/TransformComponent.h>
-#include <graphics/BlurPipeline.h>
 #include <graphics/SkyboxRenderer.h>
 #include <graphics/StaticMeshRenderer.h>
 #include <gui/Button.h>
@@ -47,7 +47,7 @@ void GameWorld::AddSystems()
       std::make_unique<mage::graphics::SkyboxRenderer>(mage::graphics::GLShader(
           "./res/shaders/Skybox.vert", "./res/shaders/Skybox.frag")));
 
-  // AddPostProcessPass(std::make_unique<mage::graphics::BlurPipeline>(
+  // AddPostProcessPass(std::make_unique<BlurPipeline>(
   //     mage::graphics::GLShader("./res/shaders/ScreenCoordPass.vert",
   //                              "./res/shaders/LightKeyPass.frag"),
   //     mage::graphics::GLShader("./res/shaders/ScreenCoordPass.vert",
@@ -128,7 +128,7 @@ void GameWorld::AddEntitiesAndComponents()
 
     auto& addedCamera = GetCamera(cameraComp.m_cameraId);
 
-    // addedCamera.MakeRenderToTarget();
+    addedCamera.MakeRenderToTarget();
 
     auto& transformComp =
         camera.AddComponent<mage::ecs::common::TransformComponent>()

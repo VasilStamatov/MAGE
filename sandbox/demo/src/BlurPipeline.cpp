@@ -1,14 +1,11 @@
-#include "graphics/BlurPipeline.h"
-
-namespace mage
-{
-namespace graphics
-{
+#include "demo/BlurPipeline.h"
 
 // ------------------------------------------------------------------------------
 
-BlurPipeline::BlurPipeline(GLShader _lightKeyShader, GLShader _blurShader,
-                           GLShader _mergeShader, std::uint8_t _blurIterations)
+BlurPipeline::BlurPipeline(mage::graphics::GLShader _lightKeyShader,
+                           mage::graphics::GLShader _blurShader,
+                           mage::graphics::GLShader _mergeShader,
+                           std::uint8_t _blurIterations)
     : m_lightKeyShader(std::move(_lightKeyShader))
     , m_blurShader(std::move(_blurShader))
     , m_mergeShader(std::move(_mergeShader))
@@ -23,11 +20,15 @@ BlurPipeline::~BlurPipeline() {}
 
 // ------------------------------------------------------------------------------
 
-void BlurPipeline::Execute(GLFramebuffer2D& _source, GLFramebuffer2D& _target)
+void BlurPipeline::Execute(mage::graphics::GLFramebuffer2D& _source,
+                           mage::graphics::GLFramebuffer2D& _target)
 {
   // Make temporary framebuffers to hold texture data
-  GLFramebuffer2D lightSource(_source.GetWidth(), _source.GetHeight());
-  GLFramebuffer2D blurredLight(_source.GetWidth(), _source.GetHeight());
+  mage::graphics::GLFramebuffer2D lightSource(_source.GetWidth(),
+                                              _source.GetHeight());
+
+  mage::graphics::GLFramebuffer2D blurredLight(_source.GetWidth(),
+                                               _source.GetHeight());
 
   // The screen vertex data is used for all post processing so it stay bound
   m_screenVAO.Bind();
@@ -71,6 +72,3 @@ void BlurPipeline::Execute(GLFramebuffer2D& _source, GLFramebuffer2D& _target)
 }
 
 // ------------------------------------------------------------------------------
-
-} // namespace graphics
-} // namespace mage
