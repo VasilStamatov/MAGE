@@ -1,23 +1,16 @@
-#include "physics/MovementControlSystem.h"
+#include "demo/MovementControlSystem.h"
 
-#include "ecs/World.h"
-#include "messaging/MessageBus.h"
-#include "physics/MotionSystem.h"
+#include <ecs/World.h>
+#include <messaging/MessageBus.h>
+#include <physics/MotionSystem.h>
 
-namespace mage
-{
-namespace physics
-{
+using namespace mage;
 
 // ------------------------------------------------------------------------------
 
-MovementControls::MovementControls(input::InputKey _forwardKey,
-                                   input::InputKey _backKey,
-                                   input::InputKey _rightKey,
+MovementControls::MovementControls(input::InputKey _rightKey,
                                    input::InputKey _leftKey)
-    : m_forwardKey(std::move(_forwardKey))
-    , m_backKey(std::move(_backKey))
-    , m_rightKey(std::move(_rightKey))
+    : m_rightKey(std::move(_rightKey))
     , m_leftKey(std::move(_leftKey))
 {
 }
@@ -26,7 +19,7 @@ MovementControls::MovementControls(input::InputKey _forwardKey,
 
 MovementControlSystem::MovementControlSystem()
 {
-  m_systemSignature.AddComponent<Motion>();
+  m_systemSignature.AddComponent<physics::Motion>();
   m_systemSignature.AddComponent<MovementControls>();
 }
 
@@ -47,19 +40,11 @@ void MovementControlSystem::Tick(ecs::World& _world, float _deltaTime)
   for (auto&& entity : m_registeredEntities)
   {
     auto& movementControls = _world.GetComponent<MovementControls>(entity);
-    auto& motion = _world.GetComponent<Motion>(entity);
+    auto& motion = _world.GetComponent<physics::Motion>(entity);
 
     for (auto&& key : m_pressedKeys)
     {
-      if (key == movementControls.m_forwardKey)
-      {
-        motion.m_acceleration += math::Vec3f(0.0f, 0.0f, -0.001f);
-      }
-      else if (key == movementControls.m_backKey)
-      {
-        motion.m_acceleration += math::Vec3f(0.0f, 0.0f, 0.001f);
-      }
-      else if (key == movementControls.m_rightKey)
+      if (key == movementControls.m_rightKey)
       {
         motion.m_acceleration += math::Vec3f(0.001f, 0.0f, 0.0f);
       }
@@ -87,6 +72,3 @@ void MovementControlSystem::OnKeyRelease(mage::input::OnKeyRelease* _event)
 }
 
 // ------------------------------------------------------------------------------
-
-} // namespace physics
-} // namespace mage

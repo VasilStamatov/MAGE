@@ -1,6 +1,7 @@
 #include "demo/GameWorld.h"
 
 #include "demo/CameraControlSystem.h"
+#include "demo/MovementControlSystem.h"
 
 #include <audio/SoundEffectSystem.h>
 #include <audio/SoundListenerSystem.h>
@@ -15,7 +16,6 @@
 #include <physics/AABBCollisionSystem.h>
 #include <physics/BasicCollisionResolution.h>
 #include <physics/MotionSystem.h>
-#include <physics/MovementControlSystem.h>
 
 GameWorld::GameWorld(mage::core::Application& _application)
     : mage::ecs::World(_application)
@@ -29,7 +29,7 @@ void GameWorld::AddSystems()
 
   // AddGameSystem(std::make_unique<CameraControlSystem>());
   AddGameSystem(std::make_unique<mage::gui::ButtonEventHandler>());
-  AddGameSystem(std::make_unique<mage::physics::MovementControlSystem>());
+  AddGameSystem(std::make_unique<MovementControlSystem>());
   AddGameSystem(std::make_unique<mage::physics::AABBCollisionSystem>());
   AddGameSystem(std::make_unique<mage::physics::BasicCollisionResolution>());
   AddGameSystem(std::make_unique<mage::physics::MotionSystem>());
@@ -42,10 +42,6 @@ void GameWorld::AddSystems()
       mage::graphics::GLShader("./res/shaders/StaticMesh.vert",
                                "./res/shaders/StaticMesh.frag")));
 
-  AddGUISystem(std::make_unique<mage::gui::ButtonRenderer>(
-      mage::graphics::GLShader("./res/shaders/WorldCoordQuad.vert",
-                               "./res/shaders/DirectCopy.frag")));
-
   // AddPostProcessPass(std::make_unique<mage::graphics::BlurPipeline>(
   //     mage::graphics::GLShader("./res/shaders/ScreenCoordPass.vert",
   //                              "./res/shaders/LightKeyPass.frag"),
@@ -56,39 +52,27 @@ void GameWorld::AddSystems()
   //     8));
 
   AddPostProcessPass(std::make_unique<mage::graphics::CopyToTargetPipeline>());
+
+  // GUI's are rendered last on top of the processed image
+  AddGUISystem(std::make_unique<mage::gui::ButtonRenderer>(
+      mage::graphics::GLShader("./res/shaders/WorldCoordQuad.vert",
+                               "./res/shaders/DirectCopy.frag")));
 }
 
 void GameWorld::AddEntitiesAndComponents()
 {
+  const auto& viewport = m_screenCamera.GetViewport();
+  std::int32_t windowWidth = viewport[2];
+  std::int32_t windowHeight = viewport[1];
+
   // -------------- Load Resources ----------------------------
 
   m_soundLibrary.AddAudioClip("./res/audio/Blip_Select11.ogg");
   m_soundLibrary.AddAudioSource("CameraSource");
   mage::graphics::OBJModel cube("./res/models/cube.obj");
+  mage::graphics::OBJModel plane("./res/models/plane.obj");
 
   // -------------- Load Resources ----------------------------
-
-  // ----------------- Make Camera ----------------------------
-  {
-    auto camera = CreateEntity();
-
-    auto& cameraComp = camera.AddComponent<mage::ecs::common::CameraComponent>(
-        *this, mage::math::Vec4i32(0, 0, 1024, 576), 70.0f, 0.1f, 100.0f, true);
-
-    GetCamera(cameraComp.m_cameraId).MakeRenderToTarget();
-
-    auto& transformComp =
-        camera.AddComponent<mage::ecs::common::TransformComponent>();
-
-    auto& cameraControlComponent =
-        camera.AddComponent<CameraControlComponent>();
-
-    camera.AddComponent<mage::audio::SoundEffectSource>(
-        m_soundLibrary.GetAudioSource("CameraSource"), 0.02f, 1.0f);
-
-    camera.AddComponent<mage::audio::SoundListener>();
-  }
-  // ----------------- Make Camera ----------------------------
 
   // ----------------- Make player controlled entity ---------------------
   {
@@ -101,7 +85,7 @@ void GameWorld::AddEntitiesAndComponents()
 
     auto& staticMeshComp =
         renderedEntity.AddComponent<mage::graphics::StaticMeshComponent>(
-            cube, "./res/textures/test.png");
+            cube, "./res/textures/bricks.jpg");
 
     auto& motionComponent =
         renderedEntity.AddComponent<mage::physics::Motion>();
@@ -109,42 +93,108 @@ void GameWorld::AddEntitiesAndComponents()
         renderedEntity.AddComponent<mage::physics::AABBCollider>(
             cube.GetAABB());
 
-    auto& movementController =
-        renderedEntity.AddComponent<mage::physics::MovementControls>();
+    auto& movementController = renderedEntity.AddComponent<MovementControls>();
   }
   // ----------------- Make player controlled entity ---------------------
 
+  // ----------------- Make Camera ----------------------------
+  {
+    auto camera = CreateEntity();
+
+    auto& cameraComp = camera.AddComponent<mage::ecs::common::CameraComponent>(
+        *this, mage::math::Vec4i32(0, 0, 1024, 576), 70.0f, 0.1f, 100.0f, true);
+
+    auto& addedCamera = GetCamera(cameraComp.m_cameraId);
+    addedCamera.MakeRenderToTarget();
+
+    auto& transformComp =
+        camera.AddComponent<mage::ecs::common::TransformComponent>()
+            .m_transform;
+
+    transformComp.Translate(mage::math::Vec3f(0.0f, 15.0f, 0.0f));
+
+    transformComp.Rotate(
+        mage::math::Quatf::GenRotationX(mage::math::ToRadians(45.0f)));
+
+    addedCamera.SetView(
+        transformComp.GetRotation().ToMat4() *
+        mage::math::GenTranslationMat(transformComp.GetTranslation() * -1));
+
+    // auto& cameraControlComponent =
+    //     camera.AddComponent<CameraControlComponent>();
+
+    // camera.AddComponent<mage::audio::SoundEffectSource>(
+    //     m_soundLibrary.GetAudioSource("CameraSource"), 0.02f, 1.0f);
+
+    camera.AddComponent<mage::audio::SoundListener>();
+  }
+  // ----------------- Make Camera ----------------------------
+
   // ----------------- Make other entities ---------------------
   {
-    for (size_t i = 0; i < 2; i++)
-    {
-      auto renderedEntity = CreateEntity();
 
-      auto& transform =
-          renderedEntity.AddComponent<mage::ecs::common::TransformComponent>();
+    // -------- first Wall ---------
 
-      transform.m_transform.SetTranslation(
-          mage::math::Vec3f(5.0f + i * 5.0f, 0.0f, -5.0f));
+    auto renderedEntity = CreateEntity();
 
-      auto& staticMeshComp =
-          renderedEntity.AddComponent<mage::graphics::StaticMeshComponent>(
-              cube, "./res/textures/test.png");
+    auto& transform =
+        renderedEntity.AddComponent<mage::ecs::common::TransformComponent>();
 
-      auto& motionComponent =
-          renderedEntity.AddComponent<mage::physics::Motion>();
-      auto& colliderComponent =
-          renderedEntity.AddComponent<mage::physics::AABBCollider>(
-              cube.GetAABB());
-    }
+    transform.m_transform.SetTranslation(mage::math::Vec3f(15.0f, 0.0f, -5.0f));
+
+    transform.m_transform.Rotate(
+        mage::math::Quatf::GenRotationZ(mage::math::ToRadians(90.0f)));
+
+    auto& staticMeshComp =
+        renderedEntity.AddComponent<mage::graphics::StaticMeshComponent>(
+            plane, "./res/textures/sand.jpg");
+
+    auto& colliderComponent =
+        renderedEntity.AddComponent<mage::physics::AABBCollider>(
+            plane.GetAABB());
+
+    // -------- Second Wall ---------
+
+    auto renderedEntity2 = CreateEntity();
+
+    auto& transform2 =
+        renderedEntity2.AddComponent<mage::ecs::common::TransformComponent>();
+
+    transform2.m_transform.SetTranslation(
+        mage::math::Vec3f(-15.0f, 0.0f, -5.0f));
+
+    transform2.m_transform.Rotate(
+        mage::math::Quatf::GenRotationZ(mage::math::ToRadians(-90.0f)));
+
+    auto& staticMeshComp2 =
+        renderedEntity2.AddComponent<mage::graphics::StaticMeshComponent>(
+            plane, "./res/textures/sand.jpg");
+
+    auto& colliderComponent2 =
+        renderedEntity2.AddComponent<mage::physics::AABBCollider>(
+            plane.GetAABB());
+
+    // -------- Floor ---------
+
+    auto renderedEntity3 = CreateEntity();
+
+    auto& transform3 =
+        renderedEntity3.AddComponent<mage::ecs::common::TransformComponent>();
+
+    transform3.m_transform.SetTranslation(mage::math::Vec3f(0.0, 0.0f, -15.0f));
+    transform3.m_transform.SetScale(mage::math::Vec3f(65.0, 1.0f, 65.0f));
+
+    // transform3.m_transform.Rotate(
+    //     mage::math::Quatf::GenRotationZ(mage::math::ToRadians(-90.0f)));
+
+    auto& staticMeshComp3 =
+        renderedEntity3.AddComponent<mage::graphics::StaticMeshComponent>(
+            plane, "./res/textures/starfield.jpg");
   }
   // ----------------- Make other entities ---------------------
 
   // -------------------- Add some GUI -------------------------
   {
-    const auto& viewport = m_screenCamera.GetViewport();
-    std::int32_t windowWidth = viewport[2];
-    std::int32_t windowHeight = viewport[1];
-
     for (size_t i = 0; i < 2; i++)
     {
       auto button = CreateEntity();

@@ -30,10 +30,10 @@ void BasicCollisionResolution::Tick(ecs::World& _world, float _deltaTime)
   for (auto&& intersections : m_entityIntersections)
   {
     auto& motionA = _world.GetComponent<Motion>(intersections.first);
-    auto& motionB = _world.GetComponent<Motion>(intersections.second);
+    // auto& motionB = _world.GetComponent<Motion>(intersections.second);
 
-    motionB.m_acceleration = motionA.m_acceleration;
-    motionB.m_velocity = motionA.m_velocity;
+    // motionB.m_acceleration = motionA.m_acceleration;
+    // motionB.m_velocity = motionA.m_velocity;
 
     motionA.m_acceleration *= -1;
     motionA.m_velocity *= -1.1f;

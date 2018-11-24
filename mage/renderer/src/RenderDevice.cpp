@@ -84,7 +84,7 @@ void RenderDevice::Initialize()
   SetBlendFunction(RendererBlendFunction::SourceAlpha,
                    RendererBlendFunction::OneMinusSourceAlpha);
 
-  GLCall(glClearColor(0.25f, 0.7f, 0.4f, 0.7f));
+  GLCall(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
   GLCall(glEnable(GL_CULL_FACE));
   GLCall(glFrontFace(GL_CCW));
   GLCall(glCullFace(GL_BACK));
