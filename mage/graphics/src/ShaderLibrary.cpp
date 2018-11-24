@@ -51,10 +51,11 @@ void ShaderLibrary::Clear() { m_loadedShaders.clear(); }
 
 void ShaderLibrary::Refresh()
 {
+  // Clear loaded shaders which aren't referenced
   m_loadedShaders.erase(
       std::remove_if(m_loadedShaders.begin(), m_loadedShaders.end(),
                      [](const ShaderResourceInstance& _resource) -> bool {
-                       return _resource.m_shader.use_count() == 0;
+                       return _resource.m_shader.use_count() == 1;
                      }),
       m_loadedShaders.end());
 }

@@ -7,6 +7,7 @@
 #include "RenderingSystem.h"
 #include "audio/SoundLibrary.h"
 #include "graphics/CopyToTargetPipeline.h"
+#include "graphics/Texture2DLibrary.h"
 
 #include <array>
 
@@ -188,6 +189,7 @@ protected:
   graphics::CopyToTargetPipeline m_copyToTargetPass;
 
   audio::SoundLibrary m_soundLibrary;
+  graphics::Texture2DLibrary m_textureLibrary;
   core::Application& m_application;
 };
 

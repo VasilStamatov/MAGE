@@ -53,10 +53,11 @@ void Texture2DLibrary::Clear() { m_loadedTextures.clear(); }
 
 void Texture2DLibrary::Refresh()
 {
+  // clear loaded textures which aren't referenced anywhere
   m_loadedTextures.erase(
       std::remove_if(m_loadedTextures.begin(), m_loadedTextures.end(),
                      [](const Texture2DResourceInstance& _resource) -> bool {
-                       return _resource.m_texture.use_count() == 0;
+                       return _resource.m_texture.use_count() == 1;
                      }),
       m_loadedTextures.end());
 }

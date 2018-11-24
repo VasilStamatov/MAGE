@@ -9,6 +9,8 @@
 #include <ecs_common/TransformComponent.h>
 #include <graphics/BlurPipeline.h>
 #include <graphics/StaticMeshRenderer.h>
+#include <gui/Button.h>
+#include <gui/ButtonRenderer.h>
 #include <physics/AABBCollisionSystem.h>
 #include <physics/BasicCollisionResolution.h>
 #include <physics/MotionSystem.h>
@@ -37,6 +39,10 @@ void GameWorld::AddSystems()
   AddRenderingSystem(std::make_unique<mage::graphics::StaticMeshRenderer>(
       mage::graphics::GLShader("./res/shaders/StaticMesh.vert",
                                "./res/shaders/StaticMesh.frag")));
+
+  AddGUISystem(std::make_unique<mage::gui::ButtonRenderer>(
+      mage::graphics::GLShader("./res/shaders/WorldCoordQuad.vert",
+                               "./res/shaders/DirectCopy.frag")));
 
   // AddPostProcessPass(std::make_unique<mage::graphics::BlurPipeline>(
   //     mage::graphics::GLShader("./res/shaders/ScreenCoordPass.vert",
@@ -130,4 +136,25 @@ void GameWorld::AddEntitiesAndComponents()
     }
   }
   // ----------------- Make other entities ---------------------
+
+  // -------------------- Add some GUI -------------------------
+  {
+    const auto& viewport = m_screenCamera.GetViewport();
+    std::int32_t windowWidth = viewport[2];
+    std::int32_t windowHeight = viewport[3];
+
+    for (size_t i = 0; i < 2; i++)
+    {
+      auto button = CreateEntity();
+
+      auto& buttonComp = button.AddComponent<mage::gui::Button>(
+          mage::math::Vec2i32(windowWidth - (i + 1) * 50,
+                              windowHeight - (i + 1) * 50),
+          mage::math::Vec2i32(50, 50));
+
+      auto& guiTextureComp = button.AddComponent<mage::gui::GUITexture>(
+          m_textureLibrary.Get("./res/textures/exit.png"));
+    }
+  }
+  // -------------------- Add some GUI -------------------------
 }

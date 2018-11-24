@@ -5,8 +5,6 @@
 #include "renderer/GLShader.h"
 #include "renderer/GLVertexArray.h"
 
-#include <vector>
-
 namespace mage
 {
 namespace graphics

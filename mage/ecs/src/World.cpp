@@ -25,6 +25,7 @@ World::World(core::Application& _application)
           -1.0f, 1.0f, _application.GetMessageBus())
     , m_copyToTargetPass()
     , m_soundLibrary(_application.GetAudioDevice())
+    , m_textureLibrary()
     , m_application(_application)
 {
 }
@@ -262,6 +263,9 @@ void World::ApplyPostProcesses()
     // Render To Screen
     m_copyToTargetPass.Execute(output, output);
   }
+
+  m_application.GetRenderDevice().SetDepthTesting(true);
+  m_application.GetRenderDevice().SetCulling(true);
 }
 
 // ------------------------------------------------------------------------------
@@ -275,6 +279,9 @@ void World::AddGUISystem(std::unique_ptr<RenderingSystem> _system)
 
 void World::TickGUISystems(float _deltaTime)
 {
+  m_application.GetRenderDevice().SetDepthTesting(false);
+  m_application.GetRenderDevice().SetCulling(false);
+
   const math::Vec4i32& viewport = m_screenCamera.GetViewport();
   m_application.GetRenderDevice().SetViewport(viewport[0], viewport[1],
                                               viewport[2], viewport[3]);
