@@ -21,7 +21,7 @@ public:
   // ------------------------------------------------------------------------------
 
   std::shared_ptr<GLTexture2D>
-  Get(const std::string& _filepath,
+  Get(const std::string& _filepath, bool _invertY = true,
       TextureParameters _parameters = TextureParameters());
 
   // ------------------------------------------------------------------------------

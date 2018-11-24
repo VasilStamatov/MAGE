@@ -18,10 +18,13 @@ World::World(core::Application& _application)
     , m_guiSystems()
     , m_cameras()
     , m_screenCamera(
+          // Declare the screen cam viewport as 0,heigth as origin to match the
+          // screen coordinates This is needed so that the rendered gui matches
+          // the gui location for event handling. (needed for an ortho matrix
+          // which matches screen origin)
           math::Vec4i32(
-              0.0f, 0.0f,
-              _application.GetVideo().GetWindowFramebufferSize().first,
-              _application.GetVideo().GetWindowFramebufferSize().second),
+              0.0f, _application.GetVideo().GetWindowFramebufferSize().second,
+              _application.GetVideo().GetWindowFramebufferSize().first, 0.0f),
           -1.0f, 1.0f, _application.GetMessageBus())
     , m_copyToTargetPass()
     , m_soundLibrary(_application.GetAudioDevice())
@@ -283,8 +286,14 @@ void World::TickGUISystems(float _deltaTime)
   m_application.GetRenderDevice().SetCulling(false);
 
   const math::Vec4i32& viewport = m_screenCamera.GetViewport();
-  m_application.GetRenderDevice().SetViewport(viewport[0], viewport[1],
-                                              viewport[2], viewport[3]);
+  // Screen camera's viewport is ordered differently, because its origin is top
+  // left to match the screen origin.
+  std::uint32_t x = viewport[0];
+  std::uint32_t y = viewport[3];
+  std::uint32_t width = viewport[2];
+  std::uint32_t height = viewport[1];
+
+  m_application.GetRenderDevice().SetViewport(x, y, width, height);
 
   for (auto&& system : m_guiSystems)
   {

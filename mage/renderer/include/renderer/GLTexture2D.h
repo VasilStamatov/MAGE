@@ -59,7 +59,7 @@ class GLTexture2D
 public:
   GLTexture2D(std::uint32_t _width, std::uint32_t _height,
               TextureParameters _parameters = TextureParameters());
-  GLTexture2D(const std::string& _filepath,
+  GLTexture2D(const std::string& _filepath, bool _invertY = true,
               TextureParameters _parameters = TextureParameters());
   ~GLTexture2D();
 
@@ -87,7 +87,8 @@ public:
   inline std::uint32_t GetHandle() const { return m_handle; }
 
 private:
-  void LoadTexture(const std::string& _filepath, TextureParameters _parameters);
+  void LoadTexture(const std::string& _filepath, bool _invertY,
+                   TextureParameters _parameters);
 
   // ------------------------------------------------------------------------------
 

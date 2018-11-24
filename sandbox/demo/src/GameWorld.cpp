@@ -10,6 +10,7 @@
 #include <graphics/BlurPipeline.h>
 #include <graphics/StaticMeshRenderer.h>
 #include <gui/Button.h>
+#include <gui/ButtonEventHandler.h>
 #include <gui/ButtonRenderer.h>
 #include <physics/AABBCollisionSystem.h>
 #include <physics/BasicCollisionResolution.h>
@@ -26,7 +27,8 @@ void GameWorld::AddSystems()
 {
   // Add systems in desired order to be executed
 
-  AddGameSystem(std::make_unique<CameraControlSystem>());
+  // AddGameSystem(std::make_unique<CameraControlSystem>());
+  AddGameSystem(std::make_unique<mage::gui::ButtonEventHandler>());
   AddGameSystem(std::make_unique<mage::physics::MovementControlSystem>());
   AddGameSystem(std::make_unique<mage::physics::AABBCollisionSystem>());
   AddGameSystem(std::make_unique<mage::physics::BasicCollisionResolution>());
@@ -141,19 +143,25 @@ void GameWorld::AddEntitiesAndComponents()
   {
     const auto& viewport = m_screenCamera.GetViewport();
     std::int32_t windowWidth = viewport[2];
-    std::int32_t windowHeight = viewport[3];
+    std::int32_t windowHeight = viewport[1];
 
     for (size_t i = 0; i < 2; i++)
     {
       auto button = CreateEntity();
 
       auto& buttonComp = button.AddComponent<mage::gui::Button>(
-          mage::math::Vec2i32(windowWidth - (i + 1) * 50,
-                              windowHeight - (i + 1) * 50),
-          mage::math::Vec2i32(50, 50));
+          mage::math::Vec2i32(i * 50, i * 50), mage::math::Vec2i32(50, 50));
 
       auto& guiTextureComp = button.AddComponent<mage::gui::GUITexture>(
-          m_textureLibrary.Get("./res/textures/exit.png"));
+          m_textureLibrary.Get("./res/textures/exit.png", false));
+
+      auto& msgBus = GetApplicationMessageBus();
+
+      auto& guiCallback =
+          button.AddComponent<mage::gui::GUICallback>([&msgBus]() {
+            mage::core::OnExitAppEvent exitApp;
+            msgBus.Broadcast(&exitApp);
+          });
     }
   }
   // -------------------- Add some GUI -------------------------

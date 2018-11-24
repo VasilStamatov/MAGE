@@ -33,30 +33,11 @@ ButtonRenderer::ButtonRenderer(graphics::GLShader _shader)
 
 void ButtonRenderer::Initialize(mage::ecs::World& _world)
 {
-  // ButtonVertex topLeft(math::Vec2f(-0.5f, 0.5f), math::Vec2f(0.0f, 1.0f));
-  // ButtonVertex botLeft(math::Vec2f(-0.5f, -0.5f), math::Vec2f(0.0f, 0.0f));
-  // ButtonVertex botRight(math::Vec2f(0.5f, -0.5f), math::Vec2f(1.0f, 0.0f));
-  // ButtonVertex topRight(math::Vec2f(0.5f, 0.5f), math::Vec2f(1.0f, 1.0f));
-
-  // ButtonVertex topLeft(math::Vec2f(200, 350), math::Vec2f(0.0f, 1.0f));
-  // ButtonVertex botLeft(math::Vec2f(200, 200), math::Vec2f(0.0f, 0.0f));
-  // ButtonVertex botRight(math::Vec2f(350, 200), math::Vec2f(1.0f, 0.0f));
-  // ButtonVertex topRight(math::Vec2f(350, 350), math::Vec2f(1.0f, 1.0f));
-
-  // std::vector<std::uint32_t> indices = {0, 1, 2, 2, 3, 0};
-
-  // std::vector<ButtonVertex> vertices{topLeft, botLeft, botRight, topRight};
-
-  // m_VBO.SetBufferData(sizeof(ButtonVertex) * vertices.size(),
-  // vertices.data());
-
   graphics::GLBufferLayout bufferLayout;
   bufferLayout.PushFloat(2, false); // first 2 floats (m_position x,y)
   bufferLayout.PushFloat(2, false); // next 2 floats (m_texCoords x,y)
 
   m_VAO.AttachVertexBuffer(m_VBO, bufferLayout);
-
-  // m_IBO.SetData(indices.data(), indices.size());
 }
 
 // ------------------------------------------------------------------------------
@@ -83,6 +64,8 @@ void ButtonRenderer::Render(mage::ecs::World& _world,
     ButtonVertex topRight(math::Vec2f(x + width, y + height),
                           math::Vec2f(1.0f, 1.0f));
 
+    // temporarily store the raw pointer in the map (cleared once rendering is
+    // finished)
     ButtonBatch& batch = m_batches[&(*texture.m_texture)];
 
     batch.m_vertices.push_back(topLeft);

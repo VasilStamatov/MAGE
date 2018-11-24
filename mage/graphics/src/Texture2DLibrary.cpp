@@ -21,7 +21,7 @@ Texture2DLibrary::~Texture2DLibrary() {}
 // ------------------------------------------------------------------------------
 
 std::shared_ptr<GLTexture2D>
-Texture2DLibrary::Get(const std::string& _filepath,
+Texture2DLibrary::Get(const std::string& _filepath, bool _invertY,
                       TextureParameters _parameters)
 {
   std::hash<std::string> hashFunction;
@@ -40,7 +40,8 @@ Texture2DLibrary::Get(const std::string& _filepath,
   }
 
   m_loadedTextures.emplace_back(
-      std::make_shared<GLTexture2D>(_filepath, _parameters), hashedName);
+      std::make_shared<GLTexture2D>(_filepath, _invertY, _parameters),
+      hashedName);
 
   return m_loadedTextures.back().m_texture;
 }

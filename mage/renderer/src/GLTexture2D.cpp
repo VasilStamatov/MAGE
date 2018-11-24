@@ -101,11 +101,11 @@ GLTexture2D::GLTexture2D(std::uint32_t _width, std::uint32_t _height,
 
 // ------------------------------------------------------------------------------
 
-GLTexture2D::GLTexture2D(const std::string& _filepath,
+GLTexture2D::GLTexture2D(const std::string& _filepath, bool _invertY,
                          TextureParameters _parameters)
     : m_handle(0)
 {
-  LoadTexture(_filepath, _parameters);
+  LoadTexture(_filepath, _invertY, _parameters);
 }
 
 // ------------------------------------------------------------------------------
@@ -138,7 +138,7 @@ GLTexture2D& GLTexture2D::operator=(GLTexture2D&& _moved)
 
 // ------------------------------------------------------------------------------
 
-void GLTexture2D::LoadTexture(const std::string& _filepath,
+void GLTexture2D::LoadTexture(const std::string& _filepath, bool _invertY,
                               TextureParameters _parameters)
 {
   std::int32_t width = 0;
@@ -151,7 +151,7 @@ void GLTexture2D::LoadTexture(const std::string& _filepath,
     desiredChannels = 3;
   }
 
-  stbi_set_flip_vertically_on_load(true);
+  stbi_set_flip_vertically_on_load(_invertY);
   unsigned char* data =
       stbi_load(_filepath.c_str(), &width, &height, &channels, desiredChannels);
 
