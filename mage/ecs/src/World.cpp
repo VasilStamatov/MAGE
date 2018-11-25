@@ -29,6 +29,7 @@ World::World(core::Application& _application)
     , m_copyToTargetPass()
     , m_soundLibrary(_application.GetAudioDevice())
     , m_textureLibrary()
+    , m_objModelLibrary()
     , m_application(_application)
 {
 }
@@ -122,24 +123,12 @@ void World::RefreshEntityState()
     }
 
     m_entityManager.ResetComponentMask(m_entitiesToRemove[i]);
+
+    m_modifiedEntities.push_back(m_entitiesToRemove[i]);
+
     m_entityManager.RecycleEntity(m_entitiesToRemove[i]);
   }
-
-  // move the removed entities into the modified container
-  if (m_modifiedEntities.empty())
-  {
-    m_modifiedEntities = std::move(m_entitiesToRemove);
-  }
-  else
-  {
-    m_modifiedEntities.reserve(m_modifiedEntities.size() +
-                               m_entitiesToRemove.size());
-
-    std::move(std::begin(m_entitiesToRemove), std::end(m_entitiesToRemove),
-              std::back_inserter(m_modifiedEntities));
-
-    m_entitiesToRemove.clear();
-  }
+  m_entitiesToRemove.clear();
 
   // Update the system's registered entities with the ones modified last update
   for (size_t i = 0; i < m_modifiedEntities.size(); i++)
@@ -358,14 +347,30 @@ messaging::MessageBus& World::GetApplicationMessageBus()
 
 // ------------------------------------------------------------------------------
 
-audio::SoundLibrary& World::GetSoundLibrary() { return m_soundLibrary; }
-
-// ------------------------------------------------------------------------------
-
 graphics::RenderDevice& World::GetRenderDevice()
 {
   return m_application.GetRenderDevice();
 }
+
+// ------------------------------------------------------------------------------
+
+audio::SoundLibrary& World::GetSoundLibrary() { return m_soundLibrary; }
+
+// ------------------------------------------------------------------------------
+
+graphics::Texture2DLibrary& World::GetTexture2DLibrary()
+{
+  return m_textureLibrary;
+}
+
+// ------------------------------------------------------------------------------
+
+graphics::OBJModelLibrary& World::GetOBJModelLibrary()
+{
+  return m_objModelLibrary;
+}
+
+// ------------------------------------------------------------------------------
 
 } // namespace ecs
 } // namespace mage

@@ -45,26 +45,26 @@ void SoundEffectSystem::Tick(ecs::World& _world, float _deltaTime)
 {
   for (auto&& entity : m_registeredEntities)
   {
-    auto& source = _world.GetComponent<SoundEffectSource>(entity);
+    auto* source = _world.GetComponent<SoundEffectSource>(entity);
 
-    if (m_audioDevice.IsSourcePlaying(source.m_source))
+    if (m_audioDevice.IsSourcePlaying(source->m_source))
     {
       // Can't play something while already playing
       continue;
     }
 
-    auto& soundEffect = _world.GetComponent<PlaySoundEffect>(entity);
+    auto* soundEffect = _world.GetComponent<PlaySoundEffect>(entity);
     auto& location =
         _world.GetComponent<ecs::common::TransformComponent>(entity)
-            .m_transform.GetTranslation();
+            ->m_transform.GetTranslation();
 
     // std::cout << "Playing Source From: " << location << std::endl;
 
-    m_audioDevice.SetSourceSound(source.m_source, soundEffect.m_soundClip,
-                                 source.m_volume, source.m_variance,
-                                 soundEffect.m_looping);
+    m_audioDevice.SetSourceSound(source->m_source, soundEffect->m_soundClip,
+                                 source->m_volume, source->m_variance,
+                                 soundEffect->m_looping);
 
-    m_audioDevice.PlaySource(source.m_source, location);
+    m_audioDevice.PlaySource(source->m_source, location);
 
     // Remove after the effect has been played
     _world.RemoveComponent<PlaySoundEffect>(entity);

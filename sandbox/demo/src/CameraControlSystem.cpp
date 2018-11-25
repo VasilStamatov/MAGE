@@ -39,19 +39,19 @@ void CameraControlSystem::Tick(mage::ecs::World& _world, float _deltaTime)
 
   for (auto&& entity : m_registeredEntities)
   {
-    auto& cameraControlComponent =
+    auto* cameraControlComponent =
         _world.GetComponent<CameraControlComponent>(entity);
-    auto& cameraComponent =
+    auto* cameraComponent =
         _world.GetComponent<mage::ecs::common::CameraComponent>(entity);
     auto& transform =
         _world.GetComponent<mage::ecs::common::TransformComponent>(entity)
-            .m_transform;
+            ->m_transform;
 
-    auto& camera = _world.GetCamera(cameraComponent.m_cameraId);
+    auto& camera = _world.GetCamera(cameraComponent->m_cameraId);
 
     mage::math::Quatf orientation = (mage::math::Quatf::GenRotationX(m_pitch) *
                                      mage::math::Quatf::GenRotationY(m_yaw)) *
-                                    cameraControlComponent.m_rotationSpeed;
+                                    cameraControlComponent->m_rotationSpeed;
 
     transform.SetRotation(orientation.GetConjugated());
 
@@ -59,7 +59,7 @@ void CameraControlSystem::Tick(mage::ecs::World& _world, float _deltaTime)
                                   (transform.GetRightAxis() * m_right) +
                                   (mage::math::Vec3f(0.0f, 1.0f, 0.0f) * m_up);
 
-    transform.Translate(accumMove * cameraControlComponent.m_movementSpeed);
+    transform.Translate(accumMove * cameraControlComponent->m_movementSpeed);
 
     camera.SetView(orientation.ToMat4() * mage::math::GenTranslationMat(
                                               transform.GetTranslation() * -1));

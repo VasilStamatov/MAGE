@@ -25,18 +25,18 @@ void MotionSystem::Tick(ecs::World& _world, float _deltaTime)
   {
     auto& transform =
         _world.GetComponent<ecs::common::TransformComponent>(entity)
-            .m_transform;
-    auto& motion = _world.GetComponent<Motion>(entity);
+            ->m_transform;
+    auto* motion = _world.GetComponent<Motion>(entity);
 
     math::Vec3f newPos = transform.GetTranslation();
-    MotionIntegrators::ForestRuth(newPos, motion.m_velocity,
-                                  motion.m_acceleration, _deltaTime);
+    MotionIntegrators::ForestRuth(newPos, motion->m_velocity,
+                                  motion->m_acceleration, _deltaTime);
     transform.SetTranslation(newPos);
 
     // TODO: This is a cheap hack to get resistance for now! Replace with a
     // proper system later
-    motion.m_velocity *= 0.95f;
-    motion.m_acceleration *= 0.95f;
+    motion->m_velocity *= 0.95f;
+    motion->m_acceleration *= 0.95f;
   }
 }
 

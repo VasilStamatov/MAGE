@@ -50,13 +50,13 @@ void ButtonRenderer::Render(mage::ecs::World& _world,
 
   for (auto&& entity : m_registeredEntities)
   {
-    auto& button = _world.GetComponent<Button>(entity);
-    auto& texture = _world.GetComponent<GUITexture>(entity);
+    auto* button = _world.GetComponent<Button>(entity);
+    auto* texture = _world.GetComponent<GUITexture>(entity);
 
-    float x = button.m_screenPos[0];
-    float y = button.m_screenPos[1];
-    float width = button.m_size[0];
-    float height = button.m_size[1];
+    float x = button->m_screenPos[0];
+    float y = button->m_screenPos[1];
+    float width = button->m_size[0];
+    float height = button->m_size[1];
 
     ButtonVertex topLeft(math::Vec2f(x, y + height), math::Vec2f(0.0f, 1.0f));
     ButtonVertex botLeft(math::Vec2f(x, y), math::Vec2f(0.0f, 0.0f));
@@ -66,7 +66,7 @@ void ButtonRenderer::Render(mage::ecs::World& _world,
 
     // temporarily store the raw pointer in the map (cleared once rendering is
     // finished)
-    ButtonBatch& batch = m_batches[&(*texture.m_texture)];
+    ButtonBatch& batch = m_batches[&(*texture->m_texture)];
 
     batch.m_vertices.push_back(topLeft);
     batch.m_vertices.push_back(botLeft);

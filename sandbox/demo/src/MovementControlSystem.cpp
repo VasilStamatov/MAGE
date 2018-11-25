@@ -39,18 +39,18 @@ void MovementControlSystem::Tick(ecs::World& _world, float _deltaTime)
 {
   for (auto&& entity : m_registeredEntities)
   {
-    auto& movementControls = _world.GetComponent<MovementControls>(entity);
-    auto& motion = _world.GetComponent<physics::Motion>(entity);
+    auto* movementControls = _world.GetComponent<MovementControls>(entity);
+    auto* motion = _world.GetComponent<physics::Motion>(entity);
 
     for (auto&& key : m_pressedKeys)
     {
-      if (key == movementControls.m_rightKey)
+      if (key == movementControls->m_rightKey)
       {
-        motion.m_acceleration += math::Vec3f(0.001f, 0.0f, 0.0f);
+        motion->m_acceleration += math::Vec3f(1.0f, 0.0f, 0.0f);
       }
-      else if (key == movementControls.m_leftKey)
+      else if (key == movementControls->m_leftKey)
       {
-        motion.m_acceleration += math::Vec3f(-0.001f, 0.0f, 0.0f);
+        motion->m_acceleration += math::Vec3f(-1.0f, 0.0f, 0.0f);
       }
     }
   }

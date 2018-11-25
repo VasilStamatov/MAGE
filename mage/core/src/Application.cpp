@@ -69,7 +69,7 @@ void Application::Run(int argc, const char** argv)
       numUpdates++;
 
       m_inputManager.Update();
-      Update(1.0f);
+      Update(c_desiredFrameTimeMS / 1000.0f);
       m_gameWorlds[m_currentWorldId]->RefreshEntityState();
     }
 

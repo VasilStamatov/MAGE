@@ -2,6 +2,8 @@
 
 #include "demo/BlurPipeline.h"
 #include "demo/CameraControlSystem.h"
+#include "demo/EnemySpawnSystem.h"
+#include "demo/GameCollisionHandler.h"
 #include "demo/MovementControlSystem.h"
 
 #include <audio/SoundEffectSystem.h>
@@ -30,9 +32,11 @@ void GameWorld::AddSystems()
 
   // AddGameSystem(std::make_unique<CameraControlSystem>());
   AddGameSystem(std::make_unique<mage::gui::ButtonEventHandler>());
+  AddGameSystem(std::make_unique<EntitySpawnSystem>());
   AddGameSystem(std::make_unique<MovementControlSystem>());
   AddGameSystem(std::make_unique<mage::physics::AABBCollisionSystem>());
-  AddGameSystem(std::make_unique<mage::physics::BasicCollisionResolution>());
+  // AddGameSystem(std::make_unique<mage::physics::BasicCollisionResolution>());
+  AddGameSystem(std::make_unique<GameCollisionhandler>());
   AddGameSystem(std::make_unique<mage::physics::MotionSystem>());
   AddGameSystem(
       std::make_unique<mage::audio::SoundListenerSystem>(m_audioDevice));
@@ -75,8 +79,8 @@ void GameWorld::AddEntitiesAndComponents()
   m_soundLibrary.AddAudioClip("./res/audio/Blip_Select11.ogg");
   m_soundLibrary.AddAudioClip("./res/audio/neocrey - Last Cyber Dance.ogg");
   m_soundLibrary.AddAudioSource("CameraSource");
-  mage::graphics::OBJModel cube("./res/models/cube.obj");
-  mage::graphics::OBJModel plane("./res/models/plane.obj");
+  auto cubeModel = m_objModelLibrary.Get("./res/models/cube.obj");
+  auto planeModel = m_objModelLibrary.Get("./res/models/plane.obj");
 
   // -------------- Load Resources ----------------------------
 
@@ -108,13 +112,13 @@ void GameWorld::AddEntitiesAndComponents()
 
     auto& staticMeshComp =
         renderedEntity.AddComponent<mage::graphics::StaticMeshComponent>(
-            cube, m_textureLibrary.Get("./res/textures/bricks.jpg"));
+            *cubeModel, m_textureLibrary.Get("./res/textures/bricks.jpg"));
 
     auto& motionComponent =
         renderedEntity.AddComponent<mage::physics::Motion>();
     auto& colliderComponent =
         renderedEntity.AddComponent<mage::physics::AABBCollider>(
-            cube.GetAABB());
+            cubeModel->GetAABB());
 
     auto& movementController = renderedEntity.AddComponent<MovementControls>();
   }
@@ -160,11 +164,8 @@ void GameWorld::AddEntitiesAndComponents()
   }
   // ----------------- Make Camera ----------------------------
 
-  // ----------------- Make other entities ---------------------
+  // -------- first Wall ---------
   {
-
-    // -------- first Wall ---------
-
     auto renderedEntity = CreateEntity();
 
     auto& transform =
@@ -177,14 +178,15 @@ void GameWorld::AddEntitiesAndComponents()
 
     auto& staticMeshComp =
         renderedEntity.AddComponent<mage::graphics::StaticMeshComponent>(
-            plane, m_textureLibrary.Get("./res/textures/sand.jpg"));
+            *planeModel, m_textureLibrary.Get("./res/textures/sand.jpg"));
 
     auto& colliderComponent =
         renderedEntity.AddComponent<mage::physics::AABBCollider>(
-            plane.GetAABB());
+            planeModel->GetAABB());
+  }
 
-    // -------- Second Wall ---------
-
+  // -------- Second Wall ---------
+  {
     auto renderedEntity2 = CreateEntity();
 
     auto& transform2 =
@@ -198,57 +200,98 @@ void GameWorld::AddEntitiesAndComponents()
 
     auto& staticMeshComp2 =
         renderedEntity2.AddComponent<mage::graphics::StaticMeshComponent>(
-            plane, m_textureLibrary.Get("./res/textures/sand.jpg"));
+            *planeModel, m_textureLibrary.Get("./res/textures/sand.jpg"));
 
     auto& colliderComponent2 =
         renderedEntity2.AddComponent<mage::physics::AABBCollider>(
-            plane.GetAABB());
-
-    // -------- Floor ---------
-
-    // auto renderedEntity3 = CreateEntity();
-
-    // auto& transform3 =
-    //     renderedEntity3.AddComponent<mage::ecs::common::TransformComponent>();
-
-    // transform3.m_transform.SetTranslation(mage::math::Vec3f(0.0, 0.0f,
-    // -15.0f)); transform3.m_transform.SetScale(mage::math::Vec3f(70.0,
-    // 1.0f, 70.0f));
-
-    // // transform3.m_transform.Rotate(
-    // //     mage::math::Quatf::GenRotationZ(mage::math::ToRadians(-90.0f)));
-
-    // auto& staticMeshComp3 =
-    //     renderedEntity3.AddComponent<mage::graphics::StaticMeshComponent>(
-    //         plane,
-    //         m_textureLibrary.Get("./res/textures/starfield.jpg"/*, true,
-    //                              mage::graphics::TextureParameters(
-    //                                  mage::graphics::TextureFormat::RGBA,
-    //                                  mage::graphics::TextureFilter::Linear,
-    //                                  mage::graphics::TextureWrap::Repeat)*/));
+            planeModel->GetAABB());
   }
-  // ----------------- Make other entities ---------------------
+
+  // -------- Invisible Wall Behind Player ---------
+  {
+    auto wall = CreateEntity();
+
+    auto& transform2 =
+        wall.AddComponent<mage::ecs::common::TransformComponent>();
+
+    transform2.m_transform.SetTranslation(mage::math::Vec3f(0.0f, 0.0f, 0.0f));
+    transform2.m_transform.SetScale(mage::math::Vec3f(15.0f, 2.0f, 2.0f));
+
+    auto& colliderComponent2 =
+        wall.AddComponent<mage::physics::AABBCollider>(planeModel->GetAABB());
+  }
+
+  // -------- Enemy Spawner ---------
+  auto enemySpawner = CreateEntity();
+
+  auto& transform3 =
+      enemySpawner.AddComponent<mage::ecs::common::TransformComponent>();
+
+  transform3.m_transform.SetTranslation(mage::math::Vec3f(0.0, 0.0f, -20.0f));
+
+  auto& spawner = enemySpawner.AddComponent<EntitySpawnComponent>(
+      cubeModel, m_textureLibrary.Get("./res/textures/bricks2.jpg"), 15.0f,
+      5.0f);
+  // -------- Enemy Spawner ---------
 
   // -------------------- Add some GUI -------------------------
   {
-    for (size_t i = 0; i < 2; i++)
-    {
-      auto button = CreateEntity();
+    auto exitButton = CreateEntity();
 
-      auto& buttonComp = button.AddComponent<mage::gui::Button>(
-          mage::math::Vec2i32(i * 50, i * 50), mage::math::Vec2i32(50, 50));
+    auto& buttonComp = exitButton.AddComponent<mage::gui::Button>(
+        mage::math::Vec2i32(0, 0), mage::math::Vec2i32(50, 50));
 
-      auto& guiTextureComp = button.AddComponent<mage::gui::GUITexture>(
-          m_textureLibrary.Get("./res/textures/exit.png", false));
+    auto& guiTextureComp = exitButton.AddComponent<mage::gui::GUITexture>(
+        m_textureLibrary.Get("./res/textures/exit.png", false));
 
-      auto& msgBus = GetApplicationMessageBus();
+    auto& msgBus = GetApplicationMessageBus();
 
-      auto& guiCallback =
-          button.AddComponent<mage::gui::GUICallback>([&msgBus]() {
-            mage::core::OnExitAppEvent exitApp;
-            msgBus.Broadcast(&exitApp);
-          });
-    }
+    auto& guiCallback =
+        exitButton.AddComponent<mage::gui::GUICallback>([&msgBus]() {
+          mage::core::OnExitAppEvent exitApp;
+          msgBus.Broadcast(&exitApp);
+        });
+  }
+
+  {
+    auto increaseDifficultyButton = CreateEntity();
+
+    auto& buttonComp = increaseDifficultyButton.AddComponent<mage::gui::Button>(
+        mage::math::Vec2i32(windowWidth * 0.5f, 0),
+        mage::math::Vec2i32(50, 50));
+
+    auto& guiTextureComp =
+        increaseDifficultyButton.AddComponent<mage::gui::GUITexture>(
+            m_textureLibrary.Get("./res/textures/red_arrow.png", false));
+
+    auto& msgBus = GetApplicationMessageBus();
+
+    auto& guiCallback =
+        increaseDifficultyButton.AddComponent<mage::gui::GUICallback>(
+            [&spawner]() {
+              if (spawner.m_spawnFrequency >= 2.0f)
+              {
+                spawner.m_spawnFrequency -= 1.0f;
+              }
+            });
+  }
+
+  {
+    auto increaseDifficultyButton = CreateEntity();
+
+    auto& buttonComp = increaseDifficultyButton.AddComponent<mage::gui::Button>(
+        mage::math::Vec2i32(windowWidth * 0.5f - 50.0f, 0),
+        mage::math::Vec2i32(50, 50));
+
+    auto& guiTextureComp =
+        increaseDifficultyButton.AddComponent<mage::gui::GUITexture>(
+            m_textureLibrary.Get("./res/textures/red_arrow_back.png", false));
+
+    auto& msgBus = GetApplicationMessageBus();
+
+    auto& guiCallback =
+        increaseDifficultyButton.AddComponent<mage::gui::GUICallback>(
+            [&spawner]() { spawner.m_spawnFrequency += 1.0f; });
   }
   // -------------------- Add some GUI -------------------------
 }

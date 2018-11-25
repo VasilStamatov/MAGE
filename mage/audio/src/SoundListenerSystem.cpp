@@ -27,7 +27,7 @@ void SoundListenerSystem::Tick(ecs::World& _world, float _deltaTime)
   {
     auto& location =
         _world.GetComponent<ecs::common::TransformComponent>(entity)
-            .m_transform.GetTranslation();
+            ->m_transform.GetTranslation();
 
     // std::cout << "Setting Location To: " << location << std::endl;
     m_audioDevice.SetListenerPosition(location);

@@ -43,6 +43,7 @@ target_include_directories(mage
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/messaging/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/physics/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/renderer/include
+  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/util/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/video/include
 )
 

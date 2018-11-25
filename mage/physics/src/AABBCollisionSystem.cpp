@@ -35,8 +35,8 @@ void AABBCollisionSystem::Tick(ecs::World& _world, float _deltaTime)
     auto& transformFirst = _world
                                .GetComponent<ecs::common::TransformComponent>(
                                    m_registeredEntities[firstE])
-                               .m_transform;
-    auto& colliderFirst =
+                               ->m_transform;
+    auto* colliderFirst =
         _world.GetComponent<AABBCollider>(m_registeredEntities[firstE]);
 
     for (size_t secondE = firstE + 1; secondE < m_registeredEntities.size();
@@ -46,14 +46,14 @@ void AABBCollisionSystem::Tick(ecs::World& _world, float _deltaTime)
           _world
               .GetComponent<ecs::common::TransformComponent>(
                   m_registeredEntities[secondE])
-              .m_transform;
-      auto& colliderSecond =
+              ->m_transform;
+      auto* colliderSecond =
           _world.GetComponent<AABBCollider>(m_registeredEntities[secondE]);
 
       math::AABB worldSpaceAABBFirst =
-          colliderFirst.m_AABB.Transform(transformFirst.ToMatrix());
+          colliderFirst->m_AABB.Transform(transformFirst.ToMatrix());
       math::AABB worldSpaceAABBSecond =
-          colliderSecond.m_AABB.Transform(transformSecond.ToMatrix());
+          colliderSecond->m_AABB.Transform(transformSecond.ToMatrix());
 
       if (worldSpaceAABBFirst.Intersects(worldSpaceAABBSecond))
       {

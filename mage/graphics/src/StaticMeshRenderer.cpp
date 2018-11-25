@@ -37,15 +37,15 @@ void StaticMeshRenderer::Render(mage::ecs::World& _world, const Camera& _camera,
 
   for (auto&& entity : m_registeredEntities)
   {
-    auto& staticMesh = _world.GetComponent<StaticMeshComponent>(entity);
-    auto& transform =
+    auto* staticMesh = _world.GetComponent<StaticMeshComponent>(entity);
+    auto* transform =
         _world.GetComponent<ecs::common::TransformComponent>(entity);
 
-    m_shader.SetUniformMat4("in_Model", transform.m_transform.ToMatrix());
+    m_shader.SetUniformMat4("in_Model", transform->m_transform.ToMatrix());
 
-    staticMesh.m_material.Bind();
-    staticMesh.m_mesh.Draw();
-    staticMesh.m_material.Unbind();
+    staticMesh->m_material.Bind();
+    staticMesh->m_mesh.Draw();
+    staticMesh->m_material.Unbind();
   }
 }
 

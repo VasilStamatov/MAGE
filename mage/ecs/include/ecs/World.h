@@ -7,6 +7,7 @@
 #include "RenderingSystem.h"
 #include "audio/SoundLibrary.h"
 #include "graphics/CopyToTargetPipeline.h"
+#include "graphics/OBJModelLibrary.h"
 #include "graphics/Texture2DLibrary.h"
 
 #include <array>
@@ -131,7 +132,7 @@ public:
 
   // ------------------------------------------------------------------------------
 
-  template <typename ComponentType> ComponentType& GetComponent(Entity _entity)
+  template <typename ComponentType> ComponentType* GetComponent(Entity _entity)
   {
     ComponentManager<ComponentType>* manager =
         GetPtrToDerivedComponentManager<ComponentType>();
@@ -151,8 +152,10 @@ public:
   // ------------------------------------------------------------------------------
 
   messaging::MessageBus& GetApplicationMessageBus();
-  audio::SoundLibrary& GetSoundLibrary();
   graphics::RenderDevice& GetRenderDevice();
+  audio::SoundLibrary& GetSoundLibrary();
+  graphics::Texture2DLibrary& GetTexture2DLibrary();
+  graphics::OBJModelLibrary& GetOBJModelLibrary();
 
   // ------------------------------------------------------------------------------
 
@@ -196,6 +199,7 @@ protected:
 
   audio::SoundLibrary m_soundLibrary;
   graphics::Texture2DLibrary m_textureLibrary;
+  graphics::OBJModelLibrary m_objModelLibrary;
   core::Application& m_application;
 };
 

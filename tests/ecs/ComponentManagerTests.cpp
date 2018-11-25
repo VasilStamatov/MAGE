@@ -26,8 +26,8 @@ SCENARIO("Component Manager functionality usage", "[ECS]")
 
       THEN("The stored component in the manager can be queried and used")
       {
-        TestComponent1& component = componentManager.GetComponent(testEntity);
-        REQUIRE(component.m_data == dataForComponent);
+        TestComponent1* component = componentManager.GetComponent(testEntity);
+        REQUIRE(component->m_data == dataForComponent);
       }
     }
   }

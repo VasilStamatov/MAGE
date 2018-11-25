@@ -85,10 +85,14 @@ public:
 
   // ------------------------------------------------------------------------------
 
-  ComponentType& GetComponent(Entity _entity)
+  ComponentType* GetComponent(Entity _entity)
   {
-    assert(m_entityIdToComponentIndex.count(_entity.m_id) == 1);
-    return m_components[m_entityIdToComponentIndex[_entity.m_id]];
+    if (m_entityIdToComponentIndex.count(_entity.m_id) == 1)
+    {
+      // component exists
+      return &m_components[m_entityIdToComponentIndex[_entity.m_id]];
+    }
+    return nullptr;
   }
 
   std::vector<ComponentType>& GetAllComponents() { return m_components; }

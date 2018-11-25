@@ -84,15 +84,15 @@ void SkyboxRenderer::Render(mage::ecs::World& _world, const Camera& _camera,
 
   for (auto&& entity : m_registeredEntities)
   {
-    auto& skybox = _world.GetComponent<SkyboxComponent>(entity);
+    auto* skybox = _world.GetComponent<SkyboxComponent>(entity);
 
-    skybox.m_skyboxCube.Bind(0);
+    skybox->m_skyboxCube.Bind(0);
 
     m_cubeVAO.Bind();
     m_cubeVAO.DrawArrays(m_numCubeVertices);
     m_cubeVAO.Unbind();
 
-    skybox.m_skyboxCube.Unbind(0);
+    skybox->m_skyboxCube.Unbind(0);
   }
 
   _world.GetRenderDevice().SetDepthFunc(graphics::DepthFunc::Less);

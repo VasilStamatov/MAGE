@@ -39,14 +39,14 @@ void ButtonEventHandler::Tick(ecs::World& _world, float _deltaTime)
 {
   for (auto&& entity : m_registeredEntities)
   {
-    auto& button = _world.GetComponent<Button>(entity);
-    auto& callback = _world.GetComponent<GUICallback>(entity);
+    auto* button = _world.GetComponent<Button>(entity);
+    auto* callback = _world.GetComponent<GUICallback>(entity);
 
-    int xMin = button.m_screenPos[0];
-    int yMin = button.m_screenPos[1];
+    int xMin = button->m_screenPos[0];
+    int yMin = button->m_screenPos[1];
 
-    int xMax = button.m_screenPos[0] + button.m_size[0];
-    int yMax = button.m_screenPos[1] + button.m_size[1];
+    int xMax = button->m_screenPos[0] + button->m_size[0];
+    int yMax = button->m_screenPos[1] + button->m_size[1];
 
     const bool insideX = m_lastMouseX > xMin && m_lastMouseX < xMax;
     const bool insideY = m_lastMouseY > yMin && m_lastMouseY < yMax;
@@ -54,7 +54,7 @@ void ButtonEventHandler::Tick(ecs::World& _world, float _deltaTime)
     if (insideX && insideY && m_leftMouseButtonClicked)
     {
       m_leftMouseButtonClicked = false;
-      callback.m_onClickCallback();
+      callback->m_onClickCallback();
     }
   }
 }
