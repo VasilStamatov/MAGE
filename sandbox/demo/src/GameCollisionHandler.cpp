@@ -2,6 +2,7 @@
 
 #include "demo/MovementControlSystem.h"
 
+#include <audio/SoundEffectSystem.h>
 #include <core/Application.h>
 #include <ecs/World.h>
 #include <messaging/MessageBus.h>
@@ -56,6 +57,10 @@ void GameCollisionhandler::Tick(mage::ecs::World& _world, float _deltaTime)
             _world.GetComponent<mage::physics::Motion>(intersections.first);
         motionA->m_acceleration *= -1;
         motionA->m_velocity *= -1.1f;
+
+        _world.AddComponent<mage::audio::PlaySoundEffect>(
+            intersections.first, _world.GetSoundLibrary().GetAudioClip(
+                                     "./res/audio/Blip_Select11.ogg"));
       }
     }
     else if (movementControlsB)
@@ -81,6 +86,10 @@ void GameCollisionhandler::Tick(mage::ecs::World& _world, float _deltaTime)
             _world.GetComponent<mage::physics::Motion>(intersections.second);
         motionB->m_acceleration *= -1;
         motionB->m_velocity *= -1.1f;
+
+        _world.AddComponent<mage::audio::PlaySoundEffect>(
+            intersections.second, _world.GetSoundLibrary().GetAudioClip(
+                                      "./res/audio/Blip_Select11.ogg"));
       }
     }
     else

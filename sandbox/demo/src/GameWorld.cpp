@@ -79,6 +79,7 @@ void GameWorld::AddEntitiesAndComponents()
   m_soundLibrary.AddAudioClip("./res/audio/Blip_Select11.ogg");
   m_soundLibrary.AddAudioClip("./res/audio/neocrey - Last Cyber Dance.ogg");
   m_soundLibrary.AddAudioSource("CameraSource");
+  m_soundLibrary.AddAudioSource("PlayerSource");
   auto cubeModel = m_objModelLibrary.Get("./res/models/cube.obj");
   auto planeModel = m_objModelLibrary.Get("./res/models/plane.obj");
 
@@ -121,6 +122,9 @@ void GameWorld::AddEntitiesAndComponents()
             cubeModel->GetAABB());
 
     auto& movementController = renderedEntity.AddComponent<MovementControls>();
+
+    renderedEntity.AddComponent<mage::audio::SoundEffectSource>(
+        m_soundLibrary.GetAudioSource("PlayerSource"), 0.2f, 1.0f);
   }
   // ----------------- Make player controlled entity ---------------------
 
