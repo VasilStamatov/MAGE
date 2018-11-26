@@ -1,18 +1,18 @@
 project(tests)
 
-add_executable(tests
-  ecs/ComponentManagerTests.cpp
-  ecs/ComponentMaskTests.cpp
-  ecs/ComponentTests.cpp
-  ecs/EntityManagerTests.cpp
-  ecs/SystemTests.cpp
-
-  math/MatTests.cpp
-  math/QuatTests.cpp
-  math/VecTests.cpp
-
-  src/testsMain.cpp
+# LOAD the header files
+file(GLOB_RECURSE HEADERS
+  ${CMAKE_CURRENT_SOURCE_DIR}/*.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp
 )
+
+# LOAD the source files
+file(GLOB_RECURSE SOURCES
+  ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/*.c
+)
+
+add_executable(tests ${HEADERS} ${SOURCES})
 
 include(${CMAKE_SCRIPTS_DIR}/FindCatch.cmake)
 
