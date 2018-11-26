@@ -14,6 +14,9 @@ namespace core
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// The stata the application can be in
+/////////////////////////////////////////////////
 enum class ApplicationState : std::uint8_t
 {
   Running,
@@ -23,26 +26,42 @@ enum class ApplicationState : std::uint8_t
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Event that can be fired to exit the application
+/////////////////////////////////////////////////
 struct OnExitAppEvent
 {
 };
 
+/////////////////////////////////////////////////
+/// Event that can be fired to transition to the next world
+/////////////////////////////////////////////////
 struct OnSetTransitionNextEvent
 {
 };
 
+/////////////////////////////////////////////////
+/// Event that can be fired to transition to the previous world
+/////////////////////////////////////////////////
 struct OnSetTransitionPreviousEvent
 {
 };
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Main Application class that must be inherited by the user-defined
+/// application
+/////////////////////////////////////////////////
 class Application
 {
 public:
   Application();
   virtual ~Application() {}
 
+  /////////////////////////////////////////////////
+  /// Run starts the application and begins the game loop
+  /////////////////////////////////////////////////
   void Run(int argc, const char** argv);
 
   audio::AudioDevice& GetAudioDevice() { return m_audioDevice; }
@@ -79,17 +98,24 @@ private:
 
   // ------------------------------------------------------------------------------
 
+  /////////////////////////////////////////////////
+  /// AddGameWorlds is the virtual function inherited classes must implement
+  /// which adds the user-defined game worlds
+  /////////////////////////////////////////////////
   virtual void AddGameWorlds() = 0;
 
 protected:
-  messaging::MessageBus m_applicationMessageBus;
-  std::vector<std::unique_ptr<ecs::World>> m_gameWorlds;
+  messaging::MessageBus
+      m_applicationMessageBus; ///< Application message bus for communication
+  std::vector<std::unique_ptr<ecs::World>> m_gameWorlds; ///< all game worlds
 
 private:
-  video::Video m_video;
-  input::InputManager m_inputManager;
-  audio::AudioDevice m_audioDevice;
-  graphics::RenderDevice m_renderDevice;
+  video::Video m_video;               ///< Video class for window management
+  input::InputManager m_inputManager; ///< Input class for input management
+  audio::AudioDevice
+      m_audioDevice; ///< audio device for the interface to the audio framework
+  graphics::RenderDevice m_renderDevice; ///< render device for the interface to
+                                         ///< the rendering framework
 
   std::int32_t m_currentWorldId;
   std::int32_t m_nextWorldId;

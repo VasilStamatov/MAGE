@@ -19,6 +19,9 @@ namespace common
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// The Camera component adds a camera to the world and stores its Id.
+/////////////////////////////////////////////////
 struct CameraComponent : public ecs::Component
 {
   CameraComponent(World& _world, const math::Vec4i32& _viewport,

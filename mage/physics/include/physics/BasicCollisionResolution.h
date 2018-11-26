@@ -9,6 +9,9 @@ namespace physics
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// This is a basic example of collision resolution system.
+/////////////////////////////////////////////////
 class BasicCollisionResolution : public ecs::GameSystem
 {
 public:

@@ -12,6 +12,9 @@ namespace common
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// The Transform component stores the transform of an entity
+/////////////////////////////////////////////////
 struct TransformComponent : public ecs::Component
 {
   math::Transform m_transform;

@@ -12,6 +12,9 @@ namespace math
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Vector class which is templated to support many different types.
+/////////////////////////////////////////////////
 template <typename T, std::uint32_t Size> class Vec
 {
 public:

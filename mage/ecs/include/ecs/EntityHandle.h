@@ -13,6 +13,11 @@ class World;
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// An EntityHandle is used to give a more OOP-looking interface to an entity
+/// when an entity is created. It stores the entity Id and the world it was
+/// created in to be able to add and remove components through the world.
+/////////////////////////////////////////////////
 class EntityHandle
 {
 public:

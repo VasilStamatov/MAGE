@@ -12,6 +12,9 @@ namespace graphics
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Resource manager for 2D texture to avoid re-loading the same texture.
+/////////////////////////////////////////////////
 class Texture2DLibrary
 {
 public:

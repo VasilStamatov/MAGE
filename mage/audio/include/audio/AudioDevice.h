@@ -11,6 +11,9 @@ namespace audio
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// The handle the device returns for an audio buffer
+/////////////////////////////////////////////////
 struct AudioBufferHandle
 {
   std::uint32_t m_index : 8;
@@ -19,6 +22,9 @@ struct AudioBufferHandle
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// The handle the device returns for an audio source
+/////////////////////////////////////////////////
 struct AudioSourceHandle
 {
   std::uint32_t m_index : 8;
@@ -27,6 +33,9 @@ struct AudioSourceHandle
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Supported audio formats
+/////////////////////////////////////////////////
 enum class AudioFormat
 {
   Mono8,
@@ -37,6 +46,9 @@ enum class AudioFormat
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// The AudioDevices handles all calls to the audio framework
+/////////////////////////////////////////////////
 class AudioDevice
 {
 public:

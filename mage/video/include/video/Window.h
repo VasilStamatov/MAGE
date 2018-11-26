@@ -19,6 +19,9 @@ namespace video
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Class which handles the window.
+/////////////////////////////////////////////////
 class Window
 {
 public:
@@ -72,12 +75,18 @@ private:
 
 // ----- Events ------
 
+/////////////////////////////////////////////////
+/// This event is fired whenever the framebuffer is resized, if that is allowed.
+/////////////////////////////////////////////////
 struct OnWindowFramebufferResized
 {
   std::int32_t m_width;
   std::int32_t m_height;
 };
 
+/////////////////////////////////////////////////
+/// This event is fired when the window is created.
+/////////////////////////////////////////////////
 struct OnWindowCreated
 {
   Window& m_window;

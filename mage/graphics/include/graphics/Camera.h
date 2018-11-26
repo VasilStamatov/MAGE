@@ -23,6 +23,11 @@ namespace graphics
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// A camera is used in the rendering systems update to render the scene from
+/// the camera's perspective. The camera can potentially have a render target so
+/// it doesn't render directly to the screen buffer.
+/////////////////////////////////////////////////
 class Camera
 {
 public:

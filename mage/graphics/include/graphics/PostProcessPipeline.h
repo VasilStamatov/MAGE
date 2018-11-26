@@ -12,6 +12,9 @@ namespace graphics
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// This is a base class for all post-process pipelines that can be added
+/////////////////////////////////////////////////
 class PostProcessPipeline
 {
 public:

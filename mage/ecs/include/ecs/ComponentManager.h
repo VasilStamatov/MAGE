@@ -15,6 +15,10 @@ namespace ecs
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Base Component manager is required to be able to store a vector of component
+/// managers for all types
+/////////////////////////////////////////////////
 class BaseComponentManager
 {
 public:
@@ -23,6 +27,11 @@ public:
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// The component manager stores a vector of components linearly in memory.
+/// Each component belongs to an entity and can be retrieved using the entity's
+/// id by mapping that to the id in the component vector
+/////////////////////////////////////////////////
 template <typename ComponentType>
 class ComponentManager : public BaseComponentManager
 {
@@ -98,8 +107,9 @@ public:
   std::vector<ComponentType>& GetAllComponents() { return m_components; }
 
 private:
-  std::unordered_map<std::uint32_t, std::uint32_t> m_entityIdToComponentIndex;
-  std::vector<ComponentType> m_components;
+  std::unordered_map<std::uint32_t, std::uint32_t>
+      m_entityIdToComponentIndex; ///< map of entity Id's to their component Id
+  std::vector<ComponentType> m_components; ///< array of components
 };
 
 // ------------------------------------------------------------------------------

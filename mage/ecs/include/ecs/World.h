@@ -35,6 +35,12 @@ namespace ecs
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// The world is the focal point of the application. This is where the entities,
+/// components and systems can communicate. This class must be inherited by
+/// end-users to describe their own world by overriding the virtual functions
+/// which add their systems and entities.
+/////////////////////////////////////////////////
 class World
 {
 public:
@@ -43,12 +49,13 @@ public:
 
   // ------------------------------------------------------------------------------
 
-  void Initialize();
+  void Initialize(); ///< Initializes the world by adding the systems and
+                     ///< components/entities
 
   // ------------------------------------------------------------------------------
 
-  void OnEnter();
-  void OnExit();
+  void OnEnter(); ///< called whenever the world transitions into this one
+  void OnExit();  ///< called whenever the world transitions out of this one
 
   // ------------------------------------------------------------------------------
 
@@ -57,7 +64,9 @@ public:
 
   // ------------------------------------------------------------------------------
 
-  void RefreshEntityState();
+  void RefreshEntityState(); ///< refreshes the entitiy state by refreshing the
+                             ///< registered entities in all the systems with
+                             ///< the modified entities.
 
   // ------------------------------------------------------------------------------
 
@@ -82,13 +91,25 @@ public:
 
   // ------------------------------------------------------------------------------
 
+  /////////////////////////////////////////////////
+  /// Adds a perspective camera to the world. This doesn't need to be explicitly
+  /// called as it's done whenver a camera component is added. This is only
+  /// needed if a camera component is not required.
+  /////////////////////////////////////////////////
   std::uint32_t AddPerspectiveCamera(const math::Vec4i32& _viewport,
                                      float _fovDegrees, float _near, float _far,
                                      bool _listenForWindowResize);
+
+  /////////////////////////////////////////////////
+  /// Adds an orthographic camera to the world. This doesn't need to be
+  /// explicitly called as it's done whenver a camera component is added. This
+  /// is only needed if a camera component is not required.
+  /////////////////////////////////////////////////
   std::uint32_t AddOrthographicCamera(const math::Vec4i32& _viewport,
                                       float _near, float _far,
                                       bool _listenForWindowResize);
-  graphics::Camera& GetCamera(std::uint32_t _id);
+
+  graphics::Camera& GetCamera(std::uint32_t _id); ///< retrieves a camera
 
   // ------------------------------------------------------------------------------
 
@@ -160,7 +181,16 @@ public:
   // ------------------------------------------------------------------------------
 
 private:
+  /////////////////////////////////////////////////
+  /// AddSystem is a function to be overriden which must add all the game and
+  /// rendering systems.
+  /////////////////////////////////////////////////
   virtual void AddSystems() = 0;
+
+  /////////////////////////////////////////////////
+  /// AddEntitiesAndComponents is a function to be overriden which must add all
+  /// the entities and components.
+  /////////////////////////////////////////////////
   virtual void AddEntitiesAndComponents() = 0;
 
   // ------------------------------------------------------------------------------

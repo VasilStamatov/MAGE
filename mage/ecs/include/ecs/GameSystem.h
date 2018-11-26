@@ -9,6 +9,10 @@ namespace ecs
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// The game system describes a system which is called every game state update,
+/// which happens at a fixed rate.
+/////////////////////////////////////////////////
 class GameSystem : public System
 {
 public:

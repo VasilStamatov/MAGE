@@ -11,6 +11,11 @@ namespace ecs
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Component mask describes the different component types it holds. Each bit of
+/// the 32 bit uint represents a component id where 0 means it doesn't have it
+/// and 1 means it has that component.
+/////////////////////////////////////////////////
 class ComponentMask
 {
 public:
@@ -34,7 +39,13 @@ public:
 
   void Reset() noexcept;
 
+  /////////////////////////////////////////////////
+  /// Checks to see if _mask's bitmask contains the components this mask has
+  /////////////////////////////////////////////////
   bool MatchesMask(ComponentMask _mask) const noexcept;
+  /////////////////////////////////////////////////
+  /// Checks to see if this mask has component bit _componentTypeId
+  /////////////////////////////////////////////////
   bool HasComponent(std::uint32_t _componentTypeId) const noexcept;
 
 private:

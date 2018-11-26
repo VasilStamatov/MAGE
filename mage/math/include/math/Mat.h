@@ -9,6 +9,9 @@ namespace math
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Matrix class which is templated to support a 3x3 and 4x4 matrix.
+/////////////////////////////////////////////////
 template <typename T, std::uint32_t Size> class Mat
 {
 public:

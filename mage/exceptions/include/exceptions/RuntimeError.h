@@ -10,6 +10,9 @@ namespace exceptions
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Describes a runtime error that can happen
+/////////////////////////////////////////////////
 class RuntimeError : public std::runtime_error
 {
 public:

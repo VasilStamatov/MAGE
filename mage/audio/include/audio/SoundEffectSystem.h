@@ -11,6 +11,9 @@ namespace audio
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// The Sound Effect Source component contains the data for one audio source
+/////////////////////////////////////////////////
 struct SoundEffectSource : public ecs::Component
 {
   SoundEffectSource(AudioSourceHandle _audioSource, float _vol, float _var);
@@ -22,6 +25,10 @@ struct SoundEffectSource : public ecs::Component
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// The Play Sound Effect component makes the sound system play a sound and then
+/// removes it
+/////////////////////////////////////////////////
 struct PlaySoundEffect : public ecs::Component
 {
   PlaySoundEffect(AudioBufferHandle _soundClip, bool _looping = false);
@@ -32,6 +39,10 @@ struct PlaySoundEffect : public ecs::Component
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// The Sound Effect System plays a sound effect whenever a Play Sound Effect
+/// component is added
+/////////////////////////////////////////////////
 class SoundEffectSystem : public ecs::GameSystem
 {
 public:

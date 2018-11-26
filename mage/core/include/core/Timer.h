@@ -15,6 +15,10 @@ namespace core
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// The timer begins running once constructer and can be queried for elapsed
+/// time or restarted.
+/////////////////////////////////////////////////
 class Timer
 {
 public:
@@ -26,7 +30,8 @@ public:
   float GetElapsedSeconds() const;
 
 private:
-  HRTimePoint m_start;
+  HRTimePoint
+      m_start; ///< The point at which the class instance was constructer
 };
 
 // ------------------------------------------------------------------------------

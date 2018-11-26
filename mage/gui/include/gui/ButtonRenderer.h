@@ -14,6 +14,9 @@ namespace gui
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Vertex for buttons
+/////////////////////////////////////////////////
 struct ButtonVertex
 {
   ButtonVertex(math::Vec2f _position, math::Vec2f _texCoords);
@@ -24,6 +27,9 @@ struct ButtonVertex
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// A batch of buttons to render in one draw call
+/////////////////////////////////////////////////
 struct ButtonBatch
 {
   std::vector<ButtonVertex> m_vertices;
@@ -34,6 +40,9 @@ struct ButtonBatch
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Renders all buttons in the world.
+/////////////////////////////////////////////////
 class ButtonRenderer : public ecs::RenderingSystem
 {
 public:

@@ -9,6 +9,9 @@ namespace graphics
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Buffer types used for clearing the screen.
+/////////////////////////////////////////////////
 enum class RendererBufferType
 {
   None,
@@ -23,6 +26,9 @@ enum class RendererBufferType
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Blend functions
+/////////////////////////////////////////////////
 enum class RendererBlendFunction
 {
   Zero,
@@ -34,6 +40,9 @@ enum class RendererBlendFunction
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Blend equations
+/////////////////////////////////////////////////
 enum class RendererBlendEquation
 {
   Add,
@@ -42,6 +51,9 @@ enum class RendererBlendEquation
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Depth functions
+/////////////////////////////////////////////////
 enum class DepthFunc
 {
   Never,
@@ -56,6 +68,13 @@ enum class DepthFunc
 
 // ------------------------------------------------------------------------------
 
+// TODO: This can be changed to fully control the render API like the audio
+// device.
+
+/////////////////////////////////////////////////
+/// The main render device which handles intialization of the render API and
+/// some control of state.
+/////////////////////////////////////////////////
 class RenderDevice
 {
 public:

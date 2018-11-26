@@ -9,6 +9,10 @@ namespace math
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Transform class is used to describe a transform matrix with a position,
+/// rotation and scale.
+/////////////////////////////////////////////////
 class Transform
 {
 public:

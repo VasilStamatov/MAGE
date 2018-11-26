@@ -9,11 +9,16 @@ namespace graphics
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// An opengl cube texture used for skybox rendering.
+/////////////////////////////////////////////////
 class GLTextureCube
 {
 public:
-  // Pass an array of 6 strings in the following order:
-  // X positive, X Negative, Ypos, Yneg, Zpos, Zneg
+  /////////////////////////////////////////////////
+  /// Pass an array of 6 filepaths in the following order:
+  /// X positive, X Negative, Ypos, Yneg, Zpos, Zneg
+  /////////////////////////////////////////////////
   GLTextureCube(std::string* _sixSkyboxFiles);
   ~GLTextureCube();
 

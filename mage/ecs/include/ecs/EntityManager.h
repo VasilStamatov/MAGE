@@ -13,6 +13,11 @@ namespace ecs
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// An EntityManager manages the creation and deletion of entities. It stores
+/// their masks (and uses it as Id's for entities created), and keeps track of
+/// recycled entities to reuse their Id's.
+/////////////////////////////////////////////////
 class EntityManager
 {
 public:

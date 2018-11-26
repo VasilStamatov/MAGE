@@ -14,6 +14,10 @@ namespace gui
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Button's location on the screen.. 0,0 is origin at the top left of the
+/// screen. Size is in pixels.
+/////////////////////////////////////////////////
 struct Button : public ecs::Component
 {
   Button(math::Vec2i32 _screenPos, math::Vec2i32 _size);
@@ -24,6 +28,9 @@ struct Button : public ecs::Component
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Texture the GUI should use
+/////////////////////////////////////////////////
 struct GUITexture : public ecs::Component
 {
   GUITexture(std::shared_ptr<graphics::GLTexture2D> _texture);
@@ -33,6 +40,9 @@ struct GUITexture : public ecs::Component
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Event that occurs when the gui is pressed
+/////////////////////////////////////////////////
 struct GUICallback : public ecs::Component
 {
   GUICallback(std::function<void()> _onClickCallback);

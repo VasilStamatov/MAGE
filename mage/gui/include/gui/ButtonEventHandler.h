@@ -10,6 +10,9 @@ namespace gui
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Systems which keeps track of all gui to check if one is pressed.
+/////////////////////////////////////////////////
 class ButtonEventHandler : public ecs::GameSystem
 {
 public:

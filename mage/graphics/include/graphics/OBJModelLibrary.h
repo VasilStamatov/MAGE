@@ -12,6 +12,10 @@ namespace graphics
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Resource manager for OBJ models to avoid loading the same model
+/// continuously.
+/////////////////////////////////////////////////
 class OBJModelLibrary
 {
 public:

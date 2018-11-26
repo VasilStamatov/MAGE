@@ -12,11 +12,17 @@ namespace video
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Hints to apply before window creation which modify the window context
+/////////////////////////////////////////////////
 struct ContextHints
 {
 
   // ------------------------------------------------------------------------------
 
+  /////////////////////////////////////////////////
+  /// Supported client API's
+  /////////////////////////////////////////////////
   enum class ClientAPI : std::uint8_t
   {
     None,
@@ -30,6 +36,9 @@ struct ContextHints
 
   // ------------------------------------------------------------------------------
 
+  /////////////////////////////////////////////////
+  /// Supported Context Robustness
+  /////////////////////////////////////////////////
   enum class ContextRobustness : std::uint8_t
   {
     NoRobustness,
@@ -44,12 +53,16 @@ struct ContextHints
 
   // ------------------------------------------------------------------------------
 
+  /////////////////////////////////////////////////
+  /// Supported Context Release behaviour
+  /////////////////////////////////////////////////
   enum class ContextReleaseBehavior : std::uint8_t
   {
-    Any,   // the default behavior of the context creation API will be used
-    Flush, // the pipeline will be flushed whenever the context is released from
-           // being the current one
-    None   // the pipeline will not be flushed on release
+    Any,   ///< the default behavior of the context creation API will be used
+    Flush, ///< the pipeline will be flushed whenever the context is released
+           ///< from
+           /// being the current one
+    None   ///< the pipeline will not be flushed on release
   };
 
   // ------------------------------------------------------------------------------
@@ -60,6 +73,9 @@ struct ContextHints
 
   // ------------------------------------------------------------------------------
 
+  /////////////////////////////////////////////////
+  /// OpenGl Supported profiles
+  /////////////////////////////////////////////////
   enum class OpenGLProfile : std::uint8_t
   {
     Any,
@@ -106,43 +122,59 @@ struct ContextHints
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Hints for the window itself
+/////////////////////////////////////////////////
 struct WindowHints
 {
-  // specifies whether the windowed mode window will be resizable by the user.
-  bool m_resizable = true;
+  bool m_resizable = true; ///< specifies whether the windowed mode window will
+                           ///< be resizable by the user.
 
-  // specifies whether the windowed mode window will be initially visible. This
-  // hint is ignored for full screen windows
-  bool m_visible = true;
+  bool m_visible = true; ///< specifies whether the windowed mode window will be
+                         ///< initially visible. This
+  /// hint is ignored for full screen windows
 
-  // specifies whether the windowed mode window will have window decorations
-  // such as a border, a close widget, etc. An undecorated window may still
-  // allow the user to generate close events on some platforms. This hint is
-  // ignored for full screen windows
+  /////////////////////////////////////////////////
+  /// specifies whether the windowed mode window will have window decorations
+  /// such as a border, a close widget, etc. An undecorated window may still
+  /// allow the user to generate close events on some platforms. This hint is
+  /// ignored for full screen windows
+  /////////////////////////////////////////////////
   bool m_decorated = true;
 
-  // specifies whether the windowed mode window will be given input focus when
-  // created. This hint is ignored for full screen and initially hidden windows
+  /////////////////////////////////////////////////
+  /// specifies whether the windowed mode window will be given input focus when
+  /// created. This hint is ignored for full screen and initially hidden windows
+  /////////////////////////////////////////////////
   bool m_focused = true;
 
-  // specifies whether the full screen window will automatically iconify and
-  // restore the previous video mode on input focus loss.This hint is ignored
-  // for windowed mode windows
+  /////////////////////////////////////////////////
+  /// specifies whether the full screen window will automatically iconify and
+  /// restore the previous video mode on input focus loss.This hint is ignored
+  /// for windowed mode windows
+  /////////////////////////////////////////////////
   bool m_autoIconify = true;
 
-  // specifies whether the windowed mode window will be floating above other
-  // regular windows, also called topmost or always-on-top. This is intended
-  // primarily for debugging purposes and cannot be used to implement proper
-  // full screen windows. This hint is ignored for full screen windows
+  /////////////////////////////////////////////////
+  /// specifies whether the windowed mode window will be floating above other
+  /// regular windows, also called topmost or always-on-top. This is intended
+  /// primarily for debugging purposes and cannot be used to implement proper
+  /// full screen windows. This hint is ignored for full screen windows
+  /////////////////////////////////////////////////
   bool m_floating = false;
 };
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Hints for the framebuffer
+/////////////////////////////////////////////////
 struct FramebufferHints
 {
-  // specify the desired bit depths of the various components of the default
-  // framebuffer; use -1 if there's no preference
+  /////////////////////////////////////////////////
+  /// specify the desired bit depths of the various components of the default
+  /// framebuffer; use -1 if there's no preference
+  /////////////////////////////////////////////////
   std::int32_t m_redBits = 8;
   std::int32_t m_greenBits = 8;
   std::int32_t m_blueBits = 8;
@@ -150,33 +182,49 @@ struct FramebufferHints
   std::int32_t m_depthBits = 24;
   std::int32_t m_stencilBits = 8;
 
-  // specifies the desired number of samples to use for multisampling. 0
-  // disables multisampling. -1 means the application has no preference
+  /////////////////////////////////////////////////
+  /// specifies the desired number of samples to use for multisampling. 0
+  /// disables multisampling. -1 means the application has no preference
+  /////////////////////////////////////////////////
   std::int32_t m_samples = 0;
 
-  // specifies whether to use stereoscopic rendering.This is a hard constraint
+  /////////////////////////////////////////////////
+  /// specifies whether to use stereoscopic rendering.This is a hard constraint
+  /////////////////////////////////////////////////
   bool m_stereo = false;
 
-  // specifies whether the framebuffer should be sRGB capable
+  /////////////////////////////////////////////////
+  /// specifies whether the framebuffer should be sRGB capable
+  /////////////////////////////////////////////////
   bool m_sRGBCapable = false;
 
-  // specifies whether the framebuffer should be double buffered.You nearly
-  // always want to use double buffering.This is a hard constraint
+  /////////////////////////////////////////////////
+  /// specifies whether the framebuffer should be double buffered.You nearly
+  /// always want to use double buffering.This is a hard constraint
+  /////////////////////////////////////////////////
   bool m_doubleBuffer = true;
 };
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Monitor Hints
+/////////////////////////////////////////////////
 struct MonitorHints
 {
-  // specifies the desired refresh rate for full screen windows. If set to -1,
-  // the highest available refresh rate will be used. This hint is ignored for
-  // windowed mode windows
+  /////////////////////////////////////////////////
+  /// specifies the desired refresh rate for full screen windows. If set to -1,
+  /// the highest available refresh rate will be used. This hint is ignored for
+  /// windowed mode windows
+  /////////////////////////////////////////////////
   std::int32_t m_refreshRate = 0;
 };
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Hints the video API applies before window creation
+/////////////////////////////////////////////////
 class VideoHints
 {
 public:
@@ -184,19 +232,20 @@ public:
 
   // ------------------------------------------------------------------------------
 
-  // to GLFW defaults (notably openGL 1.0!)
-  void ResetToDefaults();
+  void ResetToDefaults(); ///< to GLFW defaults (notably openGL 1.0!)
 
   // ------------------------------------------------------------------------------
 
-  // acquires the current bitsettings and refresh rate for a given monitor (for
-  // borderless fullscreen windows)
+  /////////////////////////////////////////////////
+  /// acquires the current bitsettings and refresh rate for a given monitor (for
+  /// borderless fullscreen windows)
+  /////////////////////////////////////////////////
   void FromVideoMode(const GLFWvidmode* _vidmode);
 
   // ------------------------------------------------------------------------------
 
-  // applies the current settings for the next window to be created
-  void Apply() const;
+  void Apply()
+      const; ///< applies the current settings for the next window to be created
 
   // ------------------------------------------------------------------------------
 
@@ -214,14 +263,10 @@ public:
   // ------------------------------------------------------------------------------
 
 private:
-  // ------------------------------------------------------------------------------
-
   void ApplyMonitorHints() const;
   void ApplyWindowHints() const;
   void ApplyFramebufferHints() const;
   void ApplyContextHints() const;
-
-  // ------------------------------------------------------------------------------
 };
 
 // ------------------------------------------------------------------------------

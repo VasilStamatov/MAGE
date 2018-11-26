@@ -12,6 +12,9 @@ namespace graphics
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// OBJ model vertex data.
+/////////////////////////////////////////////////
 struct Vertex
 {
   bool operator==(const Vertex& _other) const
@@ -27,6 +30,9 @@ struct Vertex
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// OBJ model loads an .obj file's data and stores it in vertices, indices and computes the AABB of the model.
+/////////////////////////////////////////////////
 class OBJModel
 {
 public:

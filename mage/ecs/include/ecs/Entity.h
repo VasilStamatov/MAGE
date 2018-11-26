@@ -9,6 +9,9 @@ namespace ecs
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// An Entity is just an Id which maps to different components it owns.
+/////////////////////////////////////////////////
 struct Entity
 {
   explicit Entity(std::int32_t _id);

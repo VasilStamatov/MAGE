@@ -12,6 +12,10 @@ namespace graphics
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Static mesh component which holds the static mesh and material used for
+/// rendering.
+/////////////////////////////////////////////////
 struct StaticMeshComponent : public ecs::Component
 {
   StaticMeshComponent(OBJModel& _objMesh,
@@ -23,6 +27,9 @@ struct StaticMeshComponent : public ecs::Component
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// This renders all static meshes in the world.
+/////////////////////////////////////////////////
 class StaticMeshRenderer : public ecs::RenderingSystem
 {
 public:

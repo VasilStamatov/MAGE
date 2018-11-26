@@ -11,6 +11,9 @@ namespace audio
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// The data that is loaded from an .ogg file
+/////////////////////////////////////////////////
 struct OggData
 {
   std::vector<char> m_audioBuffer;
@@ -20,6 +23,10 @@ struct OggData
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// The sound library which holds the sound resources and controls their
+/// lifetime
+/////////////////////////////////////////////////
 class SoundLibrary
 {
 public:
@@ -35,10 +42,13 @@ private:
   OggData LoadOgg(const std::string& _audioFile);
 
 private:
-  std::unordered_map<std::uint32_t, AudioBufferHandle> m_audioClips;
-  std::unordered_map<std::uint32_t, AudioSourceHandle> m_audioSources;
+  std::unordered_map<std::uint32_t, AudioBufferHandle>
+      m_audioClips; ///< loaded sound data
+  std::unordered_map<std::uint32_t, AudioSourceHandle>
+      m_audioSources; ///< generated audio sources
 
-  AudioDevice& m_audioDevice;
+  AudioDevice&
+      m_audioDevice; ///< the audio device which is needed to make the calls
 };
 
 // ------------------------------------------------------------------------------

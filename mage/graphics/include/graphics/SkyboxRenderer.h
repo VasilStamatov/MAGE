@@ -12,6 +12,9 @@ namespace graphics
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Skybox component which holds the cube texture of the skybox
+/////////////////////////////////////////////////
 struct SkyboxComponent : public ecs::Component
 {
   SkyboxComponent(std::string* _sixSkyboxFiles);
@@ -21,6 +24,9 @@ struct SkyboxComponent : public ecs::Component
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// The rendering system which renders the skybox cube
+/////////////////////////////////////////////////
 class SkyboxRenderer : public ecs::RenderingSystem
 {
 public:

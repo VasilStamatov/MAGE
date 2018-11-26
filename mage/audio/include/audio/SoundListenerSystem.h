@@ -11,12 +11,20 @@ namespace audio
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// This empty component is just use for its ID to describe a sound listener
+/// entity
+/////////////////////////////////////////////////
 struct SoundListener : public ecs::Component
 {
 };
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// The sound listener system updates the listener location of the listener
+/// entity
+/////////////////////////////////////////////////
 class SoundListenerSystem : public ecs::GameSystem
 {
 public:

@@ -9,7 +9,10 @@ namespace graphics
 
 // ------------------------------------------------------------------------------
 
-// http://docs.gl/gl4/glBufferData
+/////////////////////////////////////////////////
+/// Supported buffer usage types
+/// http://docs.gl/gl4/glBufferData
+/////////////////////////////////////////////////
 enum class BufferUsage : std::uint32_t
 {
   StaticDraw,
@@ -18,6 +21,9 @@ enum class BufferUsage : std::uint32_t
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// An opengl vertex buffer
+/////////////////////////////////////////////////
 class GLVertexBuffer
 {
 public:
