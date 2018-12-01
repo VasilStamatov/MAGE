@@ -50,10 +50,8 @@ std::string IntepretGLFWerrorcode(int _code)
 
 void GLFWErrorCallback(int _error, const char* _description)
 {
-  std::string errorMessage("GLFW error (" + IntepretGLFWerrorcode(_error) +
-                           "): " + _description + '\n');
-
-  LOG_ERROR("GLFW", errorMessage);
+  LOG_ERROR("GLFW", "Error (" + IntepretGLFWerrorcode(_error) +
+                        "): " + _description + '\n');
 }
 
 // ------------------------------------------------------------------------------

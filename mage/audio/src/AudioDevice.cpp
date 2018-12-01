@@ -54,12 +54,10 @@ bool ALLogCall(const char* _function, const char* _file, int _line)
   std::uint32_t error = ALCheckError();
   if (error != AL_NO_ERROR)
   {
-    std::string errorString("[AL ERROR] : " + ALErrorToString(error) + '\n' +
-                            "\t File: " + _file + '\n' +
-                            "\t Function: " + _function + '\n' +
-                            "\t Line: " + std::to_string(_line) + '\n');
-
-    LOG_FATAL("AudioDevice", errorString);
+    LOG_FATAL("AudioDevice", "[AL ERROR] : " + ALErrorToString(error) + '\n' +
+                                 "\t File: " + _file + '\n' +
+                                 "\t Function: " + _function + '\n' +
+                                 "\t Line: " + std::to_string(_line) + '\n');
 
     return false;
   }
@@ -271,13 +269,13 @@ void AudioDevice::Impl::Initialize()
              alcGetString(m_device, ALC_CAPTURE_DEVICE_SPECIFIER));
   ALCall(auto extensionsAvailable = alcGetString(m_device, ALC_EXTENSIONS));
 
-  std::string initInfo("----------------------------------\n Initialized "
-                       "OpenAL:\n\tOutput Device: " +
-                       std::string(outputDevice) +
-                       "\n\tCapture Device: " + captureDevice +
-                       "\n\tExtensions Available: " + extensionsAvailable +
-                       "\n----------------------------------\n");
-  LOG_INFO("AudioDevice", initInfo);
+  LOG_INFO("AudioDevice",
+           "----------------------------------\n Initialized "
+           "OpenAL:\n\tOutput Device: " +
+               std::string(outputDevice) +
+               "\n\tCapture Device: " + captureDevice +
+               "\n\tExtensions Available: " + extensionsAvailable +
+               "\n----------------------------------\n");
 
   ALCall(alGenBuffers(c_maxAudioBuffersAllocated, m_audioDataBuffers));
   ALCall(alGenSources(c_maxAudioBuffersAllocated, m_audioSourceBuffers));
