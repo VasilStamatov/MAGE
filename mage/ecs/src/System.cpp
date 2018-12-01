@@ -1,5 +1,7 @@
 #include "ecs/System.h"
 
+#include <algorithm>
+
 namespace mage
 {
 namespace ecs

@@ -3,6 +3,7 @@
 #include "AudioDevice.h"
 
 #include <unordered_map>
+#include <vector>
 
 namespace mage
 {

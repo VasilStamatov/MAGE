@@ -161,7 +161,7 @@ public:
 
   Mat& operator*=(T _scalar)
   {
-    *this = *this * _rhs;
+    *this = *this * _scalar;
     return *this;
   }
 
@@ -169,7 +169,7 @@ public:
 
   Mat& operator/=(T _scalar)
   {
-    *this = *this / _rhs;
+    *this = *this / _scalar;
     return *this;
   }
 
@@ -243,7 +243,7 @@ template <typename T> Mat<T, 3> GetTransposedMat(const Mat<T, 3>& _mat)
 {
   using std::swap;
 
-  Mat rtn(_mat);
+  Mat<T, 3> rtn(_mat);
 
   swap(rtn.m_elements[1], rtn.m_elements[3]);
   swap(rtn.m_elements[2], rtn.m_elements[6]);
@@ -258,7 +258,7 @@ template <typename T> Mat<T, 4> GetTransposedMat(const Mat<T, 4>& _mat)
 {
   using std::swap;
 
-  Mat rtn(_mat);
+  Mat<T, 4> rtn(_mat);
 
   swap(rtn[1], rtn[4]);
   swap(rtn[2], rtn[8]);

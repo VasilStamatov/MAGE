@@ -1,10 +1,9 @@
 #include "video/Video.h"
 
 #include "exceptions/RuntimeError.h"
+#include "logger/LogDispatch.h"
 #include "messaging/MessageBus.h"
 #include "video/VideoHints.h"
-
-#include <iostream>
 
 #include <GLFW/glfw3.h>
 
@@ -51,8 +50,10 @@ std::string IntepretGLFWerrorcode(int _code)
 
 void GLFWErrorCallback(int _error, const char* _description)
 {
-  std::cout << "GLFW error (" << IntepretGLFWerrorcode(_error)
-            << "): " << _description << std::endl;
+  std::string errorMessage("GLFW error (" + IntepretGLFWerrorcode(_error) +
+                           "): " + _description + '\n');
+
+  LOG_ERROR("GLFW", errorMessage);
 }
 
 // ------------------------------------------------------------------------------
@@ -86,7 +87,9 @@ void Video::Initialize()
     throw RUNTIME_ERROR("Failed to initialize GLFW");
   }
 
-  std::cout << "GLFW v" << glfwGetVersionString() << std::endl;
+  std::stringstream version;
+  version << "GLFW version: " << glfwGetVersionString() << std::endl;
+  LOG_INFO("GLFW", version.str());
 
   VideoHints videoHints;
   videoHints.m_windowHints.m_resizable = false;
@@ -123,7 +126,9 @@ void Video::Initialize()
   videoHints.m_contextHints.m_contextReleaseBehavior =
       ContextHints::ContextReleaseBehavior::Any;
 
-  std::cout << videoHints << std::endl;
+  std::stringstream hintsInfo;
+  hintsInfo << videoHints << std::endl;
+  LOG_INFO("GLFW", hintsInfo.str());
 
   videoHints.Apply();
 

@@ -2,6 +2,7 @@
 
 #include "exceptions/RuntimeError.h"
 
+#include <algorithm>
 #include <tinyobj/tiny_obj_loader.h>
 
 namespace mage

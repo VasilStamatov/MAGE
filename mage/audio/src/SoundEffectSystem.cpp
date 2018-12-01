@@ -4,8 +4,6 @@
 #include "ecs_common/TransformComponent.h"
 #include "messaging/MessageBus.h"
 
-#include <iostream>
-
 namespace mage
 {
 namespace audio
@@ -57,8 +55,6 @@ void SoundEffectSystem::Tick(ecs::World& _world, float _deltaTime)
     auto& location =
         _world.GetComponent<ecs::common::TransformComponent>(entity)
             ->m_transform.GetTranslation();
-
-    // std::cout << "Playing Source From: " << location << std::endl;
 
     m_audioDevice.SetSourceSound(source->m_source, soundEffect->m_soundClip,
                                  source->m_volume, source->m_variance,

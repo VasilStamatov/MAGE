@@ -1,7 +1,6 @@
 #include "renderer/GLCommon.h"
 
-#include <iostream>
-#include <string>
+#include "logger/LogDispatch.h"
 
 #include <GLEW/glew.h>
 
@@ -26,7 +25,7 @@ bool GLLogCall(const char* _function, const char* _file, int _line)
                             "\t Function: " + _function + '\n' +
                             "\t Line: " + std::to_string(_line) + '\n');
 
-    std::cout << errorString;
+    LOG_FATAL("OpenGL", errorString);
     return false;
   }
   return true;

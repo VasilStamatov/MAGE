@@ -1,7 +1,6 @@
 #include "video/VideoHints.h"
 
 #include <assert.h>
-#include <iostream>
 #include <string>
 
 #include <GLFW/glfw3.h>
@@ -150,11 +149,6 @@ void VideoHints::ApplyContextHints() const
       api = GLFW_OPENGL_ES_API;
       break;
     }
-    default:
-    {
-      std::cout << "Unsupported openGL API: " << m_contextHints.m_clientAPI
-                << std::endl;
-    }
   }
 
   switch (m_contextHints.m_openGLProfile)
@@ -173,11 +167,6 @@ void VideoHints::ApplyContextHints() const
     {
       profile = GLFW_OPENGL_CORE_PROFILE;
       break;
-    }
-    default:
-    {
-      std::cout << "Unsupported openGL profile: "
-                << m_contextHints.m_openGLProfile << std::endl;
     }
   }
 
@@ -198,11 +187,6 @@ void VideoHints::ApplyContextHints() const
       robustness = GLFW_NO_ROBUSTNESS;
       break;
     }
-    default:
-    {
-      std::cout << "Unsupported openGL robustness: "
-                << m_contextHints.m_contextRobustness << std::endl;
-    }
   }
 
   switch (m_contextHints.m_contextReleaseBehavior)
@@ -221,11 +205,6 @@ void VideoHints::ApplyContextHints() const
     {
       releaseBehavior = GLFW_RELEASE_BEHAVIOR_NONE;
       break;
-    }
-    default:
-    {
-      std::cout << "Unsupported context release behavior: "
-                << m_contextHints.m_contextReleaseBehavior << std::endl;
     }
   }
 

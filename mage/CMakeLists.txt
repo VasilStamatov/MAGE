@@ -39,6 +39,7 @@ target_include_directories(mage
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/graphics/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/gui/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/input/include
+  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/logger/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/math/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/messaging/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/physics/include
@@ -56,6 +57,15 @@ include(${CMAKE_SCRIPTS_DIR}/FindTinyObj.cmake)
 include(${CMAKE_SCRIPTS_DIR}/FindOgg.cmake)
 include(${CMAKE_SCRIPTS_DIR}/FindVorbis.cmake)
 include(${CMAKE_SCRIPTS_DIR}/FindOpenAL-Soft.cmake)
+
+# if (CMAKE_CXX_COMPILER_ID STREQUAL GNU)
+#     # set(CXX_FILESYSTEM_LIBRARIES stdc++fs)
+#     set(CXX_FILESYSTEM_LIBRARIES --enable-libstdcxx-filesystem-ts)
+# else()
+#     set(CXX_FILESYSTEM_LIBRARIES)
+# endif()
+
+# message("Filesystem library: ${CXX_FILESYSTEM_LIBRARIES}")
 
 # Include dependencies headers
 target_include_directories(mage
@@ -77,4 +87,5 @@ target_link_libraries(mage
   PRIVATE ${OGG_LIBRARIES}
   PRIVATE ${VORBIS_LIBRARIES}
   PRIVATE ${OPENAL_SOFT_LIBRARIES}
+  PRIVATE ${CXX_FILESYSTEM_LIBRARIES}
 )

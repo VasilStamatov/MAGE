@@ -1,9 +1,8 @@
 #include "renderer/RenderDevice.h"
 
 #include "exceptions/RuntimeError.h"
+#include "logger/LogDispatch.h"
 #include "renderer/GLCommon.h"
-
-#include <iostream>
 
 #include <GLEW/glew.h>
 
@@ -100,10 +99,13 @@ void RenderDevice::Initialize()
   GLCall(auto vendor = glGetString(GL_VENDOR));
   GLCall(auto renderer = glGetString(GL_RENDERER));
 
-  std::cout
+  std::stringstream initInfo;
+  initInfo
       << "----------------------------------\n Initialized OpenGL:\n\tVersion: "
       << version << "\n\tVendor: " << vendor << "\n\tRenderer: " << renderer
       << "\n----------------------------------\n";
+
+  LOG_INFO("RenderDevice", initInfo.str());
 
   SetDepthTesting(true);
   SetBlend(true);

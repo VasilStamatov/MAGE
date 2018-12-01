@@ -1,6 +1,6 @@
 #include "exceptions/RuntimeError.h"
 
-#include <iostream>
+#include "logger/LogDispatch.h"
 
 namespace mage
 {
@@ -16,7 +16,7 @@ RuntimeError::RuntimeError(std::string _message, std::string _file,
     , m_file(std::move(_file))
     , m_line(std::move(_line))
 {
-  std::cout << GetFullMessage() << std::endl;
+  LOG_FATAL("RuntimeError", GetFullMessage());
 }
 
 // ------------------------------------------------------------------------------

@@ -1,6 +1,7 @@
 #include "core/Application.h"
 
 #include "core/Timer.h"
+#include "logger/LogDispatch.h"
 
 #include <iostream>
 
@@ -35,13 +36,17 @@ Application::Application()
 
 void Application::Run(int argc, const char** argv)
 {
-  std::cout << "Argc: " << argc << " /--/ Argv: " << argv << std::endl;
-
   m_applicationMessageBus.Subscribe(this, &Application::ExitAppEventHandler);
   m_applicationMessageBus.Subscribe(
       this, &Application::SetTransitionNextEventHandler);
   m_applicationMessageBus.Subscribe(
       this, &Application::SetTransitionPrevEventHandler);
+
+#ifndef NDEBUG
+  log::dispatch::RegisterLogger(std::make_unique<log::ConsoleLogger>(
+      log::VerbosityFilterPolicy(log::LogType::Info), log::SimpleFormatPolicy(),
+      log::ConsoleWriterPolicy()));
+#endif
 
   InitializeSubSystems();
 
