@@ -34,7 +34,20 @@ void Initialize()
 
 // ------------------------------------------------------------------------------
 
-void Shutdown() { s_isShuttingDown.store(true); }
+void Shutdown()
+{
+  // set shutdown to true
+  s_isShuttingDown.store(true);
+
+  // notify all sleeping threads so they can break out of processing
+  s_conditionToAwake.notify_all();
+
+  // join the threads to not crash
+  for (auto&& thread : s_threads)
+  {
+    thread->join();
+  }
+}
 
 // ------------------------------------------------------------------------------
 
