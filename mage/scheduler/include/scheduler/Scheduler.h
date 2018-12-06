@@ -13,7 +13,6 @@ namespace scheduler
 
 void Initialize();
 void Shutdown();
-void Processor();
 
 // ------------------------------------------------------------------------------
 

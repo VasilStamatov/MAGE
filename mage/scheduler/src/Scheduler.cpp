@@ -21,14 +21,54 @@ static std::atomic_bool s_isShuttingDown;
 
 // ------------------------------------------------------------------------------
 
+void Processor()
+{
+  while (true)
+  {
+    // Initialize an empty task
+    std::unique_ptr<Task> task = nullptr;
+
+    {
+      std::unique_lock<std::mutex> lock(s_mutex);
+
+      // Wait until there are tasks in the queue or the app closes.
+      // The lambda protects against spurious awakening (rather than using a
+      // loop)
+      s_conditionToAwake.wait(
+          lock, [] { return s_isShuttingDown || !s_tasks.empty(); });
+
+      // Stop the processor whenever the application is closing
+      if (s_isShuttingDown && s_tasks.empty())
+      {
+        break;
+      }
+
+      // Get the front task (at this point it's known there is one thans to the
+      // conditional var)
+      task = std::move(s_tasks.front());
+      s_tasks.pop();
+    }
+
+    // Execute the task (should never be null, but guard just in case)
+    if (task)
+    {
+      task->Execute();
+    }
+  }
+}
+
+// ------------------------------------------------------------------------------
+
 void Initialize()
 {
+  // Fetch the number of supported threads
   auto numberOfSupportedThreadsHint = std::thread::hardware_concurrency();
   s_threads.reserve(numberOfSupportedThreadsHint);
 
-  for (size_t i = 0; i < numberOfSupportedThreadsHint; i++)
+  // Instantiate threads count - 1, because the main thread is already running
+  for (size_t i = 0; i < numberOfSupportedThreadsHint - 1; i++)
   {
-    s_threads.emplace_back(Processor);
+    s_threads.emplace_back(std::make_unique<std::thread>(Processor));
   }
 }
 
@@ -46,36 +86,6 @@ void Shutdown()
   for (auto&& thread : s_threads)
   {
     thread->join();
-  }
-}
-
-// ------------------------------------------------------------------------------
-
-void Processor()
-{
-  while (true)
-  {
-    std::unique_ptr<Task> task = nullptr;
-
-    {
-      std::unique_lock<std::mutex> lock(s_mutex);
-
-      s_conditionToAwake.wait(
-          lock, [=] { return s_isShuttingDown || !s_tasks.empty(); });
-
-      if (s_isShuttingDown && s_tasks.empty())
-      {
-        break;
-      }
-
-      task = std::move(s_tasks.front());
-      s_tasks.pop();
-    }
-
-    if (task)
-    {
-      task->Execute();
-    }
   }
 }
 
