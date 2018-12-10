@@ -1,6 +1,6 @@
 #include <catch/catch.hpp>
 
-#include "ecs/World.h"
+#include "ecs/System.h"
 
 struct TestComponent1 : mage::ecs::Component
 {
@@ -14,7 +14,7 @@ struct TestComponent3 : mage::ecs::Component
 {
 };
 
-class TestSystem : public mage::ecs::GameSystem
+class TestSystem : public mage::ecs::System
 {
 public:
   TestSystem()
@@ -22,9 +22,6 @@ public:
     m_systemSignature.AddComponent<TestComponent1>();
     m_systemSignature.AddComponent<TestComponent2>();
   }
-  void Initialize(mage::ecs::World& _world) override {}
-  void Uninitialize(mage::ecs::World& _world) override {}
-  void Tick(mage::ecs::World& _world, float _deltaTime) override {}
 
   bool IsEntityRegistered(mage::ecs::Entity _entity)
   {

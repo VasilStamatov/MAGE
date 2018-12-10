@@ -1,6 +1,6 @@
 #include "demo/EnemySpawnSystem.h"
 
-#include <ecs/World.h>
+#include <core/World.h>
 #include <ecs_common/TransformComponent.h>
 #include <graphics/StaticMeshRenderer.h>
 #include <physics/AABBCollisionSystem.h>
@@ -24,15 +24,15 @@ EntitySpawnSystem::EntitySpawnSystem()
   m_systemSignature.AddComponent<mage::ecs::common::TransformComponent>();
 }
 
-void EntitySpawnSystem::Initialize(mage::ecs::World& _world) {}
+void EntitySpawnSystem::Initialize(mage::core::World& _world) {}
 
-void EntitySpawnSystem::Tick(mage::ecs::World& _world, float _deltaTime)
+void EntitySpawnSystem::Tick(mage::core::World& _world, float _deltaSeconds)
 {
   for (auto&& entity : m_registeredEntities)
   {
     auto* spawner = _world.GetComponent<EntitySpawnComponent>(entity);
 
-    spawner->m_counter += _deltaTime;
+    spawner->m_counter += _deltaSeconds;
     if (spawner->m_counter >= spawner->m_spawnFrequency)
     {
       spawner->m_counter = 0.0f;

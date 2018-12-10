@@ -1,6 +1,6 @@
 #include "physics/MotionSystem.h"
 
-#include "ecs/World.h"
+#include "core/World.h"
 #include "ecs_common/TransformComponent.h"
 #include "physics/MotionIntegrators.h"
 
@@ -19,7 +19,7 @@ MotionSystem::MotionSystem()
 
 // ------------------------------------------------------------------------------
 
-void MotionSystem::Tick(ecs::World& _world, float _deltaTime)
+void MotionSystem::Simulate(core::World& _world, float _deltaSeconds)
 {
   for (auto&& entity : m_registeredEntities)
   {
@@ -30,7 +30,7 @@ void MotionSystem::Tick(ecs::World& _world, float _deltaTime)
 
     math::Vec3f newPos = transform.GetTranslation();
     MotionIntegrators::ForestRuth(newPos, motion->m_velocity,
-                                  motion->m_acceleration, _deltaTime);
+                                  motion->m_acceleration, _deltaSeconds);
     transform.SetTranslation(newPos);
 
     // TODO: This is a cheap hack to get resistance for now! Replace with a

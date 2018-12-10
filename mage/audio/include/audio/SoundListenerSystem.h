@@ -1,8 +1,7 @@
 #pragma once
 
-#include "audio/AudioDevice.h"
-#include "ecs/GameSystem.h"
-#include "math/Vec.h"
+#include "AudioDevice.h"
+#include "AudioSystem.h"
 
 namespace mage
 {
@@ -25,15 +24,12 @@ struct SoundListener : public ecs::Component
 /// The sound listener system updates the listener location of the listener
 /// entity
 /////////////////////////////////////////////////
-class SoundListenerSystem : public ecs::GameSystem
+class SoundListenerSystem : public AudioSystem
 {
 public:
   SoundListenerSystem(AudioDevice& _audioDevice);
 
-  virtual void Tick(ecs::World& _world, float _deltaTime) override;
-
-private:
-  AudioDevice& m_audioDevice;
+  virtual void Tick(core::World& _world) override;
 };
 
 // ------------------------------------------------------------------------------

@@ -4,14 +4,14 @@
 
 // ------------------------------------------------------------------------------
 
-class GameCollisionhandler : public mage::ecs::GameSystem
+class GameCollisionhandler : public mage::physics::PhysicsSystem
 {
 public:
   GameCollisionhandler();
 
-  virtual void Initialize(mage::ecs::World& _world) override;
+  virtual void Initialize(mage::core::World& _world) override;
 
-  virtual void Tick(mage::ecs::World& _world, float _deltaTime) override;
+  virtual void Simulate(mage::core::World& _world, float _deltaSeconds) override;
 
 private:
   void OnCollisionEvent(mage::physics::AABBIntersectionsEvent* _event);

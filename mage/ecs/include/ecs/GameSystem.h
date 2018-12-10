@@ -19,7 +19,10 @@ public:
   GameSystem();
   virtual ~GameSystem();
 
-  virtual void Tick(World& _world, float _deltaTime) = 0;
+  virtual void Initialize(core::World& _world) {}
+  virtual void Uninitialize(core::World& _world) {}
+
+  virtual void Tick(core::World& _world, float _deltaSeconds) = 0;
 };
 
 // ------------------------------------------------------------------------------

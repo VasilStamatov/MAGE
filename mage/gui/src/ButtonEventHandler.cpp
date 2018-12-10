@@ -1,8 +1,7 @@
 #include "gui/ButtonEventhandler.h"
 
-#include "ecs/World.h"
+#include "core/Application.h"
 #include "gui/Button.h"
-#include "messaging/MessageBus.h"
 
 namespace mage
 {
@@ -19,9 +18,9 @@ ButtonEventHandler::ButtonEventHandler()
 
 // ------------------------------------------------------------------------------
 
-void ButtonEventHandler::Initialize(ecs::World& _world)
+void ButtonEventHandler::Initialize(core::World& _world)
 {
-  auto& appMsgBus = _world.GetApplicationMessageBus();
+  auto& appMsgBus = _world.GetApplication().GetMessageBus();
 
   appMsgBus.Subscribe(this, &ButtonEventHandler::OnMouseMove);
   appMsgBus.Subscribe(this, &ButtonEventHandler::OnKeyPress);
@@ -35,7 +34,7 @@ void ButtonEventHandler::Initialize(ecs::World& _world)
 
 // ------------------------------------------------------------------------------
 
-void ButtonEventHandler::Tick(ecs::World& _world, float _deltaTime)
+void ButtonEventHandler::Tick(core::World& _world, float _deltaSeconds)
 {
   for (auto&& entity : m_registeredEntities)
   {

@@ -1,8 +1,7 @@
 #include "physics/BasicCollisionResolution.h"
 
-#include "ecs/World.h"
+#include "core/Application.h"
 #include "ecs_common/TransformComponent.h"
-#include "messaging/MessageBus.h"
 #include "physics/MotionSystem.h"
 
 namespace mage
@@ -16,16 +15,17 @@ BasicCollisionResolution::BasicCollisionResolution() {}
 
 // ------------------------------------------------------------------------------
 
-void BasicCollisionResolution::Initialize(mage::ecs::World& _world)
+void BasicCollisionResolution::Initialize(core::World& _world)
 {
-  auto& appMsgBus = _world.GetApplicationMessageBus();
+  auto& appMsgBus = _world.GetApplication().GetMessageBus();
 
   appMsgBus.Subscribe(this, &BasicCollisionResolution::OnCollisionEvent);
 }
 
 // ------------------------------------------------------------------------------
 
-void BasicCollisionResolution::Tick(ecs::World& _world, float _deltaTime)
+void BasicCollisionResolution::Simulate(core::World& _world,
+                                        float _deltaSeconds)
 {
   for (auto&& intersections : m_entityIntersections)
   {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ecs/RenderingSystem.h"
+#include "graphics/RenderingSystem.h"
 #include "renderer/GLIndexBuffer.h"
 #include "renderer/GLVertexArray.h"
 
@@ -43,15 +43,14 @@ struct ButtonBatch
 /////////////////////////////////////////////////
 /// Renders all buttons in the world.
 /////////////////////////////////////////////////
-class ButtonRenderer : public ecs::RenderingSystem
+class ButtonRenderer : public graphics::RenderingSystem
 {
 public:
-  ButtonRenderer(graphics::GLShader _shader);
+  ButtonRenderer(graphics::GLShader _shader,
+                 graphics::RenderDevice& _renderDevice);
 
-  virtual void Initialize(mage::ecs::World& _world) override;
-
-  virtual void Render(mage::ecs::World& _world, const graphics::Camera& _camera,
-                      float _deltaTime) override;
+  virtual void Render(core::World& _world, const graphics::Camera& _camera,
+                      float _deltaSeconds) override;
 
 private:
   std::unordered_map<graphics::GLTexture2D*, ButtonBatch> m_batches;

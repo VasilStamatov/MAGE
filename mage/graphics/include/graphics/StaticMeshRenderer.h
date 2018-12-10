@@ -1,9 +1,8 @@
 #pragma once
 
 #include "Material.h"
+#include "RenderingSystem.h"
 #include "StaticMesh.h"
-
-#include "ecs/RenderingSystem.h"
 
 namespace mage
 {
@@ -30,13 +29,13 @@ struct StaticMeshComponent : public ecs::Component
 /////////////////////////////////////////////////
 /// This renders all static meshes in the world.
 /////////////////////////////////////////////////
-class StaticMeshRenderer : public ecs::RenderingSystem
+class StaticMeshRenderer : public RenderingSystem
 {
 public:
-  StaticMeshRenderer(GLShader _shader);
+  StaticMeshRenderer(GLShader _shader, RenderDevice& _renderDevice);
 
-  virtual void Render(mage::ecs::World& _world, const Camera& _camera,
-                      float _deltaTime) override;
+  virtual void Render(core::World& _world, const Camera& _camera,
+                      float _deltaSeconds) override;
 };
 
 // ------------------------------------------------------------------------------

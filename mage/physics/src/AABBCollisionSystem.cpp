@@ -1,8 +1,7 @@
 #include "physics/AABBCollisionSystem.h"
 
-#include "ecs/World.h"
+#include "core/Application.h"
 #include "ecs_common/TransformComponent.h"
-#include "messaging/MessageBus.h"
 
 namespace mage
 {
@@ -26,7 +25,7 @@ AABBCollisionSystem::AABBCollisionSystem()
 
 // ------------------------------------------------------------------------------
 
-void AABBCollisionSystem::Tick(ecs::World& _world, float _deltaTime)
+void AABBCollisionSystem::Simulate(core::World& _world, float _deltaSeconds)
 {
   AABBIntersectionsEvent intersections;
 
@@ -65,7 +64,7 @@ void AABBCollisionSystem::Tick(ecs::World& _world, float _deltaTime)
 
   if (!intersections.m_entityIntersections.empty())
   {
-    _world.GetApplicationMessageBus().Broadcast(&intersections);
+    _world.GetApplication().GetMessageBus().Broadcast(&intersections);
   }
 }
 

@@ -22,9 +22,9 @@ class MovementControlSystem : public mage::ecs::GameSystem
 public:
   MovementControlSystem();
 
-  virtual void Initialize(mage::ecs::World& _world) override;
+  virtual void Initialize(mage::core::World& _world) override;
 
-  virtual void Tick(mage::ecs::World& _world, float _deltaTime) override;
+  virtual void Tick(mage::core::World& _world, float _deltaSeconds) override;
 
 private:
   void OnKeyPress(mage::input::OnKeyPress* _event);

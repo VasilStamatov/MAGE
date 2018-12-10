@@ -2,7 +2,6 @@
 
 #include <audio/SoundEffectSystem.h>
 #include <core/Application.h>
-#include <ecs/World.h>
 #include <ecs_common/CameraComponent.h>
 #include <ecs_common/TransformComponent.h>
 #include <messaging/MessageBus.h>
@@ -14,9 +13,9 @@ CameraControlSystem::CameraControlSystem()
   m_systemSignature.AddComponent<CameraControlComponent>();
 }
 
-void CameraControlSystem::Initialize(mage::ecs::World& _world)
+void CameraControlSystem::Initialize(mage::core::World& _world)
 {
-  auto& appMsgBus = _world.GetApplicationMessageBus();
+  auto& appMsgBus = _world.GetApplication().GetMessageBus();
 
   // appMsgBus.Subscribe(this, &CameraControlSystem::OnKeyPress);
   // appMsgBus.Subscribe(this, &CameraControlSystem::OnKeyRelease);
@@ -29,12 +28,12 @@ void CameraControlSystem::Initialize(mage::ecs::World& _world)
   appMsgBus.Broadcast(&cursorState);
 }
 
-void CameraControlSystem::Tick(mage::ecs::World& _world, float _deltaTime)
+void CameraControlSystem::Tick(mage::core::World& _world, float _deltaSeconds)
 {
   if (m_escapePressed)
   {
     mage::core::OnExitAppEvent exitApp;
-    _world.GetApplicationMessageBus().Broadcast(&exitApp);
+    _world.GetApplication().GetMessageBus().Broadcast(&exitApp);
   }
 
   for (auto&& entity : m_registeredEntities)
@@ -47,7 +46,8 @@ void CameraControlSystem::Tick(mage::ecs::World& _world, float _deltaTime)
         _world.GetComponent<mage::ecs::common::TransformComponent>(entity)
             ->m_transform;
 
-    auto& camera = _world.GetCamera(cameraComponent->m_cameraId);
+    auto& camera =
+        _world.GetRenderWorld().GetGameCamera(cameraComponent->m_cameraId);
 
     mage::math::Quatf orientation = (mage::math::Quatf::GenRotationX(m_pitch) *
                                      mage::math::Quatf::GenRotationY(m_yaw)) *
@@ -67,7 +67,7 @@ void CameraControlSystem::Tick(mage::ecs::World& _world, float _deltaTime)
     if (m_playSoundPressed)
     {
       _world.AddComponent<mage::audio::PlaySoundEffect>(
-          entity, _world.GetSoundLibrary().GetAudioClip(
+          entity, _world.GetAudioWorld().GetSoundLibrary().GetAudioClip(
                       "./res/audio/Blip_Select11.ogg"));
 
       m_playSoundPressed = false;

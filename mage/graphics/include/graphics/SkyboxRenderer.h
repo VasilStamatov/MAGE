@@ -1,6 +1,7 @@
 #pragma once
 
-#include "ecs/RenderingSystem.h"
+#include "RenderingSystem.h"
+
 #include "renderer/GLIndexBuffer.h"
 #include "renderer/GLTextureCube.h"
 #include "renderer/GLVertexArray.h"
@@ -27,13 +28,13 @@ struct SkyboxComponent : public ecs::Component
 /////////////////////////////////////////////////
 /// The rendering system which renders the skybox cube
 /////////////////////////////////////////////////
-class SkyboxRenderer : public ecs::RenderingSystem
+class SkyboxRenderer : public RenderingSystem
 {
 public:
-  SkyboxRenderer(GLShader _shader);
+  SkyboxRenderer(GLShader _shader, RenderDevice& _renderDevice);
 
-  virtual void Render(mage::ecs::World& _world, const Camera& _camera,
-                      float _deltaTime) override;
+  virtual void Render(core::World& _world, const Camera& _camera,
+                      float _deltaSeconds) override;
 
 private:
   GLVertexArray m_cubeVAO;

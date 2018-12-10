@@ -1,7 +1,6 @@
 #include "demo/MovementControlSystem.h"
 
-#include <ecs/World.h>
-#include <messaging/MessageBus.h>
+#include <core/Application.h>
 #include <physics/MotionSystem.h>
 
 using namespace mage;
@@ -25,9 +24,9 @@ MovementControlSystem::MovementControlSystem()
 
 // ------------------------------------------------------------------------------
 
-void MovementControlSystem::Initialize(mage::ecs::World& _world)
+void MovementControlSystem::Initialize(mage::core::World& _world)
 {
-  auto& appMsgBus = _world.GetApplicationMessageBus();
+  auto& appMsgBus = _world.GetApplication().GetMessageBus();
 
   appMsgBus.Subscribe(this, &MovementControlSystem::OnKeyPress);
   appMsgBus.Subscribe(this, &MovementControlSystem::OnKeyRelease);
@@ -35,7 +34,7 @@ void MovementControlSystem::Initialize(mage::ecs::World& _world)
 
 // ------------------------------------------------------------------------------
 
-void MovementControlSystem::Tick(ecs::World& _world, float _deltaTime)
+void MovementControlSystem::Tick(mage::core::World& _world, float _deltaSeconds)
 {
   for (auto&& entity : m_registeredEntities)
   {

@@ -4,7 +4,6 @@
 
 #include <audio/SoundEffectSystem.h>
 #include <core/Application.h>
-#include <ecs/World.h>
 #include <messaging/MessageBus.h>
 #include <physics/MotionSystem.h>
 
@@ -14,16 +13,16 @@ GameCollisionhandler::GameCollisionhandler() {}
 
 // ------------------------------------------------------------------------------
 
-void GameCollisionhandler::Initialize(mage::ecs::World& _world)
+void GameCollisionhandler::Initialize(mage::core::World& _world)
 {
-  auto& appMsgBus = _world.GetApplicationMessageBus();
+  auto& appMsgBus = _world.GetApplication().GetMessageBus();
 
   appMsgBus.Subscribe(this, &GameCollisionhandler::OnCollisionEvent);
 }
 
 // ------------------------------------------------------------------------------
 
-void GameCollisionhandler::Tick(mage::ecs::World& _world, float _deltaTime)
+void GameCollisionhandler::Simulate(mage::core::World& _world, float _deltaSeconds)
 {
   for (auto&& intersections : m_entityIntersections)
   {
@@ -46,7 +45,7 @@ void GameCollisionhandler::Tick(mage::ecs::World& _world, float _deltaTime)
         // Entity collided with a moving object. Destroy entity and exit game.
         _world.DestroyEntity(intersections.first);
 
-        auto& appMsgBus = _world.GetApplicationMessageBus();
+        auto& appMsgBus = _world.GetApplication().GetMessageBus();
         mage::core::OnExitAppEvent exitApp;
         appMsgBus.Broadcast(&exitApp);
       }
@@ -59,8 +58,9 @@ void GameCollisionhandler::Tick(mage::ecs::World& _world, float _deltaTime)
         motionA->m_velocity *= -1.1f;
 
         _world.AddComponent<mage::audio::PlaySoundEffect>(
-            intersections.first, _world.GetSoundLibrary().GetAudioClip(
-                                     "./res/audio/Blip_Select11.ogg"));
+            intersections.first,
+            _world.GetAudioWorld().GetSoundLibrary().GetAudioClip(
+                "./res/audio/Blip_Select11.ogg"));
       }
     }
     else if (movementControlsB)
@@ -75,7 +75,7 @@ void GameCollisionhandler::Tick(mage::ecs::World& _world, float _deltaTime)
         // Entity collided with a moving object. Destroy entity and exit game.
         _world.DestroyEntity(intersections.second);
 
-        auto& appMsgBus = _world.GetApplicationMessageBus();
+        auto& appMsgBus = _world.GetApplication().GetMessageBus();
         mage::core::OnExitAppEvent exitApp;
         appMsgBus.Broadcast(&exitApp);
       }
@@ -88,8 +88,9 @@ void GameCollisionhandler::Tick(mage::ecs::World& _world, float _deltaTime)
         motionB->m_velocity *= -1.1f;
 
         _world.AddComponent<mage::audio::PlaySoundEffect>(
-            intersections.second, _world.GetSoundLibrary().GetAudioClip(
-                                      "./res/audio/Blip_Select11.ogg"));
+            intersections.second,
+            _world.GetAudioWorld().GetSoundLibrary().GetAudioClip(
+                "./res/audio/Blip_Select11.ogg"));
       }
     }
     else

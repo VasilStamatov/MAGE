@@ -1,25 +1,24 @@
-#include "ecs/EntityHandle.h"
+#include "audio/AudioSystem.h"
 
-#include "ecs/World.h"
+#include "audio/AudioDevice.h"
 
 namespace mage
 {
-namespace ecs
+namespace audio
 {
 
 // ------------------------------------------------------------------------------
 
-EntityHandle::EntityHandle(World& _world, Entity _entity)
-    : m_world(_world)
-    , m_entity(_entity)
+AudioSystem::AudioSystem(AudioDevice& _audioDevice)
+    : m_audioDevice(_audioDevice)
 {
 }
 
 // ------------------------------------------------------------------------------
 
-void EntityHandle::Destroy() { m_world.DestroyEntity(m_entity); }
+AudioSystem::~AudioSystem() {}
 
 // ------------------------------------------------------------------------------
 
-} // namespace ecs
+} // namespace audio
 } // namespace mage

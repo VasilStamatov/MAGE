@@ -1,13 +1,14 @@
 #pragma once
 
-#include "System.h"
+#include "Camera.h"
 
-#include "graphics/Camera.h"
+#include "ecs/System.h"
 #include "renderer/GLShader.h"
+#include "renderer/RenderDevice.h"
 
 namespace mage
 {
-namespace ecs
+namespace graphics
 {
 
 // ------------------------------------------------------------------------------
@@ -19,21 +20,21 @@ namespace ecs
 /// rendered by a certain system will most likely all want the same shader
 /// effect.
 /////////////////////////////////////////////////
-class RenderingSystem : public System
+class RenderingSystem : public ecs::System
 {
 public:
-  RenderingSystem(graphics::GLShader _shader);
+  RenderingSystem(GLShader _shader, RenderDevice& _renderDevice);
   virtual ~RenderingSystem();
 
-  virtual void Render(World& _world, const graphics::Camera& _camera,
-                      float _deltaTime) = 0;
+  virtual void Render(core::World& _world, const Camera& _camera,
+                      float _deltaSeconds) = 0;
 
 protected:
-  graphics::GLShader
-      m_shader; ///< the shader to be used for the rendering process
+  GLShader m_shader; ///< the shader to be used for the rendering process
+  RenderDevice& m_renderDevice;
 };
 
 // ------------------------------------------------------------------------------
 
-} // namespace ecs
+} // namespace graphics
 } // namespace mage

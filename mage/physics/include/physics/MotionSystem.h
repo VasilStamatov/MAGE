@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ecs/GameSystem.h"
+#include "PhysicsSystem.h"
 #include "math/Vec.h"
 
 namespace mage
@@ -26,12 +26,12 @@ struct Motion : public ecs::Component
 /// The motion system applies movement integration to all entities with motion
 /// and a transform.
 /////////////////////////////////////////////////
-class MotionSystem : public ecs::GameSystem
+class MotionSystem : public PhysicsSystem
 {
 public:
   MotionSystem();
 
-  virtual void Tick(ecs::World& _world, float _deltaTime) override;
+  virtual void Simulate(core::World& _world, float _deltaSeconds) override;
 };
 
 // ------------------------------------------------------------------------------

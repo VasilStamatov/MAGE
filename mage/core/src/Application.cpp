@@ -2,6 +2,7 @@
 
 #include "core/Timer.h"
 #include "logger/LogDispatch.h"
+#include "scheduler/Scheduler.h"
 
 #include <iostream>
 
@@ -114,6 +115,7 @@ void Application::TransitionToPreviousWorld()
 
 void Application::InitializeSubSystems()
 {
+  scheduler::Initialize();
   m_video.Initialize();
   m_inputManager.Initialize();
   m_renderDevice.Initialize();
@@ -129,16 +131,17 @@ void Application::ShutdownSubSystems()
   m_renderDevice.Shutdown();
   m_inputManager.Shutdown();
   m_video.Shutdown();
+  scheduler::Shutdown();
 }
 
 // ------------------------------------------------------------------------------
 
-void Application::Update(float _deltaTime)
+void Application::Update(float _deltaSeconds)
 {
   switch (m_state)
   {
     case ApplicationState::Running:
-      m_gameWorlds[m_currentWorldId]->TickGameSystems(_deltaTime);
+      m_gameWorlds[m_currentWorldId]->Update(_deltaSeconds);
       break;
 
     case ApplicationState::Transitioning:
@@ -159,9 +162,7 @@ void Application::Update(float _deltaTime)
 
 void Application::Render(float _interpolation)
 {
-  m_gameWorlds[m_currentWorldId]->TickRenderingSystems(_interpolation);
-  m_gameWorlds[m_currentWorldId]->ApplyPostProcesses();
-  m_gameWorlds[m_currentWorldId]->TickGUISystems(_interpolation);
+  m_gameWorlds[m_currentWorldId]->Render(_interpolation);
 }
 
 // ------------------------------------------------------------------------------

@@ -1,7 +1,8 @@
 #pragma once
 
+#include "World.h"
+
 #include "audio/AudioDevice.h"
-#include "ecs/World.h"
 #include "input/InputManager.h"
 #include "messaging/MessageBus.h"
 #include "renderer/RenderDevice.h"
@@ -64,10 +65,13 @@ public:
   /////////////////////////////////////////////////
   void Run(int argc, const char** argv);
 
-  audio::AudioDevice& GetAudioDevice() { return m_audioDevice; }
-  graphics::RenderDevice& GetRenderDevice() { return m_renderDevice; }
-  messaging::MessageBus& GetMessageBus() { return m_applicationMessageBus; }
-  video::Video& GetVideo() { return m_video; }
+  inline audio::AudioDevice& GetAudioDevice() { return m_audioDevice; }
+  inline graphics::RenderDevice& GetRenderDevice() { return m_renderDevice; }
+  inline messaging::MessageBus& GetMessageBus()
+  {
+    return m_applicationMessageBus;
+  }
+  inline video::Video& GetVideo() { return m_video; }
 
 private:
   void Stop();
@@ -84,7 +88,7 @@ private:
 
   // ------------------------------------------------------------------------------
 
-  void Update(float _deltaTime);
+  void Update(float _deltaSeconds);
 
   // ------------------------------------------------------------------------------
 
@@ -107,7 +111,7 @@ private:
 protected:
   messaging::MessageBus
       m_applicationMessageBus; ///< Application message bus for communication
-  std::vector<std::unique_ptr<ecs::World>> m_gameWorlds; ///< all game worlds
+  std::vector<std::unique_ptr<World>> m_gameWorlds; ///< all game worlds
 
 private:
   video::Video m_video;               ///< Video class for window management

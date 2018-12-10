@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ecs/GameSystem.h"
+#include "PhysicsSystem.h"
 #include "math/AABB.h"
 
 namespace mage
@@ -26,12 +26,12 @@ struct AABBCollider : public ecs::Component
 /// AABB Collision system checks for intersections between all entities with an
 /// AABB component and a transform.
 /////////////////////////////////////////////////
-class AABBCollisionSystem : public ecs::GameSystem
+class AABBCollisionSystem : public PhysicsSystem
 {
 public:
   AABBCollisionSystem();
 
-  virtual void Tick(ecs::World& _world, float _deltaTime) override;
+  virtual void Simulate(core::World& _world, float _deltaSeconds) override;
 };
 
 // ------------------------------------------------------------------------------

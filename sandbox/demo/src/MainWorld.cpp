@@ -1,4 +1,4 @@
-#include "demo/GameWorld.h"
+#include "demo/MainWorld.h"
 
 #include "demo/BlurPipeline.h"
 #include "demo/CameraControlSystem.h"
@@ -20,13 +20,12 @@
 #include <physics/BasicCollisionResolution.h>
 #include <physics/MotionSystem.h>
 
-GameWorld::GameWorld(mage::core::Application& _application)
-    : mage::ecs::World(_application)
-    , m_audioDevice(_application.GetAudioDevice())
+MainWorld::MainWorld(mage::core::Application& _application)
+    : mage::core::World(_application)
 {
 }
 
-void GameWorld::AddSystems()
+void MainWorld::AddSystems()
 {
   // Add systems in desired order to be executed
 
@@ -34,22 +33,26 @@ void GameWorld::AddSystems()
   AddGameSystem(std::make_unique<mage::gui::ButtonEventHandler>());
   AddGameSystem(std::make_unique<EntitySpawnSystem>());
   AddGameSystem(std::make_unique<MovementControlSystem>());
-  AddGameSystem(std::make_unique<mage::physics::AABBCollisionSystem>());
+
+  AddPhysicsSystem(std::make_unique<mage::physics::AABBCollisionSystem>());
   // AddGameSystem(std::make_unique<mage::physics::BasicCollisionResolution>());
-  AddGameSystem(std::make_unique<GameCollisionhandler>());
-  AddGameSystem(std::make_unique<mage::physics::MotionSystem>());
-  AddGameSystem(
-      std::make_unique<mage::audio::SoundListenerSystem>(m_audioDevice));
-  AddGameSystem(
-      std::make_unique<mage::audio::SoundEffectSystem>(m_audioDevice));
+  AddPhysicsSystem(std::make_unique<GameCollisionhandler>());
+  AddPhysicsSystem(std::make_unique<mage::physics::MotionSystem>());
+
+  AddAudioSystem(std::make_unique<mage::audio::SoundListenerSystem>(
+      GetApplication().GetAudioDevice()));
+  AddAudioSystem(std::make_unique<mage::audio::SoundEffectSystem>(
+      GetApplication().GetAudioDevice()));
 
   AddRenderingSystem(std::make_unique<mage::graphics::StaticMeshRenderer>(
       mage::graphics::GLShader("./res/shaders/StaticMesh.vert",
-                               "./res/shaders/StaticMesh.frag")));
+                               "./res/shaders/StaticMesh.frag"),
+      GetApplication().GetRenderDevice()));
 
-  AddRenderingSystem(
-      std::make_unique<mage::graphics::SkyboxRenderer>(mage::graphics::GLShader(
-          "./res/shaders/Skybox.vert", "./res/shaders/Skybox.frag")));
+  AddRenderingSystem(std::make_unique<mage::graphics::SkyboxRenderer>(
+      mage::graphics::GLShader("./res/shaders/Skybox.vert",
+                               "./res/shaders/Skybox.frag"),
+      GetApplication().GetRenderDevice()));
 
   // AddPostProcessPass(std::make_unique<BlurPipeline>(
   //     mage::graphics::GLShader("./res/shaders/ScreenCoordPass.vert",
@@ -65,23 +68,31 @@ void GameWorld::AddSystems()
   // GUI's are rendered last on top of the processed image
   AddGUISystem(std::make_unique<mage::gui::ButtonRenderer>(
       mage::graphics::GLShader("./res/shaders/WorldCoordQuad.vert",
-                               "./res/shaders/DirectCopy.frag")));
+                               "./res/shaders/DirectCopy.frag"),
+      GetApplication().GetRenderDevice()));
 }
 
-void GameWorld::AddEntitiesAndComponents()
+void MainWorld::AddEntitiesAndComponents()
 {
-  const auto& viewport = m_screenCamera.GetViewport();
+  const auto& viewport = GetRenderWorld().GetScreenViewport();
   std::int32_t windowWidth = viewport[2];
   std::int32_t windowHeight = viewport[1];
 
   // -------------- Load Resources ----------------------------
 
-  m_soundLibrary.AddAudioClip("./res/audio/Blip_Select11.ogg");
-  m_soundLibrary.AddAudioClip("./res/audio/neocrey - Last Cyber Dance.ogg");
-  m_soundLibrary.AddAudioSource("CameraSource");
-  m_soundLibrary.AddAudioSource("PlayerSource");
-  auto cubeModel = m_objModelLibrary.Get("./res/models/cube.obj");
-  auto planeModel = m_objModelLibrary.Get("./res/models/plane.obj");
+  mage::audio::SoundLibrary& soundLibrary = GetAudioWorld().GetSoundLibrary();
+  soundLibrary.AddAudioClip("./res/audio/Blip_Select11.ogg");
+  soundLibrary.AddAudioClip("./res/audio/neocrey - Last Cyber Dance.ogg");
+  soundLibrary.AddAudioSource("CameraSource");
+  soundLibrary.AddAudioSource("PlayerSource");
+
+  mage::graphics::OBJModelLibrary& objModelLibrary =
+      GetRenderWorld().GetOBJModelLibrary();
+  auto cubeModel = objModelLibrary.Get("./res/models/cube.obj");
+  auto planeModel = objModelLibrary.Get("./res/models/plane.obj");
+
+  mage::graphics::Texture2DLibrary& texture2DLibrary =
+      GetRenderWorld().GetTexture2DLibrary();
 
   // -------------- Load Resources ----------------------------
 
@@ -113,7 +124,7 @@ void GameWorld::AddEntitiesAndComponents()
 
     auto& staticMeshComp =
         renderedEntity.AddComponent<mage::graphics::StaticMeshComponent>(
-            *cubeModel, m_textureLibrary.Get("./res/textures/bricks.jpg"));
+            *cubeModel, texture2DLibrary.Get("./res/textures/bricks.jpg"));
 
     auto& motionComponent =
         renderedEntity.AddComponent<mage::physics::Motion>();
@@ -124,7 +135,7 @@ void GameWorld::AddEntitiesAndComponents()
     auto& movementController = renderedEntity.AddComponent<MovementControls>();
 
     renderedEntity.AddComponent<mage::audio::SoundEffectSource>(
-        m_soundLibrary.GetAudioSource("PlayerSource"), 0.2f, 1.0f);
+        soundLibrary.GetAudioSource("PlayerSource"), 0.2f, 1.0f);
   }
   // ----------------- Make player controlled entity ---------------------
 
@@ -132,10 +143,18 @@ void GameWorld::AddEntitiesAndComponents()
   {
     auto camera = CreateEntity();
 
-    auto& cameraComp = camera.AddComponent<mage::ecs::common::CameraComponent>(
-        *this, mage::math::Vec4i32(0, 0, 1024, 576), 70.0f, 0.1f, 100.0f, true);
+    std::int32_t x = viewport[0];
+    std::int32_t y = viewport[3];
+    std::int32_t width = viewport[2];
+    std::int32_t height = viewport[1];
 
-    auto& addedCamera = GetCamera(cameraComp.m_cameraId);
+    auto cameraIndex = GetRenderWorld().AddPerspectiveCamera(
+        mage::math::Vec4i32(x, y, width, height), 70.0f, 0.1f, 100.0f, true);
+
+    auto& cameraComp =
+        camera.AddComponent<mage::ecs::common::CameraComponent>(cameraIndex);
+
+    auto& addedCamera = GetRenderWorld().GetGameCamera(cameraComp.m_cameraId);
 
     addedCamera.MakeRenderToTarget();
 
@@ -156,12 +175,11 @@ void GameWorld::AddEntitiesAndComponents()
     //     camera.AddComponent<CameraControlComponent>();
 
     camera.AddComponent<mage::audio::SoundEffectSource>(
-        m_soundLibrary.GetAudioSource("CameraSource"), 0.02f, 1.0f);
+        soundLibrary.GetAudioSource("CameraSource"), 0.02f, 1.0f);
 
     // Play this looping bgm
     camera.AddComponent<mage::audio::PlaySoundEffect>(
-        m_soundLibrary.GetAudioClip(
-            "./res/audio/neocrey - Last Cyber Dance.ogg"),
+        soundLibrary.GetAudioClip("./res/audio/neocrey - Last Cyber Dance.ogg"),
         true);
 
     camera.AddComponent<mage::audio::SoundListener>();
@@ -182,7 +200,7 @@ void GameWorld::AddEntitiesAndComponents()
 
     auto& staticMeshComp =
         renderedEntity.AddComponent<mage::graphics::StaticMeshComponent>(
-            *planeModel, m_textureLibrary.Get("./res/textures/sand.jpg"));
+            *planeModel, texture2DLibrary.Get("./res/textures/sand.jpg"));
 
     auto& colliderComponent =
         renderedEntity.AddComponent<mage::physics::AABBCollider>(
@@ -204,7 +222,7 @@ void GameWorld::AddEntitiesAndComponents()
 
     auto& staticMeshComp2 =
         renderedEntity2.AddComponent<mage::graphics::StaticMeshComponent>(
-            *planeModel, m_textureLibrary.Get("./res/textures/sand.jpg"));
+            *planeModel, texture2DLibrary.Get("./res/textures/sand.jpg"));
 
     auto& colliderComponent2 =
         renderedEntity2.AddComponent<mage::physics::AABBCollider>(
@@ -234,7 +252,7 @@ void GameWorld::AddEntitiesAndComponents()
   transform3.m_transform.SetTranslation(mage::math::Vec3f(0.0, 0.0f, -20.0f));
 
   auto& spawner = enemySpawner.AddComponent<EntitySpawnComponent>(
-      cubeModel, m_textureLibrary.Get("./res/textures/bricks2.jpg"), 15.0f,
+      cubeModel, texture2DLibrary.Get("./res/textures/bricks2.jpg"), 15.0f,
       5.0f);
   // -------- Enemy Spawner ---------
 
@@ -246,9 +264,9 @@ void GameWorld::AddEntitiesAndComponents()
         mage::math::Vec2i32(0, 0), mage::math::Vec2i32(50, 50));
 
     auto& guiTextureComp = exitButton.AddComponent<mage::gui::GUITexture>(
-        m_textureLibrary.Get("./res/textures/exit.png", false));
+        texture2DLibrary.Get("./res/textures/exit.png", false));
 
-    auto& msgBus = GetApplicationMessageBus();
+    auto& msgBus = GetApplication().GetMessageBus();
 
     auto& guiCallback =
         exitButton.AddComponent<mage::gui::GUICallback>([&msgBus]() {
@@ -266,9 +284,9 @@ void GameWorld::AddEntitiesAndComponents()
 
     auto& guiTextureComp =
         increaseDifficultyButton.AddComponent<mage::gui::GUITexture>(
-            m_textureLibrary.Get("./res/textures/red_arrow.png", false));
+            texture2DLibrary.Get("./res/textures/red_arrow.png", false));
 
-    auto& msgBus = GetApplicationMessageBus();
+    auto& msgBus = GetApplication().GetMessageBus();
 
     auto& guiCallback =
         increaseDifficultyButton.AddComponent<mage::gui::GUICallback>(
@@ -289,9 +307,9 @@ void GameWorld::AddEntitiesAndComponents()
 
     auto& guiTextureComp =
         increaseDifficultyButton.AddComponent<mage::gui::GUITexture>(
-            m_textureLibrary.Get("./res/textures/red_arrow_back.png", false));
+            texture2DLibrary.Get("./res/textures/red_arrow_back.png", false));
 
-    auto& msgBus = GetApplicationMessageBus();
+    auto& msgBus = GetApplication().GetMessageBus();
 
     auto& guiCallback =
         increaseDifficultyButton.AddComponent<mage::gui::GUICallback>(

@@ -1,8 +1,7 @@
 #pragma once
 
-#include "audio/AudioDevice.h"
-#include "ecs/GameSystem.h"
-#include "math/Vec.h"
+#include "AudioDevice.h"
+#include "AudioSystem.h"
 
 namespace mage
 {
@@ -43,15 +42,12 @@ struct PlaySoundEffect : public ecs::Component
 /// The Sound Effect System plays a sound effect whenever a Play Sound Effect
 /// component is added
 /////////////////////////////////////////////////
-class SoundEffectSystem : public ecs::GameSystem
+class SoundEffectSystem : public AudioSystem
 {
 public:
   SoundEffectSystem(AudioDevice& _audioDevice);
 
-  virtual void Tick(ecs::World& _world, float _deltaTime) override;
-
-private:
-  AudioDevice& m_audioDevice;
+  virtual void Tick(core::World& _world) override;
 };
 
 // ------------------------------------------------------------------------------

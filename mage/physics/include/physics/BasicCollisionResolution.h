@@ -12,14 +12,14 @@ namespace physics
 /////////////////////////////////////////////////
 /// This is a basic example of collision resolution system.
 /////////////////////////////////////////////////
-class BasicCollisionResolution : public ecs::GameSystem
+class BasicCollisionResolution : public PhysicsSystem
 {
 public:
   BasicCollisionResolution();
 
-  virtual void Initialize(mage::ecs::World& _world) override;
+  virtual void Initialize(core::World& _world) override;
 
-  virtual void Tick(ecs::World& _world, float _deltaTime) override;
+  virtual void Simulate(core::World& _world, float _deltaSeconds) override;
 
 private:
   void OnCollisionEvent(AABBIntersectionsEvent* _event);

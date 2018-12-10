@@ -1,6 +1,6 @@
 #include "graphics/SkyboxRenderer.h"
 
-#include "ecs/World.h"
+#include "core/World.h"
 #include "renderer/RenderDevice.h"
 
 namespace mage
@@ -28,8 +28,8 @@ SkyboxComponent::SkyboxComponent(std::string* _sixSkyboxFiles)
 
 // ------------------------------------------------------------------------------
 
-SkyboxRenderer::SkyboxRenderer(GLShader _shader)
-    : ecs::RenderingSystem(std::move(_shader))
+SkyboxRenderer::SkyboxRenderer(GLShader _shader, RenderDevice& _renderDevice)
+    : RenderingSystem(std::move(_shader), _renderDevice)
     , m_cubeVAO()
     , m_cubeVBO(BufferUsage::StaticDraw)
     , m_numCubeVertices(36)
@@ -67,8 +67,8 @@ SkyboxRenderer::SkyboxRenderer(GLShader _shader)
 
 // ------------------------------------------------------------------------------
 
-void SkyboxRenderer::Render(mage::ecs::World& _world, const Camera& _camera,
-                            float _deltaTime)
+void SkyboxRenderer::Render(core::World& _world, const Camera& _camera,
+                            float _deltaSeconds)
 {
   math::Mat4f view = _camera.GetView();
   // remove translation
@@ -76,7 +76,7 @@ void SkyboxRenderer::Render(mage::ecs::World& _world, const Camera& _camera,
   view[7] = 0.0f;
   view[11] = 0.0f;
 
-  _world.GetRenderDevice().SetDepthFunc(graphics::DepthFunc::LessOrEqual);
+  m_renderDevice.SetDepthFunc(graphics::DepthFunc::LessOrEqual);
 
   m_shader.Bind();
   m_shader.SetUniformMat4("in_Projection", _camera.GetProjection());
@@ -95,7 +95,7 @@ void SkyboxRenderer::Render(mage::ecs::World& _world, const Camera& _camera,
     skybox->m_skyboxCube.Unbind(0);
   }
 
-  _world.GetRenderDevice().SetDepthFunc(graphics::DepthFunc::Less);
+  m_renderDevice.SetDepthFunc(graphics::DepthFunc::Less);
 }
 
 // ------------------------------------------------------------------------------

@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Entity.h"
+#include "ecs/Entity.h"
 
 namespace mage
 {
-namespace ecs
+namespace core
 {
 
 // ------------------------------------------------------------------------------
@@ -21,7 +21,7 @@ class World;
 class EntityHandle
 {
 public:
-  EntityHandle(World& _world, Entity _entity);
+  EntityHandle(World& _world, ecs::Entity _entity);
 
   // ------------------------------------------------------------------------------
 
@@ -47,10 +47,10 @@ public:
 
 private:
   World& m_world;
-  Entity m_entity;
+  ecs::Entity m_entity;
 };
 
 // ------------------------------------------------------------------------------
 
-} // namespace ecs
+} // namespace core
 } // namespace mage

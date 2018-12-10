@@ -1,22 +1,25 @@
-#include "ecs/RenderingSystem.h"
+#include "core/EntityHandle.h"
+
+#include "core/World.h"
 
 namespace mage
 {
-namespace ecs
+namespace core
 {
 
 // ------------------------------------------------------------------------------
 
-RenderingSystem::RenderingSystem(graphics::GLShader _shader)
-    : m_shader(std::move(_shader))
+EntityHandle::EntityHandle(World& _world, ecs::Entity _entity)
+    : m_world(_world)
+    , m_entity(_entity)
 {
 }
 
 // ------------------------------------------------------------------------------
 
-RenderingSystem::~RenderingSystem() {}
+void EntityHandle::Destroy() { m_world.DestroyEntity(m_entity); }
 
 // ------------------------------------------------------------------------------
 
-} // namespace ecs
+} // namespace core
 } // namespace mage

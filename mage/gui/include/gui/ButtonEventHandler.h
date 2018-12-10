@@ -18,9 +18,9 @@ class ButtonEventHandler : public ecs::GameSystem
 public:
   ButtonEventHandler();
 
-  virtual void Initialize(ecs::World& _world) override;
+  virtual void Initialize(core::World& _world) override;
 
-  virtual void Tick(ecs::World& _world, float _deltaTime) override;
+  virtual void Tick(core::World& _world, float _deltaSeconds) override;
 
 private:
   void OnMouseMove(input::CursorPositionMovedEvent* _event);

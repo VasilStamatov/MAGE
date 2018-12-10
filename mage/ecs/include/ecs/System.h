@@ -7,14 +7,14 @@
 
 namespace mage
 {
+
+namespace core
+{
+  class World;
+}
+
 namespace ecs
 {
-
-// ------------------------------------------------------------------------------
-
-class World;
-
-// ------------------------------------------------------------------------------
 
 /////////////////////////////////////////////////
 /// The system is a process which is called to update all entities which have
@@ -25,13 +25,6 @@ class System
 public:
   System();
   virtual ~System();
-
-  // ------------------------------------------------------------------------------
-
-  virtual void Initialize(World& _world) {}
-  virtual void Uninitialize(World& _world) {}
-
-  // ------------------------------------------------------------------------------
 
   /////////////////////////////////////////////////
   /// This function is called whenever the state of an entity changes, and

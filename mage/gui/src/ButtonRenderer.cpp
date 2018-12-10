@@ -1,6 +1,6 @@
 #include "gui/ButtonRenderer.h"
 
-#include "ecs/World.h"
+#include "core/World.h"
 #include "gui/Button.h"
 
 namespace mage
@@ -18,8 +18,9 @@ ButtonVertex::ButtonVertex(math::Vec2f _position, math::Vec2f _texCoords)
 
 // ------------------------------------------------------------------------------
 
-ButtonRenderer::ButtonRenderer(graphics::GLShader _shader)
-    : ecs::RenderingSystem(std::move(_shader))
+ButtonRenderer::ButtonRenderer(graphics::GLShader _shader,
+                               graphics::RenderDevice& _renderDevice)
+    : graphics::RenderingSystem(std::move(_shader), _renderDevice)
     , m_batches()
     , m_VAO()
     , m_VBO(graphics::BufferUsage::DynamicDraw)
@@ -27,12 +28,7 @@ ButtonRenderer::ButtonRenderer(graphics::GLShader _shader)
 {
   m_systemSignature.AddComponent<Button>();
   m_systemSignature.AddComponent<GUITexture>();
-}
 
-// ------------------------------------------------------------------------------
-
-void ButtonRenderer::Initialize(mage::ecs::World& _world)
-{
   graphics::GLBufferLayout bufferLayout;
   bufferLayout.PushFloat(2, false); // first 2 floats (m_position x,y)
   bufferLayout.PushFloat(2, false); // next 2 floats (m_texCoords x,y)
@@ -42,8 +38,9 @@ void ButtonRenderer::Initialize(mage::ecs::World& _world)
 
 // ------------------------------------------------------------------------------
 
-void ButtonRenderer::Render(mage::ecs::World& _world,
-                            const graphics::Camera& _camera, float _deltaTime)
+void ButtonRenderer::Render(core::World& _world,
+                            const graphics::Camera& _camera,
+                            float _deltaSeconds)
 {
   m_shader.Bind();
   m_shader.SetUniformMat4("in_Projection", _camera.GetProjection());
