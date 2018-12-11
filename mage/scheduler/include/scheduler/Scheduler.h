@@ -2,8 +2,6 @@
 
 #include "Task.h"
 
-#include <memory>
-
 namespace mage
 {
 namespace scheduler
@@ -16,8 +14,18 @@ void Shutdown();
 
 // ------------------------------------------------------------------------------
 
-void AddTask(std::unique_ptr<Task> _task);
-std::future<bool> AddTrackedTask(std::unique_ptr<Task> _task);
+Task* CreateTask(TaskFunction _function);
+Task* CreateTask(TaskFunction _function, const void* _taskData,
+                 size_t _taskDataSize);
+
+Task* CreateChildTask(Task* _parent, TaskFunction _function);
+Task* CreateChildTask(Task* _parent, TaskFunction _function,
+                      const void* _taskData, size_t _taskDataSize);
+
+// ------------------------------------------------------------------------------
+
+void Run(Task* _task);
+void Wait(const Task* _task);
 
 // ------------------------------------------------------------------------------
 

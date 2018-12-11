@@ -1,9 +1,11 @@
 #include "scheduler/Scheduler.h"
 
-#include <condition_variable>
-#include <functional>
-#include <queue>
+#include "scheduler/WorkStealingQueue.h"
+#include "util/RandomNumberGenerator.h"
+
+#include <cassert>
 #include <thread>
+#include <unordered_map>
 #include <vector>
 
 namespace mage
@@ -13,46 +15,130 @@ namespace scheduler
 
 // ------------------------------------------------------------------------------
 
-static std::queue<std::unique_ptr<Task>> s_tasks;
+static constexpr std::int32_t c_maxTaskCount = 1024;
+
+static thread_local Task
+    s_taskAllocator[c_maxTaskCount]; ///< ring buffer of tasks for each thread
+
+static thread_local std::uint32_t s_allocatedTasksCount =
+    0u; ///< counter to keep count of the number of total allocated tasks
+
 static std::vector<std::unique_ptr<std::thread>> s_threads;
-static std::condition_variable s_conditionToAwake;
-static std::mutex s_mutex;
+static std::vector<std::unique_ptr<WorkStealingQueue>> s_taskQueues;
+static std::unordered_map<std::thread::id, std::uint32_t> s_threadIdToIndex;
+
 static std::atomic_bool s_isShuttingDown;
+static std::uint32_t s_workerThreadCount = 0u;
+static util::RandomNumberGenerator s_rng;
 
 // ------------------------------------------------------------------------------
 
-void Processor()
+WorkStealingQueue* GetWorkerThreadQueue()
 {
-  while (true)
+  auto threadId = std::this_thread::get_id();
+  auto index = s_threadIdToIndex[threadId];
+  return s_taskQueues[index].get();
+}
+
+// ------------------------------------------------------------------------------
+
+Task* AllocateTask()
+{
+  // Get a task specific for a thread (uses only thread-local vars)
+  const std::uint32_t index = s_allocatedTasksCount++;
+
+  // Warning: if more than c_maxTaskCount tasks are allocated in 1 frame, then
+  // it's possible that the first task may not have finished and will be
+  // overwritten.
+  return &s_taskAllocator[index & (c_maxTaskCount - 1)];
+}
+
+// ------------------------------------------------------------------------------
+
+bool HasTaskCompleted(const Task* _task)
+{
+  return _task->m_unfinishedTasks == 0;
+}
+
+// ------------------------------------------------------------------------------
+
+Task* GetTask()
+{
+  WorkStealingQueue* queue = GetWorkerThreadQueue();
+
+  if (queue == nullptr)
   {
-    // Initialize an empty task
-    std::unique_ptr<Task> task = nullptr;
+    return nullptr;
+  }
 
+  Task* task = queue->Pop();
+
+  // Check to see if a task was found
+  if (task == nullptr)
+  {
+    // Task queue empty, try stealing from some other queue
+
+    // Get a task queue index [0; threadCount]. 0 to threadCount includes the
+    // main thread, because the max number is included (eg 0 to 7 for 8 threads)
+    std::uint32_t randomIndex =
+        s_rng.GenRandInt<std::uint32_t>(0, s_taskQueues.size() - 1);
+
+    WorkStealingQueue* stealQueue = s_taskQueues[randomIndex].get();
+
+    if (stealQueue == queue)
     {
-      std::unique_lock<std::mutex> lock(s_mutex);
-
-      // Wait until there are tasks in the queue or the app closes.
-      // The lambda protects against spurious awakening (rather than using a
-      // loop)
-      s_conditionToAwake.wait(
-          lock, [] { return s_isShuttingDown || !s_tasks.empty(); });
-
-      // Stop the processor whenever the application is closing
-      if (s_isShuttingDown && s_tasks.empty())
-      {
-        break;
-      }
-
-      // Get the front task (at this point it's known there is one thans to the
-      // conditional var)
-      task = std::move(s_tasks.front());
-      s_tasks.pop();
+      // don't try to steal from ourselves
+      std::this_thread::yield();
+      return nullptr;
     }
 
-    // Execute the task (should never be null, but guard just in case)
+    // Try to steal a job from the random queue
+    Task* stolenTask = stealQueue->Steal();
+
+    if (stolenTask == nullptr)
+    {
+      // we couldn't steal a job from the other queue either, so we just yield
+      // our time slice for now
+      std::this_thread::yield();
+      return nullptr;
+    }
+
+    return stolenTask;
+  }
+
+  return task;
+}
+
+// ------------------------------------------------------------------------------
+
+void Finish(Task* _task)
+{
+  --_task->m_unfinishedTasks;
+
+  if ((_task->m_unfinishedTasks == 0) && (_task->m_parent))
+  {
+    Finish(_task->m_parent);
+  }
+}
+
+// ------------------------------------------------------------------------------
+
+void Execute(Task* _task)
+{
+  (_task->m_function)(_task, _task->m_data);
+  Finish(_task);
+}
+
+// ------------------------------------------------------------------------------
+
+void WorkerThreadMain()
+{
+  while (!s_isShuttingDown)
+  {
+    Task* task = GetTask();
     if (task)
     {
-      task->Execute();
+      Execute(task);
     }
   }
 }
@@ -61,14 +147,25 @@ void Processor()
 
 void Initialize()
 {
-  // Fetch the number of supported threads
-  auto numberOfSupportedThreadsHint = std::thread::hardware_concurrency();
-  s_threads.reserve(numberOfSupportedThreadsHint);
+  s_isShuttingDown.store(false);
+
+  // Fetch the number of supported threads and subtract 1, which is the main
+  // thread.
+  s_workerThreadCount = std::thread::hardware_concurrency() - 1;
+  s_threads.reserve(s_workerThreadCount);
+  s_taskQueues.reserve(s_workerThreadCount + 1);
+  s_threadIdToIndex.reserve(s_workerThreadCount + 1);
+
+  // Add the worker queue for the main thread
+  s_taskQueues.emplace_back(std::make_unique<WorkStealingQueue>());
+  s_threadIdToIndex[std::this_thread::get_id()] = 0;
 
   // Instantiate threads count - 1, because the main thread is already running
-  for (size_t i = 0; i < numberOfSupportedThreadsHint - 1; i++)
+  for (size_t i = 0; i < s_workerThreadCount; i++)
   {
-    s_threads.emplace_back(std::make_unique<std::thread>(Processor));
+    s_threads.emplace_back(std::make_unique<std::thread>(WorkerThreadMain));
+    s_taskQueues.emplace_back(std::make_unique<WorkStealingQueue>());
+    s_threadIdToIndex[s_threads.back()->get_id()] = i + 1;
   }
 }
 
@@ -79,8 +176,8 @@ void Shutdown()
   // set shutdown to true
   s_isShuttingDown.store(true);
 
-  // notify all sleeping threads so they can break out of processing
-  s_conditionToAwake.notify_all();
+  // // notify all sleeping threads so they can break out of processing
+  // s_conditionToAwake.notify_all();
 
   // join the threads to not crash
   for (auto&& thread : s_threads)
@@ -91,35 +188,93 @@ void Shutdown()
 
 // ------------------------------------------------------------------------------
 
-void AddTask(std::unique_ptr<Task> _task)
+Task* CreateTask(TaskFunction _function)
 {
-  {
-    std::lock_guard<std::mutex> lock(s_mutex);
+  Task* task = AllocateTask();
 
-    s_tasks.push(std::move(_task));
-  }
+  task->m_function = _function;
+  task->m_parent = nullptr;
+  task->m_unfinishedTasks = 1;
 
-  s_conditionToAwake.notify_one();
+  return task;
 }
 
 // ------------------------------------------------------------------------------
 
-std::future<bool> AddTrackedTask(std::unique_ptr<Task> _task)
+Task* CreateTask(TaskFunction _function, const void* _taskData,
+                 size_t _taskDataSize)
 {
-  std::unique_ptr<TrackedTask> wrapper =
-      std::make_unique<TrackedTask>(std::move(_task));
+  assert(_taskDataSize <= c_spaceForTaskData);
 
-  std::future<bool> status = wrapper->GetFuture();
+  Task* task = AllocateTask();
 
+  task->m_function = _function;
+  task->m_parent = nullptr;
+  task->m_unfinishedTasks = 1;
+
+  std::memcpy(task->m_data, _taskData, _taskDataSize);
+
+  return task;
+}
+
+// ------------------------------------------------------------------------------
+
+Task* CreateChildTask(Task* _parent, TaskFunction _function)
+{
+  ++_parent->m_unfinishedTasks;
+
+  Task* task = AllocateTask();
+
+  task->m_function = _function;
+  task->m_parent = _parent;
+  task->m_unfinishedTasks = 1;
+
+  return task;
+}
+
+// ------------------------------------------------------------------------------
+
+Task* CreateChildTask(Task* _parent, TaskFunction _function,
+                      const void* _taskData, size_t _taskDataSize)
+{
+  assert(_taskDataSize <= c_spaceForTaskData);
+
+  ++_parent->m_unfinishedTasks;
+
+  Task* task = AllocateTask();
+
+  task->m_function = _function;
+  task->m_parent = _parent;
+  task->m_unfinishedTasks = 1;
+
+  std::memcpy(task->m_data, _taskData, _taskDataSize);
+
+  return task;
+}
+
+// ------------------------------------------------------------------------------
+
+void Run(Task* _task)
+{
+  if (WorkStealingQueue* queue = GetWorkerThreadQueue())
   {
-    std::lock_guard<std::mutex> lock(s_mutex);
-
-    s_tasks.push(std::move(wrapper));
+    queue->Push(_task);
   }
+}
 
-  s_conditionToAwake.notify_one();
+// ------------------------------------------------------------------------------
 
-  return status;
+void Wait(const Task* _task)
+{
+  // wait until the job has completed. in the meantime, work on any other job.
+  while (!HasTaskCompleted(_task))
+  {
+    Task* nextTask = GetTask();
+    if (nextTask)
+    {
+      Execute(nextTask);
+    }
+  }
 }
 
 // ------------------------------------------------------------------------------

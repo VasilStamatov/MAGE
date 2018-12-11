@@ -7,23 +7,9 @@ namespace scheduler
 
 // ------------------------------------------------------------------------------
 
-TrackedTask::TrackedTask(std::unique_ptr<Task> _internalTask)
-    : m_internalTask(std::move(_internalTask))
-    , m_isComplete()
-{
-}
+constexpr int sizeOfTask = sizeof(Task);
 
-// ------------------------------------------------------------------------------
-
-void TrackedTask::Execute()
-{
-  m_internalTask->Execute();
-  m_isComplete.set_value(true);
-}
-
-// ------------------------------------------------------------------------------
-
-std::future<bool> TrackedTask::GetFuture() { return m_isComplete.get_future(); }
+static_assert(sizeOfTask == 64, "Task must be 64 bytes to avoid false sharing");
 
 // ------------------------------------------------------------------------------
 
