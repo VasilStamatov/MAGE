@@ -9,6 +9,9 @@ namespace log
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Doesn't do any filtering
+/////////////////////////////////////////////////
 struct NoFilterPolicy
 {
   inline bool Filter(const LogData& _data) { return true; }
@@ -16,6 +19,9 @@ struct NoFilterPolicy
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Logs anything thats equal or more verbose than the stored
+/////////////////////////////////////////////////
 struct VerbosityFilterPolicy
 {
   VerbosityFilterPolicy(LogType _verbosity)
@@ -34,6 +40,9 @@ private:
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Only logs from a specific channel
+/////////////////////////////////////////////////
 struct ChannelFilterPolicy
 {
   ChannelFilterPolicy(std::string _acceptedChannel)

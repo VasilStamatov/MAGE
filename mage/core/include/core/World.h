@@ -22,6 +22,10 @@ class Application;
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// The main world which holds all other lesser worlds(modules) and connects
+/// them.
+/////////////////////////////////////////////////
 class World
 {
 public:
@@ -119,7 +123,7 @@ public:
   template <typename ComponentType>
   std::vector<ComponentType>& GetAllComponentsOfType()
   {
-    ComponentManager<ComponentType>* manager =
+    ecs::ComponentManager<ComponentType>* manager =
         GetPtrToDerivedComponentManager<ComponentType>();
     return manager->GetAllComponents();
   }

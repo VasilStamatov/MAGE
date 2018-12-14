@@ -12,6 +12,9 @@ namespace scheduler
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Data that the parralel for task uses
+/////////////////////////////////////////////////
 template <typename T, typename S> struct ParralelForTaskData
 {
   using DataType = T;
@@ -35,6 +38,16 @@ template <typename T, typename S> struct ParralelForTaskData
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// The parralel for task function, which splits the passed data until it
+/// doesn't meet the split requirements and  then executes all the leaves
+/// example of splitting 5 elements into loops of 2 (or lower)
+///       *  - 5 elements
+///      / \
+///     *   * - 3/2 elements (execute 2)
+///    / \  
+///   *   *    - 2/1 (execute 2 and 1)
+/////////////////////////////////////////////////
 template <typename TaskData>
 void ParallelForTask(Task* _task, const void* _taskData)
 {
@@ -49,7 +62,7 @@ void ParallelForTask(Task* _task, const void* _taskData)
                             splitter);
 
     Task* left = scheduler::CreateChildTask(_task, ParallelForTask<TaskData>,
-                                            &leftData, sizeof(TaskData));
+                                            &leftData, sizeof(leftData));
     scheduler::Run(left);
 
     // Right side
@@ -57,7 +70,7 @@ void ParallelForTask(Task* _task, const void* _taskData)
     const TaskData rightData(data->m_data + leftCount, rightCount,
                              data->m_function, splitter);
     Task* right = scheduler::CreateChildTask(_task, ParallelForTask<TaskData>,
-                                             &rightData, sizeof(TaskData));
+                                             &rightData, sizeof(rightData));
     scheduler::Run(right);
   }
   else
@@ -68,6 +81,10 @@ void ParallelForTask(Task* _task, const void* _taskData)
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Executes a task which splits the passed data based on the splitter and once
+/// it reaches the maximum amount of splits it can, it executes the leaves
+/////////////////////////////////////////////////
 template <typename DataType, typename SplitterType>
 Task* ParralelFor(DataType* _data, std::uint32_t _count,
                   void (*_function)(DataType*, std::uint32_t),
@@ -78,7 +95,7 @@ Task* ParralelFor(DataType* _data, std::uint32_t _count,
   const TaskData taskData(_data, _count, _function, _splitter);
 
   Task* task = scheduler::CreateTask(ParallelForTask<TaskData>, &taskData,
-                                     sizeof(TaskData));
+                                     sizeof(taskData));
   return task;
 }
 

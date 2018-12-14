@@ -9,6 +9,10 @@ namespace mage
 namespace ecs
 {
 
+/////////////////////////////////////////////////
+/// The game world contains all gameplay logic systems created for the
+/// application
+/////////////////////////////////////////////////
 class GameWorld
 {
 public:

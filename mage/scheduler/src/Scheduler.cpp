@@ -15,7 +15,8 @@ namespace scheduler
 
 // ------------------------------------------------------------------------------
 
-static constexpr std::int32_t c_maxTaskCount = 1024;
+static constexpr std::int32_t c_maxTaskCount =
+    1024; ///< number of tasks the ring buffer stores
 
 static thread_local Task
     s_taskAllocator[c_maxTaskCount]; ///< ring buffer of tasks for each thread
@@ -23,12 +24,14 @@ static thread_local Task
 static thread_local std::uint32_t s_allocatedTasksCount =
     0u; ///< counter to keep count of the number of total allocated tasks
 
-static std::vector<std::unique_ptr<std::thread>> s_threads;
-static std::vector<std::unique_ptr<WorkStealingQueue>> s_taskQueues;
-static std::unordered_map<std::thread::id, std::uint32_t> s_threadIdToIndex;
+static std::vector<std::unique_ptr<std::thread>> s_threads; ///< worker threads
+static std::vector<std::unique_ptr<WorkStealingQueue>>
+    s_taskQueues; ///< work stealing queues per thread
+static std::unordered_map<std::thread::id, std::uint32_t>
+    s_threadIdToIndex; ///< thread id to array index
 
-static std::atomic_bool s_isShuttingDown;
-static std::uint32_t s_workerThreadCount = 0u;
+static std::atomic_bool s_isShuttingDown;      ///< shutting down flag
+static std::uint32_t s_workerThreadCount = 0u; ///< worker thread count
 static util::RandomNumberGenerator s_rng;
 
 // ------------------------------------------------------------------------------
@@ -115,6 +118,8 @@ void Finish(Task* _task)
 {
   --_task->m_unfinishedTasks;
 
+  assert(_task->m_unfinishedTasks >= 0);
+
   if ((_task->m_unfinishedTasks == 0) && (_task->m_parent))
   {
     Finish(_task->m_parent);
@@ -175,9 +180,6 @@ void Shutdown()
 {
   // set shutdown to true
   s_isShuttingDown.store(true);
-
-  // // notify all sleeping threads so they can break out of processing
-  // s_conditionToAwake.notify_all();
 
   // join the threads to not crash
   for (auto&& thread : s_threads)
@@ -276,6 +278,10 @@ void Wait(const Task* _task)
     }
   }
 }
+
+// ------------------------------------------------------------------------------
+
+void EmptyTask(scheduler::Task* _task, const void* _taskData) {}
 
 // ------------------------------------------------------------------------------
 

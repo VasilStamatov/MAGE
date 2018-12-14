@@ -2,11 +2,67 @@
 
 #include "core/World.h"
 #include "gui/Button.h"
+#include "scheduler/Scheduler.h"
 
 namespace mage
 {
 namespace gui
 {
+
+struct ButtonRendererData
+{
+  ButtonRendererData(
+      std::vector<Button>& _buttonComponents,
+      std::vector<GUITexture>& _guiTextureComponents,
+      std::unordered_map<graphics::GLTexture2D*, ButtonBatch>& _batches)
+      : m_buttonComponents(_buttonComponents)
+      , m_guiTextureComponents(_guiTextureComponents)
+      , m_batches(_batches)
+  {
+  }
+
+  std::vector<Button>& m_buttonComponents;
+  std::vector<GUITexture>& m_guiTextureComponents;
+  std::unordered_map<graphics::GLTexture2D*, ButtonBatch>& m_batches;
+};
+
+static void ButtonRenderTask(scheduler::Task* _task, const void* _taskData)
+{
+  const ButtonRendererData* data =
+      static_cast<const ButtonRendererData*>(_taskData);
+
+  for (size_t i = 0; i < data->m_buttonComponents.size(); i++)
+  {
+    Button& button = data->m_buttonComponents[i];
+    GUITexture& texture = data->m_guiTextureComponents[i];
+    ButtonBatch& batch = data->m_batches[&(*texture.m_texture)];
+
+    float x = button.m_screenPos[0];
+    float y = button.m_screenPos[1];
+    float width = button.m_size[0];
+    float height = button.m_size[1];
+
+    ButtonVertex topLeft(math::Vec2f(x, y + height), math::Vec2f(0.0f, 1.0f));
+    ButtonVertex botLeft(math::Vec2f(x, y), math::Vec2f(0.0f, 0.0f));
+    ButtonVertex botRight(math::Vec2f(x + width, y), math::Vec2f(1.0f, 0.0f));
+    ButtonVertex topRight(math::Vec2f(x + width, y + height),
+                          math::Vec2f(1.0f, 1.0f));
+
+    batch.m_vertices.push_back(topLeft);
+    batch.m_vertices.push_back(botLeft);
+    batch.m_vertices.push_back(botRight);
+    batch.m_vertices.push_back(topRight);
+
+    batch.m_indices.push_back(batch.m_indexOffset + 0);
+    batch.m_indices.push_back(batch.m_indexOffset + 1);
+    batch.m_indices.push_back(batch.m_indexOffset + 2);
+    batch.m_indices.push_back(batch.m_indexOffset + 2);
+    batch.m_indices.push_back(batch.m_indexOffset + 3);
+    batch.m_indices.push_back(batch.m_indexOffset + 0);
+
+    batch.m_indexOffset += 4;
+  }
+}
 
 // ------------------------------------------------------------------------------
 
@@ -42,43 +98,19 @@ void ButtonRenderer::Render(core::World& _world,
                             const graphics::Camera& _camera,
                             float _deltaSeconds)
 {
+  ButtonRendererData data(_world.GetAllComponentsOfType<Button>(),
+                          _world.GetAllComponentsOfType<GUITexture>(),
+                          m_batches);
+
+  auto* task = scheduler::CreateTask(ButtonRenderTask, &data, sizeof(data));
+
+  scheduler::Run(task);
+
+  // Only this is safe to execute in parallel
   m_shader.Bind();
   m_shader.SetUniformMat4("in_Projection", _camera.GetProjection());
 
-  for (auto&& entity : m_registeredEntities)
-  {
-    auto* button = _world.GetComponent<Button>(entity);
-    auto* texture = _world.GetComponent<GUITexture>(entity);
-
-    float x = button->m_screenPos[0];
-    float y = button->m_screenPos[1];
-    float width = button->m_size[0];
-    float height = button->m_size[1];
-
-    ButtonVertex topLeft(math::Vec2f(x, y + height), math::Vec2f(0.0f, 1.0f));
-    ButtonVertex botLeft(math::Vec2f(x, y), math::Vec2f(0.0f, 0.0f));
-    ButtonVertex botRight(math::Vec2f(x + width, y), math::Vec2f(1.0f, 0.0f));
-    ButtonVertex topRight(math::Vec2f(x + width, y + height),
-                          math::Vec2f(1.0f, 1.0f));
-
-    // temporarily store the raw pointer in the map (cleared once rendering is
-    // finished)
-    ButtonBatch& batch = m_batches[&(*texture->m_texture)];
-
-    batch.m_vertices.push_back(topLeft);
-    batch.m_vertices.push_back(botLeft);
-    batch.m_vertices.push_back(botRight);
-    batch.m_vertices.push_back(topRight);
-
-    batch.m_indices.push_back(batch.m_indexOffset + 0);
-    batch.m_indices.push_back(batch.m_indexOffset + 1);
-    batch.m_indices.push_back(batch.m_indexOffset + 2);
-    batch.m_indices.push_back(batch.m_indexOffset + 2);
-    batch.m_indices.push_back(batch.m_indexOffset + 3);
-    batch.m_indices.push_back(batch.m_indexOffset + 0);
-
-    batch.m_indexOffset += 4;
-  }
+  scheduler::Wait(task);
 
   for (auto&& batch : m_batches)
   {

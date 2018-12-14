@@ -12,6 +12,10 @@ namespace mage
 namespace graphics
 {
 
+/////////////////////////////////////////////////
+/// The render world which contains the systems and all other required data for
+/// the render pipeline
+/////////////////////////////////////////////////
 class RenderWorld
 {
 public:

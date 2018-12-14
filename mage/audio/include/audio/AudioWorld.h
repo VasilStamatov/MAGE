@@ -14,6 +14,9 @@ class World;
 namespace audio
 {
 
+/////////////////////////////////////////////////
+/// Audio world which contains all of audio related systems
+/////////////////////////////////////////////////
 class AudioWorld
 {
 public:

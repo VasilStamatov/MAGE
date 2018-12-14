@@ -1,7 +1,9 @@
 #include "physics/MotionSystem.h"
 
+#include "core/Timer.h"
 #include "core/World.h"
 #include "ecs_common/TransformComponent.h"
+#include "logger/LogDispatch.h"
 #include "physics/MotionIntegrators.h"
 #include "scheduler/ParallelFor.h"
 
@@ -29,22 +31,21 @@ struct MotionTaskData
 
 // ------------------------------------------------------------------------------
 
-void MotionTaskExecutor(MotionTaskData* _data, std::uint32_t _count)
+static void MotionTask(scheduler::Task* _task, const void* _taskData)
 {
-  for (size_t i = 0; i < _count; i++)
-  {
-    math::Vec3f newPos = _data[i].m_transform->GetTranslation();
-    MotionIntegrators::Verlet(newPos, _data[i].m_motion->m_velocity,
-                              _data[i].m_motion->m_acceleration,
-                              _data[i].m_deltaSeconds);
+  const MotionTaskData* data = static_cast<const MotionTaskData*>(_taskData);
 
-    _data[i].m_transform->SetTranslation(newPos);
+  math::Vec3f newPos = data->m_transform->GetTranslation();
+  MotionIntegrators::Verlet(newPos, data->m_motion->m_velocity,
+                            data->m_motion->m_acceleration,
+                            data->m_deltaSeconds);
 
-    // TODO: This is a cheap hack to get resistance for now! Replace
-    // with a proper system later
-    _data[i].m_motion->m_velocity *= 0.95f;
-    _data[i].m_motion->m_acceleration *= 0.95f;
-  }
+  data->m_transform->SetTranslation(newPos);
+
+  // TODO: This is a cheap hack to get resistance for now! Replace
+  // with a proper system later
+  data->m_motion->m_velocity *= 0.95f;
+  data->m_motion->m_acceleration *= 0.95f;
 }
 
 // ------------------------------------------------------------------------------
@@ -59,8 +60,7 @@ MotionSystem::MotionSystem()
 
 void MotionSystem::Simulate(core::World& _world, float _deltaSeconds)
 {
-  std::vector<MotionTaskData> taskData;
-  taskData.reserve(m_registeredEntities.size());
+  auto* rootTask = scheduler::CreateTask(scheduler::EmptyTask);
 
   for (auto&& entity : m_registeredEntities)
   {
@@ -69,16 +69,16 @@ void MotionSystem::Simulate(core::World& _world, float _deltaSeconds)
              ->m_transform;
     auto* motion = _world.GetComponent<Motion>(entity);
 
-    taskData.emplace_back(transform, motion, _deltaSeconds);
+    MotionTaskData data(transform, motion, _deltaSeconds);
+
+    auto* task =
+        scheduler::CreateChildTask(rootTask, MotionTask, &data, sizeof(data));
+
+    scheduler::Run(task);
   }
 
-  auto motionTask =
-      scheduler::ParralelFor<MotionTaskData, scheduler::CountSplitter>(
-          taskData.data(), taskData.size(), MotionTaskExecutor,
-          scheduler::CountSplitter(128));
-
-  scheduler::Run(motionTask);
-  scheduler::Wait(motionTask);
+  scheduler::Run(rootTask);
+  scheduler::Wait(rootTask);
 }
 
 // ------------------------------------------------------------------------------

@@ -27,6 +27,9 @@ public:
 
 // ------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+/// Generic logger which is templated to accept different policies for logging
+/////////////////////////////////////////////////
 template <class FilterPolicy, class FormatPolicy, class WritePolicy>
 class GenericLogger : public Logger
 {
