@@ -1,2 +1,2 @@
 # MAGE
-Modernly Architectured Game Engine
+Training
